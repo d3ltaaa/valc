@@ -106,16 +106,15 @@ else
 
         # declaring and assinging the variables
 
-        disk_to_partition="/dev/${disk_type}"
         
         if [ "$disk_type" == "sata" ]; then
-
+            disk_to_partition="/dev/sda"
             efi_partition="/dev/sda1"
             swap_partition="/dev/sda2"
             fs_partition="/dev/sda3"
 
         elif [ "$disk_type" == "nvme" ]; then
-
+            disk_to_partition="/dev/nvme0n1"
             efi_partition="/dev/nvme0n1p1"
             swap_partition="/dev/nvme0n1p2"
             fs_partition="/dev/nvme0n1p3"
