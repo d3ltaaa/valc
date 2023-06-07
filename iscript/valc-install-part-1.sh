@@ -140,7 +140,7 @@ else
     mkfs.ext4 $fs_partition
 
     # Mount partitions
-    mkdir /mnt/boot/EFI
+    mkdir -p /mnt/boot/EFI
     mount $efi_partition /mnt/boot/EFI
     swapon $swap_partition
     mount $fs_partition /mnt
