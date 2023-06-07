@@ -153,8 +153,8 @@ else
 
 fi
 
-curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > valc-install-part-2.sh
-chmod +x valc-install-part-2.sh
+curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh
+chmod +x /mnt/valc-install-part-2.sh
 
 
 arch-chroot /mnt
