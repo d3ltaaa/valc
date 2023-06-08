@@ -28,23 +28,15 @@ while true; do
 
     case $yn in
 
-        [yY]* ) ans_layout="german"; break;;
-        [nN]* ) ans_layout="english"; break;;
+        [yY]* ) echo "KEYMAP=de-latin1" > /etc/vconsole.conf; break;;
+        [nN]* ) echo "Not accessible yet"; sleep 2;;
         * ) echo "Enter 'y' or 'n'!";;
     esac
 done
 
-if [ "$ans_layout" == "german" ]; then
 
-   echo "KEYMAP=de-latin1" > /etc/vconsole.conf 
-
-else
-
-    # to-be-continued
-    echo "to-be-continued"
-    sleep 1
     
-fi
+
 
 # Hostname
 
@@ -75,6 +67,11 @@ sudo sed -i '/^# %wheel ALL=(ALL:ALL) ALL$/s/^# //' /etc/sudoers | sudo EDITOR='
 
 pacman -S --noconfirm grub efibootmgr dosfstools os-prober mtools
 
+# EFI
+mkdir /boot/EFI
+echo "Enter EFI partition (1) (e.g.: /dev/nvme0n1p1): "
+read efi_part
+mount $efi_part /boot/EFI
 
 # grub
 
