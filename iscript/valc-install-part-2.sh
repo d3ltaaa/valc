@@ -133,7 +133,7 @@ network_manager () {
 }
 
 inst_part () {
-
+    cd
     notification "Installing next valc-installation-part"
     curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-3.sh > valc-install-part-3.sh
     chmod +x valc-install-part-3.sh
