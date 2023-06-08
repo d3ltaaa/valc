@@ -211,11 +211,7 @@ inst_part () {
     chmod +x /mnt/valc-install-part-2.sh
 }
 
-ch_root () {
 
-    notification "Changing root"
-    arch-chroot /mnt
-}
 
 ##################################################################################
 
@@ -234,4 +230,5 @@ exe partitioning
 
 exe inst_part
 
-exe ch_root
+notification "Changing root"
+arch-chroot /mnt
