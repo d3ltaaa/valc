@@ -9,6 +9,7 @@ exe () {
         # check if everything worked
         if [ $? -eq 0 ]; then
             exit_code=0
+            echo "Checks out"; sleep 1
             break
         fi
 
