@@ -12,7 +12,7 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 # video driver
 notification "Installing video driver"
 while true; do
-    read -p "Does the device have an amd-gpu? [y/n]" yn
+    read -p "Does the device have an amd-gpu? [y/n]: " yn
     case $yn in
         [yY]* ) sudo pacman --noconfirm -S xf86-video-amdgpu; break;;
         [nN]* ) sudo pacman --noconfirm -S xf86-video-fbdev; break;;
