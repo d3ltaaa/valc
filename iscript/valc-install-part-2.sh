@@ -67,11 +67,11 @@ sudo sed -i '/^# %wheel ALL=(ALL:ALL) ALL$/s/^# //' /etc/sudoers | sudo EDITOR='
 
 pacman -S --noconfirm grub efibootmgr dosfstools os-prober mtools
 
-# EFI
-mkdir /boot/EFI
-echo "Enter EFI partition (1) (e.g.: /dev/nvme0n1p1): "
-read efi_part
-mount $efi_part /boot/EFI
+# # EFI
+# mkdir /boot/EFI
+# echo "Enter EFI partition (1) (e.g.: /dev/nvme0n1p1): "
+# read efi_part
+# mount $efi_part /boot/EFI
 
 # grub
 
