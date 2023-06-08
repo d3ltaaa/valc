@@ -1,21 +1,38 @@
 #!/bin/bash
 
+notification () {
+    clear; echo "$1"; sleep 1
+}
+
 printf "This is an install-script for the valc linux distribution."
 read temp
 
 # kb-setup (in case sth goes wrong)
+notification "Loading keys"
+
 loadkeys de-latin1
 
 # time setup 1.0
+
+notification "Time setup"
+
 timedatectl set-ntp true
 
+
 # update cache
+notification "Updating keys"
 pacman -Sy
 
+
+
 # update parallel downloads
+notification "Enabling parallel downloads"
+
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 
 # Decision fast installation or slow installation
+notification "Partitioning"
+
 ans_man=""
 while true; do
     read -p "Do you want to partition the disks manually? [y/n]: " yn
@@ -133,28 +150,33 @@ else
 
     fi
 
-
+    
     # Format partitions
+    notification "Formating partitions"
     mkfs.fat -F32 $efi_partition
     mkswap $swap_partition
     mkfs.ext4 $fs_partition
 
     # Mount partitions
+    notification "Mount partitions"
     swapon $swap_partition
     mount $fs_partition /mnt
     mkdir -p /mnt/boot/EFI
     mount $efi_partition /mnt/boot/EFI
 
     # misscellaneous
+    notification "Installing kernels"
     pacstrap /mnt base linux linux-firmware
+    notification "Generating fstab"
     genfstab -U /mnt >> /mnt/etc/fstab
 
 
 fi
 
+notification "Installing next valc-installation-part"
 curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh
 chmod +x /mnt/valc-install-part-2.sh
 
-
+"Changing root"
 arch-chroot /mnt
 
