@@ -1,10 +1,11 @@
 #!/bin/bash
 
 exe () {
+    # exe hepls "contain a block of code in a repeatable format in case something goes wrong
     exit_code=1
     while [ $exit_code -ne 0 ]; do
 
-        $1
+        $@
 
         # check if everything worked
         if [ $? -eq 0 ]; then
@@ -22,6 +23,14 @@ exe () {
             esac
         done
     done
+}
+
+excode () {
+    # excode helps the exe function to work, because it checks at strategic points in the code to check for errors
+    # and outputs an exit code of 1, prompting exe to repeat at the beginning of the code block
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
 }
 
 notification () {
@@ -85,7 +94,9 @@ partitioning () {
                 [Yy]* ) 
     
                     read -p "Which disk would you like to partition?: " disk_to_partition
-                    cfdisk $disk_to_partition;;
+                    cfdisk $disk_to_partition
+                    excode
+                    ;;
         
                 [Nn]* )
     
@@ -124,11 +135,12 @@ partitioning () {
             read -p "What size should the EFI partition be?:  " size_of_efi
             read -p "What size should the swap partition be?: " size_of_swap
     
-            parted -s $disk_to_partition mklabel gpt
-            parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB 
-            parted -s $disk_to_partition set 1 esp on
-            parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB
+            parted -s $disk_to_partition mklabel gpt &&
+            parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB &&
+            parted -s $disk_to_partition set 1 esp on &&
+            parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
             parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
+            excode
     
     
         else
@@ -171,34 +183,39 @@ partitioning () {
         size_of_swap=2
 
 
-        parted -s $disk_to_partition mklabel gpt
-        parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB 
-        parted -s $disk_to_partition set 1 esp on
-        parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB
+        parted -s $disk_to_partition mklabel gpt &&
+        parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB &&
+        parted -s $disk_to_partition set 1 esp on &&
+        parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
         parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-        
+        excode
 
     fi
 
     
     # Format partitions
     notification "Formating partitions"
-    mkfs.fat -F32 $efi_partition
-    mkswap $swap_partition
-    mkfs.ext4 $fs_partition
+    mkfs.fat -F32 $efi_partition &&
+    mkswap $swap_partition &&
+    mkfs.ext4 $fs_partition 
+    excode
 
     # Mount partitions
     notification "Mount partitions"
-    swapon $swap_partition
-    mount $fs_partition /mnt
-    mkdir -p /mnt/boot/EFI
+    swapon $swap_partition &&
+    mount $fs_partition /mnt &&
+    mkdir -p /mnt/boot/EFI &&
     mount $efi_partition /mnt/boot/EFI
+    excode
 
     # misscellaneous
     notification "Installing kernels"
     pacstrap /mnt base linux linux-firmware
+    excode
+
     notification "Generating fstab"
     genfstab -U /mnt >> /mnt/etc/fstab
+    excode
 
 
     fi
@@ -207,8 +224,9 @@ partitioning () {
 inst_part () {
     
     notification "Installing next valc-installation-part"
-    curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh
+    curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh &&
     chmod +x /mnt/valc-install-part-2.sh
+    excode
 }
 
 
