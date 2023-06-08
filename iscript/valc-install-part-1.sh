@@ -177,6 +177,6 @@ notification "Installing next valc-installation-part"
 curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh
 chmod +x /mnt/valc-install-part-2.sh
 
-"Changing root"
+notification "Changing root"
 arch-chroot /mnt
 
