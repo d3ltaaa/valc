@@ -145,12 +145,12 @@ links_setup () {
     ln -s ~/.setup/config/lf ~/.config
 
     ln -s ~/.setup/system/.dwm ~/ &&
-    sudo rm -r ~/.scripts &&
+    # sudo rm -r ~/.scripts &&
     ln -s ~/.setup/system/.scripts ~/ &&
     ln -s ~/.setup/system/.xinitrc ~/ &&
-    rm ~/.bash_profile &&
+    # rm ~/.bash_profile &&
     ln -s ~/.setup/system/.bash_profile ~/ &&
-    rm ~/.bashrc &&
+    # rm ~/.bashrc &&
     ln -s ~/.setup/system/.bashrc ~/ 
     [ $? -ne 0 ] && return 49 || :
 
@@ -202,7 +202,6 @@ inst_fonts () {
     mkdir ~/Downloads &&
     curl https://fonts.google.com/download?family=Ubuntu%20Mono > ~/Downloads/UbuntuMono.zip &&
     curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.0/NerdFontsSymbolsOnly.zip > ~/Downloads/NerdFontIcons.zip &&
- &&
     sudo mv ~/Downloads/UbuntuMono.zip /usr/share/fonts/TTF &&
     sudo mv ~/Downloads/NerdFontIcons.zip /usr/share/fonts/ICONS &&
     cd /usr/share/fonts/TTF &&
@@ -211,7 +210,7 @@ inst_fonts () {
     sudo rm UFL.txt &&
     cd /usr/share/fonts/ICONS &&
     sudo unzip /usr/share/fonts/ICONS/NerdFontIcons.zip &&
-    jsudo rm NerdFontIcons.zip &&
+    sudo rm NerdFontIcons.zip &&
     sudo rm readme.md &&
     sudo rm LICENSE
     [ $? -ne 0 ] && return 52 || :
