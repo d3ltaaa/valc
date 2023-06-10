@@ -15,6 +15,7 @@ exe () {
         fi
 
         while [ return_code -ne 0 ]; do
+            echo "Error code: $return_code !"
             read -p "Something went wrong here :( Do you want to redo the command? [y/n]: " yn
             case $yn in
                 [Yy]* ) break;;
@@ -25,8 +26,6 @@ exe () {
     done
 }
 
-[ $? -ne 0 ] && return 1
-        
     
 
 
@@ -38,30 +37,28 @@ kb_setup () {
     # kb-setup (in case sth goes wrong)
     notification "Loading keys"
     loadkeys de-latin1
+    [ $? -eq 0 ] && return 0 || return 10
 }
 
 time_setup () {
-    
     # time setup 1.0
-
     notification "Time setup"
-
     timedatectl set-ntp true
+    [ $? -eq 0 ] && return 0 || return 11
 }
 
 upd_cache () {
-    
     # update cache
     notification "Updating keys"
     pacman -Sy
+    [ $? -eq 0 ] && return 0 || return 12
 }
 
 ena_parallel () {
-    
     # update parallel downloads
     notification "Enabling parallel downloads"
-
     sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
+    [ $? -eq 0 ] && return 0 || return 13
 }
 
 partitioning () {
@@ -92,7 +89,7 @@ partitioning () {
     
                     read -p "Which disk would you like to partition?: " disk_to_partition
                     cfdisk $disk_to_partition
-                    [ $? -ne 0 ] && return 1
+                    [ $? -eq 0 ] && return 0 || return 14
                     ;;
         
                 [Nn]* )
@@ -137,7 +134,7 @@ partitioning () {
             parted -s $disk_to_partition set 1 esp on &&
             parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
             parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-            [ $? -ne 0 ] && return 1
+            [ $? -eq 0 ] && return 0 || return 15
     
     
         else
@@ -185,7 +182,7 @@ partitioning () {
         parted -s $disk_to_partition set 1 esp on &&
         parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
         parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-        [ $? -ne 0 ] && return 1
+        [ $? -eq 0 ] && return 0 || return 16
 
     fi
 
@@ -195,7 +192,7 @@ partitioning () {
     mkfs.fat -F32 $efi_partition &&
     mkswap $swap_partition &&
     mkfs.ext4 $fs_partition 
-    [ $? -ne 0 ] && return 1
+    [ $? -eq 0 ] && return 0 || return 17
 
     # Mount partitions
     notification "Mount partitions"
@@ -203,16 +200,16 @@ partitioning () {
     mount $fs_partition /mnt &&
     mkdir -p /mnt/boot/EFI &&
     mount $efi_partition /mnt/boot/EFI
-    [ $? -ne 0 ] && return 1
+    [ $? -eq 0 ] && return 0 || return 18
 
     # misscellaneous
     notification "Installing kernels"
     pacstrap /mnt base linux linux-firmware
-    [ $? -ne 0 ] && return 1
+    [ $? -eq 0 ] && return 0 || return 19
 
     notification "Generating fstab"
     genfstab -U /mnt >> /mnt/etc/fstab
-    [ $? -ne 0 ] && return 1
+    [ $? -eq 0 ] && return 0 || return 20
 
 
     fi
@@ -223,7 +220,7 @@ inst_part () {
     notification "Installing next valc-installation-part"
     curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh &&
     chmod +x /mnt/valc-install-part-2.sh
-    [ $? -ne 0 ] && return 1
+    [ $? -eq 0 ] && return 0 || return 21
 }
 
 
