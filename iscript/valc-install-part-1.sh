@@ -25,13 +25,10 @@ exe () {
     done
 }
 
-excode () {
-    # excode helps the exe function to work, because it checks at strategic points in the code to check for errors
-    # and outputs an exit code of 1, prompting exe to repeat at the beginning of the code block
-    if [ $? -ne 0 ]; then
-        exit 1
-    fi
-}
+[ $? -ne 0 ] && exit 1
+        
+    
+
 
 notification () {
     clear; echo "$1"; sleep 1
@@ -95,7 +92,7 @@ partitioning () {
     
                     read -p "Which disk would you like to partition?: " disk_to_partition
                     cfdisk $disk_to_partition
-                    excode
+                    [ $? -ne 0 ] && exit 1
                     ;;
         
                 [Nn]* )
@@ -140,7 +137,7 @@ partitioning () {
             parted -s $disk_to_partition set 1 esp on &&
             parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
             parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-            excode
+            [ $? -ne 0 ] && exit 1
     
     
         else
@@ -188,7 +185,7 @@ partitioning () {
         parted -s $disk_to_partition set 1 esp on &&
         parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
         parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-        excode
+        [ $? -ne 0 ] && exit 1
 
     fi
 
@@ -198,7 +195,7 @@ partitioning () {
     mkfs.fat -F32 $efi_partition &&
     mkswap $swap_partition &&
     mkfs.ext4 $fs_partition 
-    excode
+    [ $? -ne 0 ] && exit 1
 
     # Mount partitions
     notification "Mount partitions"
@@ -206,16 +203,16 @@ partitioning () {
     mount $fs_partition /mnt &&
     mkdir -p /mnt/boot/EFI &&
     mount $efi_partition /mnt/boot/EFI
-    excode
+    [ $? -ne 0 ] && exit 1
 
     # misscellaneous
     notification "Installing kernels"
     pacstrap /mnt base linux linux-firmware
-    excode
+    [ $? -ne 0 ] && exit 1
 
     notification "Generating fstab"
     genfstab -U /mnt >> /mnt/etc/fstab
-    excode
+    [ $? -ne 0 ] && exit 1
 
 
     fi
@@ -226,7 +223,7 @@ inst_part () {
     notification "Installing next valc-installation-part"
     curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh &&
     chmod +x /mnt/valc-install-part-2.sh
-    excode
+    [ $? -ne 0 ] && exit 1
 }
 
 
