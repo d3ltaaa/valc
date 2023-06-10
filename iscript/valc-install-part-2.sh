@@ -83,13 +83,12 @@ kb_setup () {
     done
 }
 
-host_setup () {
+host_name () {
 
     # Hostname
     notification "Hostname"
-    echo "HOSTNAME: "
-    
-    read hostname 
+
+    read -p "What is the hostname?: " hostname 
 
     while true; do
 
@@ -104,6 +103,11 @@ host_setup () {
             * ) echo "Enter 'y' or 'n'!";;
         esac
     done
+}
+
+host_setup () {
+
+    notification "Host setup"
 
     echo $hostname > /etc/hostname &&
 
@@ -115,15 +119,18 @@ host_setup () {
 
 }
 
-user_setup () {
-
-    # User
-    notification "User"
+host_pw () {
+    
+    notification "Host password"
     passwd
     [ $? -ne 0 ] && return 28 || :
+}
 
-    echo "USER: "
-    read user
+user_name () {
+
+    # User
+    notification "Username"
+    read -p "What is the Username?: " user
 
 
     while true; do
@@ -139,21 +146,34 @@ user_setup () {
             * ) echo "Enter 'y' or 'n'!";;
         esac
     done
+}
 
+user_add () {
+    notification "Adding user"
     useradd -m $user 
     [ $? -ne 0 ] && return 30 || :
+}
+
+user_pw () {
+    notification "User password"
 
     echo "Password for $user: " &&
     passwd $user
     [ $? -ne 0 ] && return 31 || :
- 
+}
+
+user_mod () {
+    notification "User mod"
+
     usermod -aG wheel,audio,video $user
     [ $? -ne 0 ] && return 32 || :
+}
 
+inst_sudo () {
+    notification "Installing and setting up sudo"
     pacman --noconfirm -S sudo &&
     sudo sed -i '/^# %wheel ALL=(ALL:ALL) ALL$/s/^# //' /etc/sudoers | sudo EDITOR='tee -a' visudo
     [ $? -ne 0 ] && return 33 || :
-
 }
 
 inst_important () {
@@ -208,9 +228,21 @@ exe language_setup
 
 exe kb_setup
 
+exe host_name
+
 exe host_setup 
 
-exe user_setup
+exe host_pw 
+
+exe user_name
+
+exe user_add
+
+exe user_pw 
+
+exe user_mod
+
+exe inst_sudo
 
 exe inst_important
 
