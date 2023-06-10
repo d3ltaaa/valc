@@ -135,6 +135,9 @@ download_setup () {
 links_setup () {
 
     notification "Setting up links"
+    
+    [ -e ~/.bash_profile ] && rm ~/.bash_profile
+    [ -e ~/.bashrc ] && rm  ~/.bashrc
 
     mkdir -p ~/.config &&
     ln -s ~/.setup/config/nvim ~/.config &&
@@ -145,12 +148,9 @@ links_setup () {
     ln -s ~/.setup/config/lf ~/.config
 
     ln -s ~/.setup/system/.dwm ~/ &&
-    # sudo rm -r ~/.scripts &&
     ln -s ~/.setup/system/.scripts ~/ &&
     ln -s ~/.setup/system/.xinitrc ~/ &&
-    # rm ~/.bash_profile &&
     ln -s ~/.setup/system/.bash_profile ~/ &&
-    # rm ~/.bashrc &&
     ln -s ~/.setup/system/.bashrc ~/ 
     [ $? -ne 0 ] && return 49 || :
 
