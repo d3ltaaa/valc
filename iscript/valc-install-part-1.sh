@@ -2,30 +2,30 @@
 
 exe () {
     # exe hepls "contain a block of code in a repeatable format in case something goes wrong
-    exit_code=1
-    while [ $exit_code -ne 0 ]; do
+    return_code=1
+    while [ $return_code -ne 0 ]; do
 
-        $@
-
+        "$@"
+        
+        return_code=$?
         # check if everything worked
-        if [ $? -eq 0 ]; then
-            exit_code=0
+        if [ $return_code -eq 0 ]; then
             echo "Checks out"; sleep 1
             break
         fi
 
-        while true; do
+        while [ return_code -ne 0 ]; do
             read -p "Something went wrong here :( Do you want to redo the command? [y/n]: " yn
             case $yn in
                 [Yy]* ) break;;
-                [Nn]* ) exit_code=0; break;;
+                [Nn]* ) return_code=0; break;;
                 * ) echo "Enter 'y' or 'n'!";;
             esac
         done
     done
 }
 
-[ $? -ne 0 ] && exit 1
+[ $? -ne 0 ] && return 1
         
     
 
@@ -92,7 +92,7 @@ partitioning () {
     
                     read -p "Which disk would you like to partition?: " disk_to_partition
                     cfdisk $disk_to_partition
-                    [ $? -ne 0 ] && exit 1
+                    [ $? -ne 0 ] && return 1
                     ;;
         
                 [Nn]* )
@@ -137,7 +137,7 @@ partitioning () {
             parted -s $disk_to_partition set 1 esp on &&
             parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
             parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-            [ $? -ne 0 ] && exit 1
+            [ $? -ne 0 ] && return 1
     
     
         else
@@ -185,7 +185,7 @@ partitioning () {
         parted -s $disk_to_partition set 1 esp on &&
         parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
         parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-        [ $? -ne 0 ] && exit 1
+        [ $? -ne 0 ] && return 1
 
     fi
 
@@ -195,7 +195,7 @@ partitioning () {
     mkfs.fat -F32 $efi_partition &&
     mkswap $swap_partition &&
     mkfs.ext4 $fs_partition 
-    [ $? -ne 0 ] && exit 1
+    [ $? -ne 0 ] && return 1
 
     # Mount partitions
     notification "Mount partitions"
@@ -203,16 +203,16 @@ partitioning () {
     mount $fs_partition /mnt &&
     mkdir -p /mnt/boot/EFI &&
     mount $efi_partition /mnt/boot/EFI
-    [ $? -ne 0 ] && exit 1
+    [ $? -ne 0 ] && return 1
 
     # misscellaneous
     notification "Installing kernels"
     pacstrap /mnt base linux linux-firmware
-    [ $? -ne 0 ] && exit 1
+    [ $? -ne 0 ] && return 1
 
     notification "Generating fstab"
     genfstab -U /mnt >> /mnt/etc/fstab
-    [ $? -ne 0 ] && exit 1
+    [ $? -ne 0 ] && return 1
 
 
     fi
@@ -223,7 +223,7 @@ inst_part () {
     notification "Installing next valc-installation-part"
     curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh &&
     chmod +x /mnt/valc-install-part-2.sh
-    [ $? -ne 0 ] && exit 1
+    [ $? -ne 0 ] && return 1
 }
 
 
