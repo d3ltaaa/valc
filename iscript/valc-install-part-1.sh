@@ -37,28 +37,28 @@ kb_setup () {
     # kb-setup (in case sth goes wrong)
     notification "Loading keys"
     loadkeys de-latin1
-    [ $? -eq 0 ] && return 0 || return 10
+    [ $? -ne 0 ] && return 10 || :
 }
 
 time_setup () {
     # time setup 1.0
     notification "Time setup"
     timedatectl set-ntp true
-    [ $? -eq 0 ] && return 0 || return 11
+    [ $? -ne 0 ] && return 11 || : 
 }
 
 upd_cache () {
     # update cache
     notification "Updating keys"
     pacman -Sy
-    [ $? -eq 0 ] && return 0 || return 12
+    [ $? -ne 0 ] && return 12 || : 
 }
 
 ena_parallel () {
     # update parallel downloads
     notification "Enabling parallel downloads"
     sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
-    [ $? -eq 0 ] && return 0 || return 13
+    [ $? -ne 0 ] && return 13 || : 
 }
 
 partitioning () {
@@ -89,7 +89,7 @@ partitioning () {
     
                     read -p "Which disk would you like to partition?: " disk_to_partition
                     cfdisk $disk_to_partition
-                    [ $? -eq 0 ] && return 0 || return 14
+                    [ $? -ne 0 ] && return 14 || : 
                     ;;
         
                 [Nn]* )
@@ -122,19 +122,19 @@ partitioning () {
     
         if [ "$ans_size" == "manually" ]; then
     
-            read -p "Which disk would you like to partition?: " disk_to_partition
+            read -p "Which disk would you like to partition?:         " disk_to_partition
             read -p "What is the EFI partition called?:               " efi_partition
             read -p "What is the SWAP partition called?:              " swap_partition
             read -p "What is the LINUX FILE SYSTEM partition called?: " fs_partition
-            read -p "What size should the EFI partition be?:  " size_of_efi
-            read -p "What size should the swap partition be?: " size_of_swap
+            read -p "What size should the EFI partition be?:          " size_of_efi
+            read -p "What size should the swap partition be?:         " size_of_swap
     
             parted -s $disk_to_partition mklabel gpt &&
             parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB &&
             parted -s $disk_to_partition set 1 esp on &&
             parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
             parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-            [ $? -eq 0 ] && return 0 || return 15
+            [ $? -ne 0 ] && return 15 || : 
     
     
         else
@@ -182,7 +182,7 @@ partitioning () {
         parted -s $disk_to_partition set 1 esp on &&
         parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
         parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-        [ $? -eq 0 ] && return 0 || return 16
+        [ $? -ne 0 ] && return 16 || : 
 
     fi
 
@@ -192,7 +192,7 @@ partitioning () {
     mkfs.fat -F32 $efi_partition &&
     mkswap $swap_partition &&
     mkfs.ext4 $fs_partition 
-    [ $? -eq 0 ] && return 0 || return 17
+    [ $? -ne 0 ] && return 17 || :
 
     # Mount partitions
     notification "Mount partitions"
@@ -200,16 +200,16 @@ partitioning () {
     mount $fs_partition /mnt &&
     mkdir -p /mnt/boot/EFI &&
     mount $efi_partition /mnt/boot/EFI
-    [ $? -eq 0 ] && return 0 || return 18
+    [ $? -ne 0 ] && return 18 || : 
 
     # misscellaneous
     notification "Installing kernels"
     pacstrap /mnt base linux linux-firmware
-    [ $? -eq 0 ] && return 0 || return 19
+    [ $? -ne 0 ] && return 19 || : 
 
     notification "Generating fstab"
     genfstab -U /mnt >> /mnt/etc/fstab
-    [ $? -eq 0 ] && return 0 || return 20
+    [ $? -ne 0 ] && return 20 || :
 
 
     fi
@@ -220,7 +220,7 @@ inst_part () {
     notification "Installing next valc-installation-part"
     curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh &&
     chmod +x /mnt/valc-install-part-2.sh
-    [ $? -eq 0 ] && return 0 || return 21
+    [ $? -ne 0 ] && return 21 || : 
 }
 
 
