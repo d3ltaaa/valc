@@ -15,7 +15,7 @@ exe () {
             break
         fi
 
-        while [ return_code -ne 0 ]; do
+        while [ $return_code -ne 0 ]; do
             echo "Error code: $return_code !"
             read -p "Something went wrong here :( Do you want to redo the command? [y/n]: " yn
             case $yn in
