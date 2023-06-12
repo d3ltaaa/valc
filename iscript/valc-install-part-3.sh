@@ -67,6 +67,7 @@ inst_packages () {
     	alsa-utils pulseaudio pavucontrol \
     	bluez bluez-utils pulseaudio-bluetooth blueman \
     	firefox thunar \
+        thermald \
     	lf feh xdotool zathura zathura-pdf-mupdf \
         xournalpp discord \
     	neofetch ranger git neovim dunst xwallpaper xclip acpi upower \
@@ -85,6 +86,10 @@ blue_setup () {
     systemctl enable bluetooth.service &&
     systemctl --user enable pulseaudio
     [ $? -ne 0 ] && return 44 || :
+}
+
+thermald_setup () {
+    sudo systemctl enable thermald
 }
 
 yay_setup () {
@@ -109,6 +114,13 @@ yay_installations () {
     yay -S picom-jonaburg-git --noconfirm
     [ $? -ne 0 ] && return 46 || :
 
+}
+
+inst_auto_cpu_freq () {
+    cd ~/.config/
+    git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+    cd auto-cpufreq && sudo ./auto-cpufreq-installer
+    sudo auto-cpufreq --install
 }
 
 inst_remnote () {
@@ -240,6 +252,8 @@ exe video_setup
 exe inst_packages
 
 exe blue_setup
+
+exe thermald_setup
 
 exe yay_setup
 
