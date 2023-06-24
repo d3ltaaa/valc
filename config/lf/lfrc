@@ -1,0 +1,141 @@
+# Basic Settings
+set nopreview
+set hidden true
+set ignorecase true
+set drawbox
+# set icons true
+
+
+# Custom Functions
+cmd mkdir ${{
+    clear
+    printf "Directory Name: "
+    read ans
+    mkdir $ans
+}}
+
+cmd mkfile ${{
+    clear
+    printf "File Name: "
+    read ans
+    $EDITOR $ans
+}}
+
+cmd setwallpaper ${{
+    xwallpaper --zoom "$f"
+    cp "$f" ~/.config/wall/picture
+}}
+
+# Image view
+cmd viewimg ${{
+    pkill -SIGINT feh
+    feh --scale-down --auto-zoom "$f" &
+    sleep 0.4
+    # xdotool key Alt+j
+}}
+
+cmd open ${{
+    case "$f" in 
+        *.jpg|*.jpeg|*.png) 
+            dwmswallow $WINDOWID; feh --scale-dwon --auto-zoom "$f"
+            # pkill -SIGINT feh
+            # feh --scale-down --auto-zoom "$f" &
+            # sleep 0.4
+            # xdotool key Alt+k
+            ;;
+        *.pdf) 
+            dwmswallow $WINDOWID; zathura "$f"
+            ;;
+
+        *) $EDITOR "$f";;
+    esac
+}}
+
+# favorites
+cmd fave ${{
+    cp "$f" ~/Pictures/Wallpapers/Favorites
+}}
+
+cmd rm_fave ${{
+    rm ~/Pictures/Wallpapers/Favorites/"$f"
+}}
+
+
+# Archive bindings
+cmd unarchive ${{
+  case "$f" in
+      *.zip) unzip "$f" ;;
+      *.tar.gz) tar -xzvf "$f" ;;
+      *.tar.bz2) tar -xjvf "$f" ;;
+      *.tar) tar -xvf "$f" ;;
+      *) echo "Unsupported format" ;;
+  esac
+}}
+
+cmd rename ${{
+    clear
+    printf "Old Name: $f\n"
+    printf "New Name: "
+    read ans
+    mv "$f" $ans
+}}
+
+cmd remove_dir ${{
+    sudo rm -r "$f"
+}}
+
+cmd remove_file ${{
+    rm "$f"
+}}
+
+cmd make ${{
+    make && sudo make install
+}}
+
+# remove defaults
+map m 
+map o
+map n
+map "'"
+map '"'
+map c
+map e
+map f
+map r
+
+# Basic Functions
+map . set hidden!
+map p paste
+map y copy
+map <enter> open
+map R reload
+
+map rr rename
+
+map rf remove_file 
+map rd remove_dir 
+
+map mf mkfile
+map md mkdir
+map mm make 
+
+map zz unarchive
+
+map bv viewimg
+map bg setwallpaper
+map bf fave
+map br rm_fave
+
+map gr cd /
+map gh cd ~/
+map gd cd ~/Downloads
+map gD cd ~/Documents
+map gp cd ~/Pictures
+map gS cd ~/.scripts
+map gc cd ~/.config
+map gCS cd ~/.config/suckless
+map gse cd ~/.setup
+map gsc cd ~/.setup/config
+map gss cd ~/.setup/system
+
+map C clear

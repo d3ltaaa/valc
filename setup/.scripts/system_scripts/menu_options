@@ -1,0 +1,213 @@
+#!/bin/bash
+
+menu_main () {
+    # Define first layer
+    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Close")
+
+    # display options
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    case $selected in 
+        "Wifi")
+            menu_wifi
+            ;;
+        "Bluetooth")
+            menu_blue
+            ;;
+        "Monitors")
+            menu_mon
+            ;;
+        "Audio")
+            menu_audio
+            ;;
+        "Tablet-Mode")
+            menu_tablet
+            ;;
+        "Energy-Mode")
+            menu_energy
+            ;;
+        "Themes")
+            menu_themes
+            ;;
+        "Close")
+            ;;
+    esac
+}
+
+menu_wifi () {
+    # get wifi status
+    connection_lan=$(nmcli -t -f NAME connection show --active | head -n 1)
+
+    connection_wifi=$(nmcli radio wifi)
+
+    if [[ $connection_lan == "Wired connection 1" ]]; then
+        status="Enabled - Wired"
+    elif [[ $connection_wifi == "enabled" && $connection_lan == "lo" ]]; then
+        status="Enabled - Not Connected" 
+    elif [[ $connection_wifi == "enabled" ]]; then
+        status="Enabled - Connected to $(nmcli -t -f NAME connection show --active | head -n 1)"
+    else 
+        status="Disabled"
+    fi
+
+    options=("Internet ($status)" "Wifi list" "Go back")
+
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    case $selected in 
+        "Internet ($status)")
+
+            case $status in
+                "Disabled")
+                    nmcli radio wifi on
+                    menu_wifi
+                    ;;
+                "Enabled - Wired")
+                    menu_wifi
+                    ;;
+                "Enabled - Not Connected")
+                    nmcli radio wifi off
+                    menu_wifi
+                    ;;
+                *)
+                    nmcli radio wifi off
+                    menu_wifi
+                    ;;
+            esac
+            ;;
+
+        "Wifi list")
+
+            selected="$(nmcli -f SSID dev wifi list | tail -n +2 | awk '{$1=$1};1' | dmenu -i)"
+            echo "selected wifi: $selected"
+
+            password=$(:| dmenu -i -p "Password:")
+
+            nmcli d wifi connect "$selected" password "$password"  
+
+            menu_wifi
+            ;;
+
+        "Go back")
+
+            menu_main
+            ;;
+    esac 
+}
+
+menu_blue () {
+
+    options=( "Connect to device" "Scan for devices" "Back" "Close")
+
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    case $selected in
+        "Connect to device" )
+
+            device_amount=$(bluetoothctl devices Paired | wc -l)
+
+            if [[ $device_amount = 1 ]]; then
+                select=$(bluetoothctl devices Paired | awk '{print $3}' | dmenu -l 1 -i)
+                MAC=$(bluetoothctl devices Paired | awk {'print $2'})
+                    [ -z $MAC ] && MAC=NoDeviceFound # Prevents accidental disconnect error
+
+            else
+                select=$(bluetoothctl devices Paired | awk '{print $3}' | dmenu -i)
+                MAC=$(bluetoothctl devices Paired | grep $select | awk {'print $2'}) 
+                    [ -z $MAC ] && MAC=NoDeviceFound # Prevents accidental disconnect error
+            fi
+
+            connect=$(bluetoothctl info $MAC | grep Connected: | awk '{print $2}')
+
+            if [[ $connect = no ]]; then 
+                notify-send "Attempting to connect to $select"
+                bluetoothctl connect $MAC && notify-send "Connected Successfully" || notify-send "Failed to Connect"
+
+            elif [[ $connect = yes ]]; then
+                notify-send "Attempting to disconnect $select" && notify-send "Disconnected Successfully" || notify-send "Failed to Disconnect"
+                bluetoothctl disconnect $MAC 
+
+            fi
+            menu_blue
+            ;;
+
+        "Scan for devices" )
+             
+
+            duration=6
+    
+            # Start the scan in the background
+            bluetoothctl scan on &
+
+            # Sleep for the desired duration
+            sleep "$duration"
+
+            # Stop the scan by killing the background process
+            kill $(pgrep bluetoothctl)
+
+            # Wait for the background process to finish
+            wait
+
+            # Fetch the list of devices
+            select_to_connect=$(bluetoothctl devices | awk '{print $3}' | dmenu -i)
+
+            MAC=$(bluetoothctl devices | grep $select_to_connect | awk {'print $2'}) 
+                [ -z $MAC ] && MAC=NoDeviceFound # Prevents accidental disconnect error
+            
+            connect=$(bluetoothctl info $MAC | grep Connected: | awk '{print $2}')
+
+            if [[ $connect = no ]]; then 
+                
+                notify-send "Attempting to connect to $select_to_connect"
+                bluetoothctl connect $MAC && notify-send "Connected Successfully" || notify-send "Failed to Connect"
+
+            elif [[ $connect = yes ]]; then
+                notify-send "Attempting to disconnect $select_to_connect" && notify-send "Disconnected Successfully" || notify-send "Failed to Disconnect"
+                bluetoothctl disconnect $MAC 
+
+            fi
+
+            menu_blue
+
+            ;;
+        "Back" )
+            menu_main
+            ;;
+        "Close" )
+            ;;
+    esac
+
+    menu_main
+}
+
+menu_themes () {
+    options=("Arch-Dark" "Arch-Light" "Arch-Cyan" "Triangle-Blue" "Go back") 
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i -p "Select Theme:")
+
+    case $selected in 
+        "Arch-Dark")
+            set-arch-dark
+            ;;#
+
+        "Arch-Light")
+            set-arch-light
+            ;;
+
+        "Arch-Cyan")
+            set-arch-cyan
+            ;;
+
+        "Triangle-Blue")
+            set-triangle-blue
+            ;;
+        "Go back")
+            menu_main
+            ;;
+    esac
+    menu_main
+}
+
+menu_main
+
+
+

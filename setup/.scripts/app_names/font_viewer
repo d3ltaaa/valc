@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# sudo mv new font into /usr/share/fonts/
+choice=$(fc-list | awk '{print $1}' | sed 's/://g' | dmenu -i -p 'Fonts: ')
+display "$choice"

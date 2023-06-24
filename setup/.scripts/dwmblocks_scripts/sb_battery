@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# useful commands
+# acpi -bi
+# upower -i /org/freedesktop/UPower/devices/battery_BAT0
+
+percent="$(cat /sys/class/power_supply/BAT0/capacity)"
+status="$(cat /sys/class/power_supply/BAT0/status)"
+output="$(acpi -bi)"
+time=$(echo "$output" | awk -F ' ' 'NR==1 {print $5}')
+
+if [ "$status" == "Discharging" ]; then 
+    if [ "$percent" -ge 90 ]; then
+        echo "    $percent%      "
+    elif [ "$percent" -ge 70 ] && [ "$percent" -lt 90 ]; then
+        echo "    $percent%      "
+    elif [ "$percent" -ge 40 ] && [ "$percent" -lt 70 ]; then
+        echo "    $percent%      "
+    elif [ "$percent" -ge 20 ] && [ "$percent" -lt 40 ]; then
+        echo "    $percent%      "
+    elif [ "$percent" -ge 0 ] && [ "$percent" -lt 20 ]; then
+        echo "    $percent%      "
+    fi
+elif [ "$status" == "Full" ]; then
+    echo "   100%      " 
+elif [ "$status" == "Not charging" ]; then
+    echo "   100%      " 
+elif [ "$status" == "Charging" ]; then
+    if [ "$percent" -ge 90 ]; then
+        echo "    $percent%    󱐋 "
+    elif [ "$percent" -ge 70 ] && [ "$percent" -lt 90 ]; then
+        echo "    $percent%    󱐋 "
+    elif [ "$percent" -ge 40 ] && [ "$percent" -lt 70 ]; then
+        echo "    $percent%    󱐋 "
+    elif [ "$percent" -ge 20 ] && [ "$percent" -lt 40 ]; then
+        echo "    $percent%    󱐋 "
+    elif [ "$percent" -ge 0 ] && [ "$percent" -lt 20 ]; then
+        echo "    $percent%    󱐋 "
+    fi
+fi
+
+
+if [ "$status" == "Discharging" ]; then 
+    case $BUTTON in 
+        1) dunstify "$time";
+    esac
+elif [ "$status" == "Charging" ]; then
+    case $BUTTON in 
+        1) dunstify "$time";
+    esac
+else
+    case $BUTTON in
+        1) dunstify "Not charging / Full"
+    esac
+fi

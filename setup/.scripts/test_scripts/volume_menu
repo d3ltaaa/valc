@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# WORK IN PROGRESS
+
+# Prompt the user to select an output device
+devices=$(pacmd list-sinks | grep -E 'index:|device.description' | awk '{if ($1 == "index:") printf "%s ", $2; else printf "%s\n", $0}')
+selected_device=$(echo "$devices" | dmenu -i -l 10 -p "Select output device:" | awk '{print $1}')
+
+# Prompt the user to select a volume level
+volume=$(pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $selected_device + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,')
+new_volume=$(echo -e "5%+\n5%-\n10%+\n10%-\nCustom" | dmenu -i -p "Set volume for $selected_device to $volume%:" | sed 's/%//')
+case $new_volume in
+    5%+)
+        pactl set-sink-volume $selected_device +5%
+        ;;
+    5%-)
+        pactl set-sink-volume $selected_device -5%
+        ;;
+    10%+)
+        pactl set-sink-volume $selected_device +10%
+        ;;
+    10%-)
+        pactl set-sink-volume $selected_device -10%
+        ;;
+    Custom)
+        custom_volume=$(echo "" | dmenu -p "Enter custom volume (0-100):" | sed 's/%//')
+        if [[ $custom_volume =~ ^[0-9]+$ ]]; then
+            pactl set-sink-volume $selected_device $custom_volume%
+        fi
+        ;;
+esac
+
+# Display the volume levels of all running applications
+sink_inputs=$(pacmd list-sink-inputs | grep -E 'index:|application.process.binary|media.name' | awk '{if ($1 == "index:") printf "%s ", $2; else printf "%s\n", $0}')
+echo "$sink_inputs" | while read -r index application_name media_name; do
+    volume=$(pactl list sink-inputs | grep -A 15 "Sink Input #$index$" | grep '^[[:space:]]Volume:' | awk '{print $5}')
+    echo "$application_name ($media_name): $volume"
+done | dmenu -i -l 10 -p "Application volumes:"
+
