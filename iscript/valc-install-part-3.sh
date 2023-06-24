@@ -136,10 +136,10 @@ inst_remnote () {
 
 download_setup () {
 
-    notification "Downloading .setup from github"
+    notification "Downloading valc from github"
     
     cd ~/
-    git clone https://github.com/d3ltaaa/.setup.git
+    git clone https://github.com/d3ltaaa/valc.git
     [ $? -ne 0 ] && return 48 || :
 
 }
@@ -152,18 +152,18 @@ links_setup () {
     [ -e ~/.bashrc ] && rm  ~/.bashrc
 
     mkdir -p ~/.config &&
-    ln -s ~/.setup/config/nvim ~/.config &&
-    ln -s ~/.setup/config/suckless ~/.config &&
-    ln -s ~/.setup/config/neofetch ~/.config &&
-    ln -s ~/.setup/config/picom ~/.config &&
-    ln -s ~/.setup/config/dunst ~/.config &&
-    ln -s ~/.setup/config/lf ~/.config
+    ln -s ~/valc/config/nvim ~/.config &&
+    ln -s ~/valc/config/suckless ~/.config &&
+    ln -s ~/valc/config/neofetch ~/.config &&
+    ln -s ~/valc/config/picom ~/.config &&
+    ln -s ~/valc/config/dunst ~/.config &&
+    ln -s ~/valc/config/lf ~/.config
 
-    ln -s ~/.setup/system/.dwm ~/ &&
-    ln -s ~/.setup/system/.scripts ~/ &&
-    ln -s ~/.setup/system/.xinitrc ~/ &&
-    ln -s ~/.setup/system/.bash_profile ~/ &&
-    ln -s ~/.setup/system/.bashrc ~/ 
+    ln -s ~/valc/system/.dwm ~/ &&
+    ln -s ~/valc/system/.scripts ~/ &&
+    ln -s ~/valc/system/.xinitrc ~/ &&
+    ln -s ~/valc/system/.bash_profile ~/ &&
+    ln -s ~/valc/system/.bashrc ~/ 
     [ $? -ne 0 ] && return 49 || :
 
 }
