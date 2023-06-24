@@ -6,8 +6,12 @@
 
 percent="$(cat /sys/class/power_supply/BAT0/capacity)"
 status="$(cat /sys/class/power_supply/BAT0/status)"
-output="$(acpi -bi)"
-time=$(echo "$output" | awk -F ' ' 'NR==1 {print $5}')
+# output="$(acpi -bi)"
+output="$(upower -i /org/freedesktop/UPower/devices/battery_BAT0)"
+
+# time=$(echo "$output" | awk -F ' ' 'NR==1 {print $5}')
+time_to_empty=$(echo "$output" | grep "time to empty:" | awk '{print $4}')
+time_to_full=$(echo "$output" | grep "time to full:" | awk '{print $4}')
 
 if [ "$status" == "Discharging" ]; then 
     if [ "$percent" -ge 90 ]; then
@@ -42,11 +46,11 @@ fi
 
 if [ "$status" == "Discharging" ]; then 
     case $BUTTON in 
-        1) dunstify "$time";
+        1) dunstify "$time_to_empty hours";
     esac
 elif [ "$status" == "Charging" ]; then
     case $BUTTON in 
-        1) dunstify "$time";
+        1) dunstify "$time_to_full hours";
     esac
 else
     case $BUTTON in

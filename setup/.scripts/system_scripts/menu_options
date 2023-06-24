@@ -107,7 +107,10 @@ menu_blue () {
             device_amount=$(bluetoothctl devices Paired | wc -l)
 
             if [[ $device_amount = 1 ]]; then
-                select=$(bluetoothctl devices Paired | awk '{print $3}' | dmenu -l 1 -i)
+
+                # select=$(bluetoothctl devices Paired | awk '{print $3}' | printf "%s\n" | dmenu -l 1 -i)
+                # select=$(bluetoothctl devices Paired | printf "\n "| awk '{print $3}' | dmenu -l 1 -i)
+                select=$(printf "$(bluetoothctl devices Paired | awk '{print $3}')\n " | dmenu -l 1)
                 MAC=$(bluetoothctl devices Paired | awk {'print $2'})
                     [ -z $MAC ] && MAC=NoDeviceFound # Prevents accidental disconnect error
 
@@ -177,7 +180,7 @@ menu_blue () {
             ;;
     esac
 
-    menu_main
+    # menu_main
 }
 
 menu_themes () {
@@ -204,10 +207,24 @@ menu_themes () {
             menu_main
             ;;
     esac
-    menu_main
+    # menu_main
 }
 
-menu_main
+case $1 in
+    "wifi" )
+        menu_wifi
+        ;;
+    "blue" )
+        menu_blue
+        ;;
+    "theme" )
+        menu_theme
+        ;;
+    * )
+        menu_main
+        ;;
+esac
+
 
 
 
