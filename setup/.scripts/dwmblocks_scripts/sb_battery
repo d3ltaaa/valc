@@ -14,7 +14,7 @@ time_to_empty=$(echo "$output" | grep "time to empty:" | awk '{print $4}')
 time_to_empty_unit=$(echo "$output" | grep "time to empty:" | awk '{print $5}')
 
 time_to_full=$(echo "$output" | grep "time to full:" | awk '{print $4}')
-time_to_full=$(echo "$output" | grep "time to full:" | awk '{print $5}')
+time_to_full_unit=$(echo "$output" | grep "time to full:" | awk '{print $5}')
 
 
 if [ "$status" == "Discharging" ]; then 
