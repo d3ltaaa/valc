@@ -11,7 +11,11 @@ output="$(upower -i /org/freedesktop/UPower/devices/battery_BAT0)"
 
 # time=$(echo "$output" | awk -F ' ' 'NR==1 {print $5}')
 time_to_empty=$(echo "$output" | grep "time to empty:" | awk '{print $4}')
+time_to_empty_unit=$(echo "$output" | grep "time to empty:" | awk '{print $5}')
+
 time_to_full=$(echo "$output" | grep "time to full:" | awk '{print $4}')
+time_to_full=$(echo "$output" | grep "time to full:" | awk '{print $5}')
+
 
 if [ "$status" == "Discharging" ]; then 
     if [ "$percent" -ge 90 ]; then
@@ -46,11 +50,11 @@ fi
 
 if [ "$status" == "Discharging" ]; then 
     case $BUTTON in 
-        1) dunstify "$time_to_empty hours";
+        1) dunstify "$time_to_empty ";
     esac
 elif [ "$status" == "Charging" ]; then
     case $BUTTON in 
-        1) dunstify "$time_to_full hours";
+        1) dunstify "$time_to_full ";
     esac
 else
     case $BUTTON in
