@@ -50,11 +50,11 @@ fi
 
 if [ "$status" == "Discharging" ]; then 
     case $BUTTON in 
-        1) dunstify "$time_to_empty ";
+        1) dunstify "$time_to_empty $time_to_empty_unit";
     esac
 elif [ "$status" == "Charging" ]; then
     case $BUTTON in 
-        1) dunstify "$time_to_full ";
+        1) dunstify "$time_to_full $time_to_full_unit";
     esac
 else
     case $BUTTON in
