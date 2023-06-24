@@ -152,18 +152,18 @@ links_setup () {
     [ -e ~/.bashrc ] && rm  ~/.bashrc
 
     mkdir -p ~/.config &&
-    ln -s ~/valc/config/nvim ~/.config &&
-    ln -s ~/valc/config/suckless ~/.config &&
-    ln -s ~/valc/config/neofetch ~/.config &&
-    ln -s ~/valc/config/picom ~/.config &&
-    ln -s ~/valc/config/dunst ~/.config &&
-    ln -s ~/valc/config/lf ~/.config
+    ln -s ~/.valc/config/nvim ~/.config &&
+    ln -s ~/.valc/config/suckless ~/.config &&
+    ln -s ~/.valc/config/neofetch ~/.config &&
+    ln -s ~/.valc/config/picom ~/.config &&
+    ln -s ~/.valc/config/dunst ~/.config &&
+    ln -s ~/.valc/config/lf ~/.config
 
-    ln -s ~/valc/system/.dwm ~/ &&
-    ln -s ~/valc/system/.scripts ~/ &&
-    ln -s ~/valc/system/.xinitrc ~/ &&
-    ln -s ~/valc/system/.bash_profile ~/ &&
-    ln -s ~/valc/system/.bashrc ~/ 
+    ln -s ~/.valc/setup/.dwm ~/ &&
+    ln -s ~/.valc/setup/.scripts ~/ &&
+    ln -s ~/.valc/setup/.xinitrc ~/ &&
+    ln -s ~/.valc/setup/.bash_profile ~/ &&
+    ln -s ~/.valc/setup/.bashrc ~/ 
     [ $? -ne 0 ] && return 49 || :
 
 }
