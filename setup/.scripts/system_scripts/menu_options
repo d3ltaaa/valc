@@ -183,6 +183,35 @@ menu_blue () {
     # menu_main
 }
 
+menu_tablet () {
+    
+    status_kb=$(xinput list-props 12 | grep "Device Enabled" | awk '{print $4}')
+    status_kb_short=""
+    if [[ $status_kb = 1 ]]; then 
+        status_kb_short="Laptop-mode"
+    elif [[ $status_kb = 0 ]]; then
+        status_kb_short="Tablet-mode"
+    fi
+
+    options=( $status_kb_short "Go Back" )
+
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    case $selected in
+        $status_kb_short )
+
+            if [[ $status_kb = 1 ]]; then 
+                xinput disable 12
+            elif [[ $status_kb = 0 ]]; then
+                xinput enable 12
+            fi
+            ;;
+        "Go Back" )
+            menu_main
+            ;;
+    esac
+}
+
 menu_themes () {
     options=("Arch-Dark" "Arch-Light" "Arch-Cyan" "Triangle-Blue" "Go back") 
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i -p "Select Theme:")
@@ -216,6 +245,9 @@ case $1 in
         ;;
     "blue" )
         menu_blue
+        ;;
+    "tablet" )
+        menu_tablet
         ;;
     "theme" )
         menu_theme
