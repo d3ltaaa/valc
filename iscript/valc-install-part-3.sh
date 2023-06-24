@@ -139,7 +139,7 @@ download_setup () {
     notification "Downloading valc from github"
     
     cd ~/
-    git clone https://github.com/d3ltaaa/valc.git
+    git clone https://github.com/d3ltaaa/.valc.git
     [ $? -ne 0 ] && return 48 || :
 
 }
