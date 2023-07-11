@@ -183,6 +183,19 @@ menu_blue () {
     # menu_main
 }
 
+menu_mon () {
+
+   # Run xrandr and search for HDMI-A-0
+   if xrandr | grep -q "HDMI-A-0 connected"; then
+       # HDMI-A-0 is connected, enabling the monitor
+       xrandr --output HDMI-A-0 --auto --right-of eDP
+   else
+       # HDMI-A-0 is not connected, disabling the monitor
+       xrandr --output HDMI-A-0 --off
+   fi  
+
+}
+
 menu_tablet () {
     
     status_kb=$(xinput list-props 12 | grep "Device Enabled" | awk '{print $4}')
@@ -245,6 +258,9 @@ case $1 in
         ;;
     "blue" )
         menu_blue
+        ;;
+    "mon" )
+        menu_mon
         ;;
     "tablet" )
         menu_tablet
