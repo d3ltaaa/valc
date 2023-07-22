@@ -70,7 +70,7 @@ inst_packages () {
         thermald \
     	lf feh xdotool zathura zathura-pdf-mupdf \
         xournalpp discord \
-    	neofetch ranger git neovim dunst xwallpaper xclip acpi upower \
+    	neofetch ranger git neovim dunst xwallpaper xclip acpi upower xbindkeys xvkbd\
     	flatpak xdg-desktop-portal-gtk unzip \
     	fuse2 ripgrep pamixer sox \
     	imagemagick
@@ -163,7 +163,8 @@ links_setup () {
     ln -s ~/.valc/setup/.scripts ~/ &&
     ln -s ~/.valc/setup/.xinitrc ~/ &&
     ln -s ~/.valc/setup/.bash_profile ~/ &&
-    ln -s ~/.valc/setup/.bashrc ~/ 
+    ln -s ~/.valc/setup/.bashrc ~/ &&
+    ln -s ~/.valc/setup/.xbindkeysrc ~/ 
     [ $? -ne 0 ] && return 49 || :
 
 }

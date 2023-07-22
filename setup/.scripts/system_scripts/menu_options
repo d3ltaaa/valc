@@ -189,9 +189,12 @@ menu_mon () {
    if xrandr | grep -q "HDMI-A-0 connected"; then
        # HDMI-A-0 is connected, enabling the monitor
        xrandr --output HDMI-A-0 --auto --right-of eDP
+       xwallpaper --zoom ~/.config/wall/picture 
+
    else
        # HDMI-A-0 is not connected, disabling the monitor
        xrandr --output HDMI-A-0 --off
+       xwallpaper --zoom ~/.config/wall/picture 
    fi  
 
 }
