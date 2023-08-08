@@ -46,7 +46,9 @@ cmd open ${{
         *.pdf) 
             dwmswallow $WINDOWID; zathura "$f"
             ;;
-
+        *.xopp) 
+            dwmswallow $WINDOWID; xournalpp "$f"
+            ;;
         *) $EDITOR "$f";;
     esac
 }}
@@ -132,10 +134,12 @@ map gd cd ~/Downloads
 map gD cd ~/Documents
 map gp cd ~/Pictures
 map gS cd ~/.scripts
-map gc cd ~/.config
-map gCS cd ~/.config/suckless
-map gse cd ~/.setup
-map gsc cd ~/.setup/config
-map gss cd ~/.setup/system
+map gC cd ~/.config
+map gc cd ~/Code
+map gSC cd ~/.config/suckless
+map gva cd ~/.valc
+map gvs cd ~/.valc/setup
+map gvc cd ~/.valc/config
+map gvi cd ~/.valc/iscript
 
 map C clear

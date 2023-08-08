@@ -63,16 +63,44 @@ video_setup () {
 inst_packages () {
 
     notification "Installing packages"
+
+    sudo pacman -Syu
     sudo pacman --noconfirm -S xorg xorg-xinit webkit2gtk base-devel \
-    	alsa-utils pulseaudio pavucontrol \
-    	bluez bluez-utils pulseaudio-bluetooth blueman \
-    	firefox thunar \
+    	alsa-utils \
+        pulseaudio \
+        pavucontrol \
+    	bluez \
+        bluez-utils \
+        pulseaudio-bluetooth \
+        blueman \
+    	firefox \
+        thunar \
         thermald \
-    	lf feh xdotool zathura zathura-pdf-mupdf \
+    	lf \
+        feh \ 
+        xdotool \
+        zathura \
+        zathura-pdf-mupdf \
         xournalpp discord \
-    	neofetch ranger git neovim dunst xwallpaper xclip acpi upower xbindkeys xvkbd\
-    	flatpak xdg-desktop-portal-gtk unzip \
-    	fuse2 ripgrep pamixer sox \
+    	neofetch \
+        ranger \
+        git \
+        neovim \
+        dunst \
+        xwallpaper \
+        xclip \
+        acpi \
+        upower \
+        xbindkeys \
+        xvkbd\
+    	flatpak \
+        xdg-desktop-portal-gtk \
+        unzip \
+    	fuse2 \
+        ripgrep \
+        pamixer \
+        sox \
+        gimp \
     	imagemagick
 
     [ $? -ne 0 ] && return 43 || :
