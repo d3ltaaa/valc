@@ -36,8 +36,9 @@ cmd viewimg ${{
 
 cmd open ${{
     case "$f" in 
-        *.jpg|*.jpeg|*.png) 
-            dwmswallow $WINDOWID; feh --scale-dwon --auto-zoom "$f"
+        *.JPG|*.jpg|*.jpeg|*.png) 
+            dwmswallow $WINDOWID; feh --scale-down --auto-zoom "$f"
+
             # pkill -SIGINT feh
             # feh --scale-down --auto-zoom "$f" &
             # sleep 0.4
@@ -92,6 +93,40 @@ cmd make ${{
     make && sudo make install
 }}
 
+cmd photos ${{
+    # setting up directories
+    year=2005
+    while [ "$year" -lt 2023 ]
+    do
+        mkdir -p ~/Pictures/Photos/"$year"
+        ((year++))
+    done
+
+    # setting up logfile
+    touch -p ~/Pictures/Photos/logs.txt
+    
+    # asking for confirmation
+    clear
+    copy_to="$1"
+    printf "Copied to $copy_to \n"
+    printf "To undo type 'R': "
+    read ans
+
+    case "$ans" in
+        "R") clear ;;
+        *)
+            # actually copying
+            cp "$f" ~/Pictures/Photos/"$copy_to" 
+            # writing to logfile
+            filename=$(basename "$f")
+            echo "$f -cp-> ~/Pictures/Photos/$copy_to/$filename" >> ~/Pictures/Photos/logs.txt
+            ;;
+    esac
+
+
+}}
+
+
 # remove defaults
 map m 
 map o
@@ -137,5 +172,27 @@ map gCS cd ~/.config/suckless
 map gse cd ~/.setup
 map gsc cd ~/.setup/config
 map gss cd ~/.setup/system
+map gusb cd /run/media/falk
+
+map f% photos 2005
+map f& photos 2006
+map f/ photos 2007
+map f( photos 2008
+map f) photos 2009
+map f= photos 2010
+map f1 photos 2011
+map f2 photos 2012
+map f3 photos 2013
+map f4 photos 2014
+map f5 photos 2015
+map f6 photos 2016
+map f7 photos 2017
+map f8 photos 2018
+map f9 photos 2019
+map f0 photos 2020
+map f! photos 2021
+map f" photos 2022
+map f§ photos 2023
 
 map C clear
+

@@ -2,7 +2,7 @@
 
 menu_main () {
     # Define first layer
-    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Close")
+    options=("Wifi" "Bluetooth" "Devices" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Close")
 
     # display options
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
@@ -13,6 +13,9 @@ menu_main () {
             ;;
         "Bluetooth")
             menu_blue
+            ;;
+        "Devices")
+            menu_dev
             ;;
         "Monitors")
             menu_mon
@@ -181,6 +184,10 @@ menu_blue () {
     esac
 
     # menu_main
+}
+
+menu_dev () {
+   hello=1
 }
 
 menu_tablet () {
