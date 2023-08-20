@@ -77,7 +77,7 @@ inst_packages () {
         thunar \
         thermald \
     	lf \
-        feh \ 
+        feh \
         xdotool \
         zathura \
         zathura-pdf-mupdf \
@@ -92,7 +92,6 @@ inst_packages () {
         acpi \
         upower \
         xbindkeys \
-        xvkbd\
     	flatpak \
         xdg-desktop-portal-gtk \
         unzip \
@@ -139,7 +138,8 @@ yay_installations () {
     notification "Installing yay packages"
     yay -S ncspot --noconfirm &&
     yay -S brillo --noconfirm &&
-    yay -S picom-jonaburg-git --noconfirm
+    # yay -S picom-jonaburg-git --noconfirm &&
+    yay -S xvkbd --noconfirm 
     # yay -S coreshot 
     [ $? -ne 0 ] && return 46 || :
 
