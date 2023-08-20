@@ -128,12 +128,13 @@ partitioning () {
             read -p "What is the LINUX FILE SYSTEM partition called?: " fs_partition
             read -p "What size should the EFI partition be?:          " size_of_efi
             read -p "What size should the swap partition be?:         " size_of_swap
+            read -p "What size should the root partition be?:         " size_of_root
     
             parted -s $disk_to_partition mklabel gpt &&
             parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB &&
             parted -s $disk_to_partition set 1 esp on &&
             parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
-            parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
+            parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB $((size_of_efi + size_of_swap +size_of_root))GiB
             [ $? -ne 0 ] && return 15 || : 
     
     

@@ -128,7 +128,7 @@ static const Key keys[] = {
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_l,      incrogaps,      {.i = -1 } },
 	{ MODKEY|Mod4Mask|ControlMask,  XK_h,      incrigaps,      {.i = +1 } },
 	{ MODKEY|Mod4Mask|ControlMask,  XK_l,      incrigaps,      {.i = -1 } },
-	{ MODKEY|Mod4Mask,              XK_0,      togglegaps,     {0} },
+	{ MODKEY|Mod4Mask|ShiftMask,    XK_t,      togglegaps,     {0} },
 	{ MODKEY|Mod4Mask|ShiftMask,    XK_0,      defaultgaps,    {0} },
 	{ MODKEY,                       XK_y,      incrihgaps,     {.i = +1 } },
 	{ MODKEY,                       XK_o,      incrihgaps,     {.i = -1 } },
@@ -176,6 +176,7 @@ static const Key keys[] = {
     { 0,                            0x1008ff12, spawn,         SHCMD("scr_volume mute") }, 
     { 0,                            0x1008ff03, spawn,         SHCMD("scr_light down") }, 
     { 0,                            0x1008ff02, spawn,         SHCMD("scr_light up") }, 
+    { MODKEY,                       XK_s,      spawn,          SHCMD("com.symless.synergy") },
 
 }; 
 

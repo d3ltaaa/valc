@@ -140,6 +140,7 @@ yay_installations () {
     yay -S ncspot --noconfirm &&
     yay -S brillo --noconfirm &&
     yay -S picom-jonaburg-git --noconfirm
+    # yay -S coreshot 
     [ $? -ne 0 ] && return 46 || :
 
 }
