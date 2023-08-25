@@ -94,6 +94,21 @@ cmd make ${{
     make && sudo make install
 }}
 
+cmd scp_push ${{
+    printf "Send file $f\n"
+    printf "Which User? "
+    read user
+    printf "Which server? "
+    read address
+    printf "Which connection? "
+    read connection
+    printf "To which directory on $address? "
+    read directory
+    echo "scp $f ${user}@${address}:${directory}"
+    scp $f ${user}@${address}_${connection}:${directory}
+
+}}
+
 # remove defaults
 map m 
 map o
@@ -141,5 +156,7 @@ map gva cd ~/.valc
 map gvs cd ~/.valc/setup
 map gvc cd ~/.valc/config
 map gvi cd ~/.valc/iscript
+
+map xscp scp_push
 
 map C clear

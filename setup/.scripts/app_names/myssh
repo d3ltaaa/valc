@@ -1,0 +1,15 @@
+#!/bin/bash
+
+connect () {
+    printf "User: "
+    read user
+    printf "Server: "
+    read server
+    printf "Connection (LAN/WIFI): "
+    read connection
+
+    clear
+    ssh ${user}@${server}_${connection}
+}
+
+connect
