@@ -214,7 +214,6 @@ mount_partitions () {
                     mount $par $mount_path
                     [ $? -ne 0 ] && return 18 || : 
 
-                    break
                 else
                     echo "No partition with that name!"
                 fi
@@ -240,10 +239,28 @@ generate_fstab () {
 
 cfdisk_partitioning () {
 
-    clear
-    lsblk -f -p
-    read -p "Which disk would you like to partition?: " disk_to_partition
-    cfdisk $disk_to_partition
+    while true; do
+        clear
+        lsblk -f -p
+        read -p "What do disk do you want to partition? [N]: " disk
+        case $par in
+            [Nn] ) break;;
+            *)
+                partitions=$(lsblk -p -n -o NAME)
+                partition_count=$(echo "$partitions" | grep -c "$disk")
+
+                # wont work with more than 10 partitions since sda1 is in sda10
+                if echo "$partitions" | grep "$disk"; then
+
+                    cfdisk $disk
+                    [ $? -ne 0 ] && return 18 || : 
+
+                else
+                    echo "No partition with that name!"
+                fi
+                ;;
+        esac
+    done
     [ $? -ne 0 ] && return 14 || : 
 
 }
@@ -257,7 +274,8 @@ partitioning () {
     
 
     while true; do
-        read -p "Cfdisk: D \nConfig: C \nNo: N \nHow do you want to partition?" ans
+        printf "Cfdisk: D \nConfig: C \nNo: N \n"
+        read -p "How do you want to partition?" ans
         case $ans in
             [Dd]* ) 
                 exe cfdisk_partitioning && 
@@ -266,7 +284,7 @@ partitioning () {
                 exe install_kernel && 
                 exe generate_fstab
                 [ $? -ne 0 ] && return 14 || : 
-
+                break
                 ;;
             [Cc]* ) echo "config_partitioning"; break;;
             [Nn]* ) break;;
