@@ -45,7 +45,6 @@ fi
 
 xwallpaper --zoom ~/.config/wall/picture &
 xbindkeys -f ~/.xbindkeysrc &
-
 # xwallpaper --restore
 exec dwm
 

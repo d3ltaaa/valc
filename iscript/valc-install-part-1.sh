@@ -61,159 +61,210 @@ ena_parallel () {
     [ $? -ne 0 ] && return 13 || : 
 }
 
-partitioning () {
-
-    # Decision fast installation or slow installation
-    notification "Partitioning"
+set_file_system () {
     
-    ans_man=""
     while true; do
-        read -p "Do you want to partition the disks manually? [y/n]: " yn
-        case $yn in
-            [Yy]* ) ans_man="manually"; break;;
-            [Nn]* ) break;;
-            * ) echo "Enter 'y' or 'n'!";;
+        lsblk -f -p
+        read -p "What partition would you like set a file system for? [N]: " partition_to_set
+        case $partition_to_set in
+            [Nn] ) break;;
+            * )
+                partitions=$(lsblk -p -n -o NAME)
+                partition_count=$(echo "$partitions" | grep -c "$partition_to_set")
+
+                # wont work with more than 10 partitions since sda1 is in sda10
+                if echo "$partitions" | grep "$partition_to_set" && [[ $partition_count -eq 1 ]]; then
+                    while true; do
+
+                        read -p "What file system for $partition_to_set? [NTFS/FAT32/exFAT/ext4]: " file_system
+                        if [[ "$file_system" == "NTFS" ]]; then
+                            mkfs.ntfs $partition_to_set
+                            [ $? -ne 0 ] && return 14 || : 
+                            break
+
+                        elif [[ "$file_system" == "FAT32" ]]; then
+                            mkfs.fat -F32 $partition_to_set
+                            [ $? -ne 0 ] && return 14 || : 
+                            break
+
+                        elif [[ "$file_system" == "exFAT" ]]; then
+                            mkfs.exfat $partition_to_set
+                            [ $? -ne 0 ] && return 14 || : 
+                            break
+
+                        elif [[ "$file_system" == "ext4" ]]; then
+                            mkfs.ext4 $partition_to_set
+                            [ $? -ne 0 ] && return 14 || : 
+                            break
+
+                        else 
+                            echo "You typed the file system wrong!"
+                            sleep 1
+                        fi
+                    done
+                else
+                    echo "No partition with that name!"
+                    sleep 1
+                fi
+                ;;
         esac
     done
-    
-    if [ "$ans_man" == "manually" ]; then
-    
-        # manual partition (prompts as long as there is another disk to partition
-        while true; do
-    
-            read -p "Do you want to partition (another) disk? [y/n]: " yn
-    
-            case $yn in
-    
-                [Yy]* ) 
-    
-                    read -p "Which disk would you like to partition?: " disk_to_partition
-                    cfdisk $disk_to_partition
-                    [ $? -ne 0 ] && return 14 || : 
-                    ;;
-        
-                [Nn]* )
-    
-                    printf "You do not want to partition another disk!"
-                    sleep 1
-                    break;;
-        
-                * ) echo "Enter 'y' or 'n'!";;
-            esac
-        done
-    else
-        # the partition types are given!
-        ans_size=""
-    
-        while true; do
-       
-            read -p "Do you want to set the sizes yourself? [y/n]: " yn
-    
-            case $yn in
-    
-                [Yy]* ) ans_size="manually"; break;;
-    
-                [Nn]* ) break;;
-    
-                * ) echo "Enter 'y' or 'n'!";;
-    
-            esac
-        done
-    
-        if [ "$ans_size" == "manually" ]; then
-    
-            read -p "Which disk would you like to partition?:         " disk_to_partition
-            read -p "What is the EFI partition called?:               " efi_partition
-            read -p "What is the SWAP partition called?:              " swap_partition
-            read -p "What is the LINUX FILE SYSTEM partition called?: " fs_partition
-            read -p "What size should the EFI partition be?:          " size_of_efi
-            read -p "What size should the swap partition be?:         " size_of_swap
-            read -p "What size should the root partition be?:         " size_of_root
-    
-            parted -s $disk_to_partition mklabel gpt &&
-            parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB &&
-            parted -s $disk_to_partition set 1 esp on &&
-            parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
-            parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB $((size_of_efi + size_of_swap +size_of_root))GiB
-            [ $? -ne 0 ] && return 15 || : 
-    
-    
-        else
-    
-            # get the disk type
-            
-            while true; do
-       
-                read -p "Is the type of your disk sata or nvme? [sata/nvme]: " disk_type
-    
-                case $disk_type in
-    
-                sata ) break;;
 
-                nvme ) break;;
+}
 
-                * ) echo "Enter 'sata' or 'nvme'!";;
-
-            esac
-
-        done
-
-        # declaring and assinging the variables
-
-        
-        if [ "$disk_type" == "sata" ]; then
-            disk_to_partition="/dev/sda"
-            efi_partition="/dev/sda1"
-            swap_partition="/dev/sda2"
-            fs_partition="/dev/sda3"
-
-        elif [ "$disk_type" == "nvme" ]; then
-            disk_to_partition="/dev/nvme0n1"
-            efi_partition="/dev/nvme0n1p1"
-            swap_partition="/dev/nvme0n1p2"
-            fs_partition="/dev/nvme0n1p3"
-        fi
-
-        size_of_efi=2
-        size_of_swap=2
-
-
-        parted -s $disk_to_partition mklabel gpt &&
-        parted -s $disk_to_partition mkpart primary fat32 1MiB ${size_of_efi}GiB &&
-        parted -s $disk_to_partition set 1 esp on &&
-        parted -s $disk_to_partition mkpart primary linux-swap ${size_of_efi}GiB $((size_of_efi + size_of_swap))GiB &&
-        parted -s $disk_to_partition mkpart primary ext4 $((size_of_efi + size_of_swap))GiB 100%
-        [ $? -ne 0 ] && return 16 || : 
-
-    fi
-
-    
-    # Format partitions
-    notification "Formating partitions"
-    mkfs.fat -F32 $efi_partition &&
-    mkswap $swap_partition &&
-    mkfs.ext4 $fs_partition 
-    [ $? -ne 0 ] && return 17 || :
+mount_partitions () {
 
     # Mount partitions
-    notification "Mount partitions"
-    swapon $swap_partition &&
-    mount $fs_partition /mnt &&
-    mkdir -p /mnt/boot/EFI &&
-    mount $efi_partition /mnt/boot/EFI
-    [ $? -ne 0 ] && return 18 || : 
 
-    # misscellaneous
+    notification "Mount home"
+
+    while true; do
+        read -p "What is your home partition? [N]: " home_par
+        case $home_par in
+            [Nn] ) break;;
+            *)
+                partitions=$(lsblk -p -n -o NAME)
+                partition_count=$(echo "$partitions" | grep -c "$home_par")
+
+                # wont work with more than 10 partitions since sda1 is in sda10
+                if echo "$partitions" | grep "$home_par"; then
+                    mount $home_par /mnt
+                    [ $? -ne 0 ] && return 18 || : 
+
+                    break
+                else
+                    echo "No partition with that name!"
+                fi
+                ;;
+        esac
+    done
+
+
+    notification "Mount efi"
+
+    while true; do
+        read -p "What is your EFI partition? [N]: " efi_par 
+        case $efi_par in
+            [Nn] ) break;;
+            *)
+                partitions=$(lsblk -p -n -o NAME)
+                partition_count=$(echo "$partitions" | grep -c "$efi_par")
+
+                # wont work with more than 10 partitions since sda1 is in sda10
+                if echo "$partitions" | grep "$efi_par"; then
+                    mkdir -p /mnt/boot/EFI && 
+                    mount $efi_partition /mnt/boot/EFI
+                    [ $? -ne 0 ] && return 18 || : 
+
+                    break
+                else
+                    echo "No partition with that name!"
+                fi
+                ;;
+        esac
+    done
+
+    notification "Mount swap"
+
+    while true; do
+        read -p "What is your swap partition? [N]: " swap_par
+        case $swap_par in
+            [Nn] ) break;;
+            *)
+                partitions=$(lsblk -p -n -o NAME)
+                partition_count=$(echo "$partitions" | grep -c "$swap_par")
+
+                # wont work with more than 10 partitions since sda1 is in sda10
+                if echo "$partitions" | grep "$swap_par"; then
+                    swapon $swap_partition 
+                    [ $? -ne 0 ] && return 18 || : 
+
+                    break
+                else
+                    echo "No partition with that name!"
+                fi
+                ;;
+        esac
+    done
+
+
+    while true; do
+        read -p "What partition do you want to mount? [N]: " par
+        case $par in
+            [Nn] ) break;;
+            *)
+                partitions=$(lsblk -p -n -o NAME)
+                partition_count=$(echo "$partitions" | grep -c "$par")
+
+                # wont work with more than 10 partitions since sda1 is in sda10
+                if echo "$partitions" | grep "$par"; then
+                    read -p "Where do you want to mount the partition?: " mount_path
+
+                    mkdir -p $mount_path
+                    mount $par $mount_path
+                    [ $? -ne 0 ] && return 18 || : 
+
+                    break
+                else
+                    echo "No partition with that name!"
+                fi
+                ;;
+        esac
+    done
+
+}
+
+install_kernel () {
+
     notification "Installing kernels"
     pacstrap /mnt base linux linux-firmware
     [ $? -ne 0 ] && return 19 || : 
 
+}
+
+generate_fstab () {
     notification "Generating fstab"
     genfstab -U /mnt >> /mnt/etc/fstab
     [ $? -ne 0 ] && return 20 || :
+}
+
+cfdisk_partitioning () {
+
+    clear
+    lsblk -f -p
+    read -p "Which disk would you like to partition?: " disk_to_partition
+    cfdisk $disk_to_partition
+    [ $? -ne 0 ] && return 14 || : 
+
+}
+
+partitioning () {
+   
+    notification "Partitioning"
+    
+    # variable that needs to updated in the different partitioning types
+    # so that when setting file system types, it works
+    
+
+    while true; do
+        read -p "Cfdisk: D \nConfig: C \nNo: N \nHow do you want to partition?" ans
+        case $ans in
+            [Dd]* ) 
+                exe cfdisk_partitioning && 
+                exe set_file_system && 
+                exe mount_partitions && 
+                exe install_kernel && 
+                exe generate_fstab
+                [ $? -ne 0 ] && return 14 || : 
+
+                ;;
+            [Cc]* ) echo "config_partitioning"; break;;
+            [Nn]* ) break;;
+            * ) echo "Enter 'D', 'C' or 'N'!";;
+        esac
+    done
 
 
-    fi
 }
 
 inst_part () {
