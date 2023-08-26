@@ -239,29 +239,27 @@ generate_fstab () {
 
 cfdisk_partitioning () {
 
-    while true; do
-        clear
-        lsblk -f -p
-        read -p "What do disk do you want to partition? [N]: " disk
-        case $par in
-            [Nn] ) break;;
-            *)
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$disk")
+    clear
+    lsblk -f -p
+    read -p "What disk do you want to partition? [N]: " disk
+    case $par in
+        [Nn] ) ;;
+        *)
+            partitions=$(lsblk -p -n -o NAME)
+            partition_count=$(echo "$partitions" | grep -c "$disk")
 
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$disk"; then
+            # wont work with more than 10 partitions since sda1 is in sda10
+            if echo "$partitions" | grep "$disk"; then
 
-                    cfdisk $disk
-                    [ $? -ne 0 ] && return 18 || : 
+                cfdisk $disk
+                [ $? -ne 0 ] && return 18 || : 
 
-                else
-                    echo "No partition with that name!"
-                fi
-                ;;
-        esac
-    done
-    [ $? -ne 0 ] && return 14 || : 
+            else
+                echo "No partition with that name!"
+                sleep 1
+            fi
+            ;;
+    esac
 
 }
 
@@ -278,13 +276,8 @@ partitioning () {
         read -p "How do you want to partition?" ans
         case $ans in
             [Dd]* ) 
-                exe cfdisk_partitioning && 
-                exe set_file_system && 
-                exe mount_partitions && 
-                exe install_kernel && 
-                exe generate_fstab
+                exe cfdisk_partitioning 
                 [ $? -ne 0 ] && return 14 || : 
-                break
                 ;;
             [Cc]* ) echo "config_partitioning"; break;;
             [Nn]* ) break;;
@@ -292,6 +285,12 @@ partitioning () {
         esac
     done
 
+    exe set_file_system && 
+    exe mount_partitions && 
+    exe install_kernel && 
+    exe generate_fstab
+
+    [ $? -ne 0 ] && return 14 || : 
 
 }
 
