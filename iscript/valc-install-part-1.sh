@@ -102,7 +102,7 @@ set_file_system () {
                             [ $? -ne 0 ] && return 14 || : 
                             break
 
-                        elif [[ "$file_system" == "EFI" ]]; then
+                        elif [[ "$file_system" == "SWAP" ]]; then
                             mkswap $partition_to_set
                             [ $? -ne 0 ] && return 14 || : 
                             break
@@ -163,7 +163,7 @@ mount_partitions () {
                 # wont work with more than 10 partitions since sda1 is in sda10
                 if echo "$partitions" | grep "$efi_par"; then
                     mkdir -p /mnt/boot/EFI && 
-                    mount $efi_partition /mnt/boot/EFI
+                    mount $efi_par /mnt/boot/EFI
                     [ $? -ne 0 ] && return 18 || : 
 
                     break
