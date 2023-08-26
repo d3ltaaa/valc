@@ -65,6 +65,7 @@ set_file_system () {
     notification "Set file system"
     
     while true; do
+        clear
         lsblk -f -p
         read -p "What partition would you like set a file system for? [N]: " partition_to_set
         case $partition_to_set in
@@ -132,7 +133,7 @@ mount_partitions () {
 
     while true; do
         clear
-        lsblk -p -n
+        lsblk -f -n
         read -p "What is your home partition? [N]: " home_par
         case $home_par in
             [Nn] ) break;;
@@ -158,7 +159,7 @@ mount_partitions () {
 
     while true; do
         clear
-        lsblk -p -n
+        lsblk -f -n
         read -p "What is your EFI partition? [N]: " efi_par 
         case $efi_par in
             [Nn] ) break;;
@@ -185,7 +186,7 @@ mount_partitions () {
 
     while true; do
         clear
-        lsblk -p -n
+        lsblk -f -n
 
         read -p "What is your swap partition? [N]: " swap_par
         case $swap_par in
@@ -211,7 +212,7 @@ mount_partitions () {
 
     while true; do
         clear
-        lsblk -p -n
+        lsblk -f -n
         read -p "What partition do you want to mount? [N]: " par
         case $par in
             [Nn] ) break;;
@@ -285,6 +286,7 @@ partitioning () {
     
 
     while true; do
+        clear
         printf "Cfdisk: D \nConfig: C \nNo: N \n"
         read -p "How do you want to partition?: " ans
         case $ans in
