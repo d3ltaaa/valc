@@ -76,7 +76,7 @@ set_file_system () {
                 if echo "$partitions" | grep "$partition_to_set" && [[ $partition_count -eq 1 ]]; then
                     while true; do
 
-                        read -p "What file system for $partition_to_set? [NTFS/FAT32/exFAT/ext4]: " file_system
+                        read -p "What file system for $partition_to_set? [NTFS/FAT32/exFAT/ext4/EFI/SWAP]: " file_system
                         if [[ "$file_system" == "NTFS" ]]; then
                             mkfs.ntfs $partition_to_set
                             [ $? -ne 0 ] && return 14 || : 
@@ -94,6 +94,16 @@ set_file_system () {
 
                         elif [[ "$file_system" == "ext4" ]]; then
                             mkfs.ext4 $partition_to_set
+                            [ $? -ne 0 ] && return 14 || : 
+                            break
+
+                        elif [[ "$file_system" == "EFI" ]]; then
+                            mkfs.fat -F32 $partition_to_set
+                            [ $? -ne 0 ] && return 14 || : 
+                            break
+
+                        elif [[ "$file_system" == "EFI" ]]; then
+                            mkswap $partition_to_set
                             [ $? -ne 0 ] && return 14 || : 
                             break
 
