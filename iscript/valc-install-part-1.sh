@@ -62,6 +62,7 @@ ena_parallel () {
 }
 
 set_file_system () {
+    notification "Set file system"
     
     while true; do
         lsblk -f -p
@@ -126,9 +127,12 @@ mount_partitions () {
 
     # Mount partitions
 
-    notification "Mount home"
+    clear
+    echo "Mount home"
 
     while true; do
+        clear
+        lsblk -p -n
         read -p "What is your home partition? [N]: " home_par
         case $home_par in
             [Nn] ) break;;
@@ -149,10 +153,12 @@ mount_partitions () {
         esac
     done
 
-
-    notification "Mount efi"
+    clear
+    echo "Mount efi"
 
     while true; do
+        clear
+        lsblk -p -n
         read -p "What is your EFI partition? [N]: " efi_par 
         case $efi_par in
             [Nn] ) break;;
@@ -174,9 +180,13 @@ mount_partitions () {
         esac
     done
 
-    notification "Mount swap"
+    clear
+    echo "Mount swap"
 
     while true; do
+        clear
+        lsblk -p -n
+
         read -p "What is your swap partition? [N]: " swap_par
         case $swap_par in
             [Nn] ) break;;
@@ -197,8 +207,11 @@ mount_partitions () {
         esac
     done
 
+    clear
 
     while true; do
+        clear
+        lsblk -p -n
         read -p "What partition do you want to mount? [N]: " par
         case $par in
             [Nn] ) break;;
@@ -273,7 +286,7 @@ partitioning () {
 
     while true; do
         printf "Cfdisk: D \nConfig: C \nNo: N \n"
-        read -p "How do you want to partition?" ans
+        read -p "How do you want to partition?: " ans
         case $ans in
             [Dd]* ) 
                 exe cfdisk_partitioning 
