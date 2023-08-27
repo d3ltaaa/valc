@@ -10,7 +10,7 @@ exe () {
         return_code=$?
         # check if everything worked
         if [ $return_code -eq 0 ]; then
-            echo "Checks out"; sleep 1
+            echo "================>>      Checks out"; sleep 1
             break
         fi
 
