@@ -11,7 +11,7 @@ exe () {
         return_code=$?
         # check if everything worked
         if [ $return_code -eq 0 ]; then
-            echo "Checks out"; sleep 1
+            echo "================>>      Checks out"; sleep 1
             break
         fi
 
@@ -28,7 +28,8 @@ exe () {
 }
 
 notification () {
-    clear; echo "$1"; sleep 1
+    clear; echo "================>>      $1"
+    sleep 1
 }
 
 
@@ -155,9 +156,8 @@ user_add () {
 }
 
 user_pw () {
-    notification "User password"
+    notification "User password for $user"
 
-    echo "Password for $user: " &&
     passwd $user
     [ $? -ne 0 ] && return 31 || :
 }
