@@ -30,7 +30,8 @@ exe () {
 
 
 notification () {
-    clear; echo "$1"; sleep 1
+    clear; echo "================>>      $1"
+    sleep 1
 }
 
 kb_setup () {
@@ -62,10 +63,11 @@ ena_parallel () {
 }
 
 set_file_system () {
-    notification "Set file system"
+
     
     while true; do
-        clear
+        notification "Set file system"       
+
         lsblk -f -p
         read -p "What partition would you like set a file system for? [N]: " partition_to_set
         case $partition_to_set in
@@ -128,11 +130,10 @@ mount_partitions () {
 
     # Mount partitions
 
-    clear
-    echo "Mount home"
 
     while true; do
-        clear
+        
+        notification "Mount Home"
         lsblk -f -n
         read -p "What is your home partition? [N]: " home_par
         case $home_par in
@@ -154,11 +155,11 @@ mount_partitions () {
         esac
     done
 
-    clear
-    echo "Mount efi"
+    
 
     while true; do
-        clear
+        
+        notification "Mount efi"
         lsblk -f -n
         read -p "What is your EFI partition? [N]: " efi_par 
         case $efi_par in
@@ -181,11 +182,11 @@ mount_partitions () {
         esac
     done
 
-    clear
-    echo "Mount swap"
+    
 
     while true; do
-        clear
+        
+        notification "Mount swap"
         lsblk -f -n
 
         read -p "What is your swap partition? [N]: " swap_par
@@ -208,10 +209,11 @@ mount_partitions () {
         esac
     done
 
-    clear
 
     while true; do
-        clear
+        
+        notification "Mounting other Partitions"
+
         lsblk -f -n
         read -p "What partition do you want to mount? [N]: " par
         case $par in
@@ -253,7 +255,8 @@ generate_fstab () {
 
 cfdisk_partitioning () {
 
-    clear
+    notification "Cfdisk partitioning"
+    
     lsblk -f -p
     read -p "What disk do you want to partition? [N]: " disk
     case $par in
@@ -279,14 +282,15 @@ cfdisk_partitioning () {
 
 partitioning () {
    
-    notification "Partitioning"
     
     # variable that needs to updated in the different partitioning types
     # so that when setting file system types, it works
     
 
     while true; do
-        clear
+        
+        notification "Partitioning"
+
         printf "Cfdisk: D \nConfig: C \nNo: N \n"
         read -p "How do you want to partition?: " ans
         case $ans in
