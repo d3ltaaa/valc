@@ -253,6 +253,32 @@ generate_fstab () {
     [ $? -ne 0 ] && return 20 || :
 }
 
+fdisk_partitioning () {
+
+    notification "fdisk partitioning"
+    
+    lsblk -f -p
+    read -p "What disk do you want to partition? [N]: " disk
+    case $par in
+        [Nn] ) ;;
+        *)
+            partitions=$(lsblk -p -n -o NAME)
+            partition_count=$(echo "$partitions" | grep -c "$disk")
+
+            # wont work with more than 10 partitions since sda1 is in sda10
+            if echo "$partitions" | grep "$disk"; then
+
+                fdisk $disk
+                [ $? -ne 0 ] && return 18 || : 
+
+            else
+                echo "No partition with that name!"
+                sleep 1
+            fi
+            ;;
+    esac
+
+}
 cfdisk_partitioning () {
 
     notification "Cfdisk partitioning"
@@ -291,11 +317,15 @@ partitioning () {
         
         notification "Partitioning"
 
-        printf "Cfdisk: D \nConfig: C \nNo: N \n"
+        printf "Cfdisk: D \nFdisk: F \nConfig: C \nNo: N \n"
         read -p "How do you want to partition?: " ans
         case $ans in
             [Dd]* ) 
                 exe cfdisk_partitioning 
+                [ $? -ne 0 ] && return 14 || : 
+                ;;
+            [Ff]* ) 
+                exe fdisk_partitioning
                 [ $? -ne 0 ] && return 14 || : 
                 ;;
             [Cc]* ) echo "config_partitioning"; break;;
