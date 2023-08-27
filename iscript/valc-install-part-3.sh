@@ -228,10 +228,7 @@ inst_wallpaper () {
     mkdir -p ~/.config/wall &&
     touch ~/.config/wall/picture &&
     cd ~/Pictures/Wallpapers &&
-    curl https://raw.githubusercontent.com/dxnst/nord-wallpapers/master/operating-systems/archlinux.png > archlinux.png &&
-    curl https://raw.githubusercontent.com/linuxdotexe/nordic-wallpapers/master/wallpapers/ign_nordic_triangle.png > trian &&gle.png
-    curl https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/arch-nord-dark.png > arch-nord-dark.png &&
-    curl https://raw.githubusercontent.com/D3Ext/aesthetic-wallpapers/main/images/arch-nord-light.png > arch-nord-light.png
+    curl https://raw.githubusercontent.com/d3ltaaa/backgrounds/main/arch_nord_dark_bg.png > arch_nord_dark_bg.png
     [ $? -ne 0 ] && return 51 || :
 
 }
