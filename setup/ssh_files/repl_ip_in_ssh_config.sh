@@ -18,8 +18,8 @@ pc_ip_address=$(echo $client_ip_address | cut -d '.' -f 1-3)
 scp ip_address falk@$pc_ip_address.$HOTSPOT_START:/home/falk/.ssh/
 
 ssh falk@192.168.2.31 << 'EOF'
-line_number_phone=$(grep -n "PHONESPOT" /home/falk/.ssh/config | cut -d ':' -f 1)
-line_number_hostname=$(grep -A3 "PHONESPOT" /home/falk/.ssh/config | grep -n "HostName" | cut -d ':' -f 1)
+line_number_phone=$(grep -n "phspot" /home/falk/.ssh/config | cut -d ':' -f 1)
+line_number_hostname=$(grep -A3 "phspot" /home/falk/.ssh/config | grep -n "HostName" | cut -d ':' -f 1)
 line_number=$(($line_number_phone + $line_number_hostname -1))
 phone_ip=$(cat /home/falk/.ssh/ip_address)
 sed -i "${line_number}s/.*/    HostName $phone_ip/" /home/falk/.ssh/config
