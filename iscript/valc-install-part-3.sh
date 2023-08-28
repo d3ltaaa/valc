@@ -120,6 +120,10 @@ thermald_setup () {
     sudo systemctl enable thermald
 }
 
+enable_services () {
+    sudo systemctl enable sshd
+}
+
 yay_setup () {
 
     # yay-AUR-helper
