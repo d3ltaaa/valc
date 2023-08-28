@@ -2,29 +2,29 @@
 
 send_file () {
 
-    # arguments: client_path user server connection server_path
-    scp ${1} ${2}@${3}${4}:${5}
+    # arguments: client_path server server_path
+    scp ${1} ${2}:${3}
 
 }
 
 
 send_folder () {
-    # arguments: client_path user server connection server_path
-    scp -r ${1} ${2}@${3}${4}:${5}
+    # arguments: client_path server server_path
+    scp -r ${1} ${2}:${3}
 
 }
 
 receive_folder () {
 
-    # arguments: user server connection server_path client_path
-    scp -r ${1}@${2}${3}:${4} ${5}
+    # arguments: server server_path client_path
+    scp -r ${1}:${2} ${3}
 
 }
 
 receive_file () {
 
-    # arguments: user server connection server_path client_path
-    scp ${1}@${2}${3}:${4} ${5}
+    # arguments: server server_path client_path
+    scp ${1}:${2} ${3}
 }
 
 read_in_data () {
@@ -54,66 +54,50 @@ read_in_data () {
     if [[ $scp_send -eq 0 ]] && [[ $scp_file -eq 0 ]]
     then
 
-        printf "User: "
-        read user
         printf "Server: "
         read server
-        printf "Connection (LAN/WIFI): "
-        read connection
         printf "Path (Server-side): "
         read server_path
         printf "Path (Client-side): "
         read client_path
 
-        receive_folder $user $server $connection $server_path $client_path
+        receive_folder $server $server_path $client_path
 
     elif [[ $scp_send -eq 0 ]] && [[ $scp_file -eq 1 ]]
     then
 
-        printf "User: "
-        read user
         printf "Server: "
         read server
-        printf "Connection (LAN/WIFI): "
-        read connection
         printf "Path (Server-side): "
         read server_path
         printf "Path (Client-side): "
         read client_path
 
-        receive_file $user $server $connection $server_path $client_path
+        receive_file $server $server_path $client_path
 
     elif [[ $scp_send -eq 1 ]] && [[ $scp_file -eq 0 ]]
     then
 
-        printf "User: "
-        read user
         printf "Server: "
         read server
-        printf "Connection (LAN/WIFI): "
-        read connection
         printf "Path (Client-side): "
         read client_path
         printf "Path (Server-side): "
         read server_path
 
-        send_folder $client_path $user $server $connection $server_path
+        send_folder $client_path $server $server_path
 
     elif [[ $scp_send -eq 1 ]] && [[ $scp_file -eq 1 ]]
     then
 
-        printf "User: "
-        read user
         printf "Server: "
         read server
-        printf "Connection (LAN/WIFI): "
-        read connection
         printf "Path (Client-side): "
         read client_path
         printf "Path (Server-side): "
         read server_path
 
-        send_file $client_path $user $server $connection $server_path
+        send_file $client_path $server $server_path
 
     fi
 
