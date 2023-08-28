@@ -9,7 +9,7 @@ connect () {
     read connection
 
     clear
-    ssh ${user}@${server}_${connection}
+    ssh ${user}@${server}${connection}
 }
 
 connect
