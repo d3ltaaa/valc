@@ -3,28 +3,28 @@
 send_file () {
 
     # arguments: client_path user server connection server_path
-    scp ${1} ${2}@${3}_${4}:${5}
+    scp ${1} ${2}@${3}${4}:${5}
 
 }
 
 
 send_folder () {
     # arguments: client_path user server connection server_path
-    scp -r ${1} ${2}@${3}_${4}:${5}
+    scp -r ${1} ${2}@${3}${4}:${5}
 
 }
 
 receive_folder () {
 
     # arguments: user server connection server_path client_path
-    scp -r ${1}@${2}_${3}:${4} ${5}
+    scp -r ${1}@${2}${3}:${4} ${5}
 
 }
 
 receive_file () {
 
     # arguments: user server connection server_path client_path
-    scp ${1}@${2}_${3}:${4} ${5}
+    scp ${1}@${2}${3}:${4} ${5}
 }
 
 read_in_data () {
