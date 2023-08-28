@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# is to be installed on phone to send its own ip address to the computer in the network so that the 
+# computer can connect to the phone
+
 if [[ ! -f "ip_address" ]]; then
 	touch ip_address
 fi
