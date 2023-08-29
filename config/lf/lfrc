@@ -156,6 +156,7 @@ map gva cd ~/.valc
 map gvs cd ~/.valc/setup
 map gvc cd ~/.valc/config
 map gvi cd ~/.valc/iscript
+map gusb cd /run/media
 
 map xscp scp_push
 

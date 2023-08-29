@@ -2,7 +2,7 @@
 
 menu_main () {
     # Define first layer
-    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Phone server" "Close")
+    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Phone server" "USB" "Close")
 
     # display options
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
@@ -31,6 +31,9 @@ menu_main () {
             ;;
         "Phone server")
             menu_server
+            ;;
+        "USB")
+            menu_usb
             ;;
         "Close")
             ;;
@@ -302,6 +305,85 @@ menu_server () {
             menu_main
             ;;
     esac
+
+}
+
+menu_usb () {
+
+#devices found by udisksctl
+lsblk_print=$(lsblk -no name,type,mountpoints | grep -A1 disk)
+devices=($(lsblk -no name,type | grep disk | awk '{print $1}'))
+
+
+
+# echo ${devices[@]}
+
+usb_devices=()
+
+    for device in "${devices[@]}"; do
+        connection_type=$(lsblk -no tran /dev/$device)
+        if [[  $connection_type == "usb" ]]; then
+            usb_devices+=("$device")
+        fi
+    done
+    
+        # Iterate the loop to read and print each array element
+    
+        pretty_name=()
+
+    for value in "${usb_devices[@]}"; do
+        # get the name of $value
+        properties=$(udevadm info --query=property --name=/dev/$value)
+        vendor=$(echo "$properties" | grep -e "ID_VENDOR=" | awk -F "=" '{print $2}')
+        model=$(echo "$properties" | grep -e "ID_MODEL=" | awk -F "=" '{print $2}')
+        pretty_name+=("$value -- $vendor $model")
+
+    done
+
+    echo ${pretty_name[0]}
+
+
+    usb_names=$(
+    for value in "${pretty_name[@]}"
+    do
+        echo $value
+    done
+    )
+    
+    options=( "Mount" "Unmount" "Go back" )
+    
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    new_options=("$usb_names" "Go back")
+
+    case $selected in
+        "Mount")
+            new_selected=$(printf '%s\n' "${new_options[@]}" | dmenu -i | awk '{print $1}')
+            case $new_selected in
+                "Go back" )
+                    menu_usb
+                    ;;
+                *)
+                    udisksctl mount -b /dev/${new_selected}1
+                    ;;
+            esac
+            ;;
+        "Unmount")
+            new_selected=$(printf '%s\n' "${new_options[@]}" | dmenu -i | awk '{print $1}')
+            case $new_selected in
+                "Go back" )
+                    menu_usb
+                    ;;
+                *)
+                    udisksctl unmount -b /dev/${new_selected}1
+                    ;;
+            esac
+            ;;
+        "Go back")
+            menu_main
+            ;;
+    esac
+
 
 }
 
