@@ -37,7 +37,7 @@ cmd viewimg ${{
 cmd open ${{
     case "$f" in 
         *.jpg|*.jpeg|*.png) 
-            dwmswallow $WINDOWID; feh --scale-dwon --auto-zoom "$f"
+            dwmswallow $WINDOWID; feh --scale-down --auto-zoom "$f"
             # pkill -SIGINT feh
             # feh --scale-down --auto-zoom "$f" &
             # sleep 0.4

@@ -5,6 +5,8 @@
 
 HOTSPOT_START=90 # specific to hotspot configuration (dynamic ip address 90 - *)
 
+sshd
+
 if [[ ! -f "ip_address" ]]; then
 	touch ip_address
 fi
