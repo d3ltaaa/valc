@@ -1,0 +1,17 @@
+NAME: THINKPAD-FH
+
+USER: falk
+
+IP: 
+LAN:  192.168.2.21
+WIFI: 192.168.2.22
+
+MONITOR: eDP-1
+TURN-OFF: 
+
+TABLET: yes
+
+PARTITION:
+nvme0n1p1 0%  2G   2G   /mnt/boot/EFI fat -32
+nvme0n1p2 2G  4G   2G   //            swap
+nvme0n1p3 4G  100% 100% /mnt          ext4

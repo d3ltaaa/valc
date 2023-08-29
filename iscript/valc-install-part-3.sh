@@ -116,12 +116,10 @@ blue_setup () {
     [ $? -ne 0 ] && return 44 || :
 }
 
-thermald_setup () {
-    sudo systemctl enable thermald
-}
 
 enable_services () {
     sudo systemctl enable sshd
+    sudo systemctl enable thermald
 }
 
 yay_setup () {
@@ -287,7 +285,7 @@ exe inst_packages
 
 exe blue_setup
 
-exe thermald_setup
+exe enable_services 
 
 exe yay_setup
 

@@ -1,0 +1,38 @@
+HOSTNAME: DESKTOP-FH
+
+
+USER: falk
+
+
+#         IN TTY             IN OS (.dwm/autostart)
+
+KEYBOARD: KEYMAP=de-latin1 de
+
+TIME: /Europe/Berlin
+
+LANGUAGE: LANG=en_US.UTF-8
+
+XORG_DDX: fbdev
+
+FOLDERS: Documents Downloads Pictures Code
+
+
+
+IP: 
+LAN:  192.168.2.31
+WIFI: 192.168.2.32
+
+
+
+MONITOR: HDMI-1 VDI-D-1
+TURN-OFF: VDI-D-1
+
+
+TABLET: no
+
+
+PARTITION:
+sda1      0%  100% 100% /mnt/mnt/HDD  exfat
+nvme0n1p1 0%  2G   2G   /mnt/boot/EFI fat -32
+nvme0n1p2 2G  4G   2G   //            swap
+nvme0n1p3 4G  256G 252G /mnt          ext4

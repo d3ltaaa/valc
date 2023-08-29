@@ -2,7 +2,7 @@
 
 menu_main () {
     # Define first layer
-    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Close")
+    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Phone server" "Close")
 
     # display options
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
@@ -28,6 +28,9 @@ menu_main () {
             ;;
         "Themes")
             menu_themes
+            ;;
+        "Phone server")
+            menu_server
             ;;
         "Close")
             ;;
@@ -254,6 +257,52 @@ menu_themes () {
             ;;
     esac
     # menu_main
+}
+
+menu_server () {
+
+    connection_lan=$(nmcli -t -f NAME connection show --active | head -n 1)
+
+    connection_wifi=$(nmcli radio wifi)
+
+    if [[ $connection_lan == "Wired connection 1" ]]; then
+        status="Enabled - Wired"
+    elif [[ $connection_wifi == "enabled" && $connection_lan == "lo" ]]; then
+        status="Enabled - Not Connected" 
+    elif [[ $connection_wifi == "enabled" ]]; then
+        status="Enabled - Connected to $(nmcli -t -f NAME connection show --active | head -n 1)"
+    else 
+        status="Disabled"
+    fi
+
+    
+    options=( "Internet ($status)" "Get Remnote images" "Get Images" "Get Documents" "Go back" ) 
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i )
+
+    case $selected in 
+        "Internet ($status)")
+            menu_wifi
+            ;;
+        "Get Remnote images")
+            st -e bash -c "
+            transfer_from_remote.sh ~/Pictures/Remnote
+            "
+            ;;
+        "Get Images")
+            st -e bash -c "
+            transfer_from_remote.sh ~/Pictures/Server
+            "
+            ;;
+        "Get Documents")
+            st -e bash -c "
+            transfer_from_remote.sh ~/Documents
+            "
+            ;;
+        "Go back")
+            menu_main
+            ;;
+    esac
+
 }
 
 case $1 in
