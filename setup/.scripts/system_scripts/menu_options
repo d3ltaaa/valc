@@ -400,7 +400,7 @@ menu_usb () {
                     menu_options usb
                     ;;
                 *)
-                    udisksctl mount -b /dev/${new_selected} || udisksctl mount -b /dev/${new_selected}1
+                    udisksctl mount -b /dev/${new_selected} && dunstify "$new_selected mounted" || udisksctl mount -b /dev/${new_selected}1 && dunstify "${new_selected}1 mounted" 
                     ;;
             esac
             ;;
@@ -411,7 +411,7 @@ menu_usb () {
                     menu_options usb
                     ;;
                 *)
-                    udisksctl unmount -b /dev/${new_selected} || udisksctl unmount -b /dev/${new_selected}1
+                    udisksctl unmount -b /dev/${new_selected} && dunstify "$new_selected unmounted" || udisksctl unmount -b /dev/${new_selected}1 && dunstify "${new_selected}1 unmounted"
                     ;;
             esac
             ;;
