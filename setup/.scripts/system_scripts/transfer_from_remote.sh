@@ -16,7 +16,7 @@ case $connection_ in
         remote_connection_type=spot
         ;;
     * )
-        echo "ERROR: client connection type unexpected!"
+        echo "Error: Client connection not supported!"
         exit 1
         ;;
 esac
@@ -39,7 +39,13 @@ if [[ ! -d $1 ]]; then
     done
 fi
 
-scp -r ph$remote_connection_type:downloads/* $1
+if [[ ! -d ~/Transfer ]]; then
+    mkdir -p ~/Transfer
+fi
+
+scp -r ph$remote_connection_type:downloads/* ~/Transfer
+scp -r ~/Transfer/* server:$1
+mv ~/Transfer/* $1
 
 ssh ph$remote_connection_type << 'EOF'
 if [[ ! -d scans ]]; then
