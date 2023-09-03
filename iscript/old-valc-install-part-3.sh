@@ -31,89 +31,6 @@ notification () {
     sleep 1
 }
 
-CONFIG_PATH="/config"
-USE_CONFIG_FILE=0
-VALUE_VIDEO_SETUP=0
-VALUE_FOLDER_SETUP=0
-VALUE_IP_SETUP=0
-VALUE_MONITOR_SETUP=0
-VALUE_KB_SETUP=0
-
-determine_config () {
-
-    if [ -e $CONFIG_PATH ]; then
-        echo "config found"
-        USE_CONFIG_FILE=1
-    fi
-
-
-    if [[ $USE_CONFIG_FILE -eq 1 ]]; then
-
-        while true; do
-
-            invalid_value=0
-
-            echo "determine_config"
-            echo "grub_setup"
-            echo "video_setup: V"
-            echo "inst_packages"
-            echo "blue_setup"
-            echo "enable_services "
-            echo "yay_setup"
-            echo "yay_installations"
-            echo "inst_remnote"
-            echo "download_setup"
-            echo "links_setup"
-            echo "create_folder: C"
-            echo "building_suckless"
-            echo "inst_wallpaper"
-            echo "inst_fonts"
-            echo "manage_ip: I"
-            echo "manage_monitor: M"
-            echo "kb_setup: K"
-
-
-            read -p "What do you want to use the config file for? [V/C/I/M/K]: " choice
-
-            choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
-
-            if [ -z "$choice" ]; then
-                USE_CONFIG_FILE=0
-            fi
-
-
-            for char in $(echo "$choice" | grep -o .); do
-                case "$char" in
-                    v)
-                        VALUE_VIDEO_SETUP=1
-                        ;;
-                    c)
-                        VALUE_FOLDER_SETUP=1
-                        ;;
-                    i)
-                        VALUE_IP_SETUP=1
-                        ;;
-                    m)
-                        VALUE_MONITOR_SETUP=1
-                        ;;
-                    k)
-                        VALUE_KB_SETUP=1
-                        ;;
-                    *)
-                        invalid_value=1
-                        break
-                        ;;
-                esac
-            done
-
-            if [ $invalid_value -eq 0 ]; then
-                break;
-            fi
-
-        done
-    fi
-}
-
 grub_setup () {
 
     # update grub 
@@ -128,26 +45,20 @@ video_setup () {
 
     # video driver
     notification "Installing video driver"
-    if [ $VALUE_VIDEO_SETUP -eq 1 ]; then
-        ddx_driver=$(grep -i -w XORG_DDX $CONFIG_PATH | awk '{print $2}')
-        sudo pacman --noconfirm xf86-video-$ddx_driver
-
-    else
-        while true; do
-            read -p "Does the device have an amd-gpu? [y/n]: " yn
-            case $yn in
-                [yY]* ) 
-                    sudo pacman --noconfirm -S xf86-video-amdgpu
-                    [ $? -ne 0 ] && return 41 || :
-                    break;;
-                [nN]* ) 
-                    sudo pacman --noconfirm -S xf86-video-fbdev
-                    [ $? -ne 0 ] && return 42 || :
-                    break;;
-                * ) echo "Enter 'y' or 'n'!";;
-            esac
-        done
-    fi
+    while true; do
+        read -p "Does the device have an amd-gpu? [y/n]: " yn
+        case $yn in
+            [yY]* ) 
+                sudo pacman --noconfirm -S xf86-video-amdgpu
+                [ $? -ne 0 ] && return 41 || :
+                break;;
+            [nN]* ) 
+                sudo pacman --noconfirm -S xf86-video-fbdev
+                [ $? -ne 0 ] && return 42 || :
+                break;;
+            * ) echo "Enter 'y' or 'n'!";;
+        esac
+    done
 }
 
 inst_packages () {
@@ -174,6 +85,7 @@ inst_packages () {
         xournalpp discord \
     	neofetch \
         ranger \
+        udisks2 \
         git \
         neovim \
         dunst \
@@ -292,32 +204,6 @@ links_setup () {
 
 }
 
-create_folder () {
-
-    notification "Folder"
-
-    if [ $VALUE_FOLDER_SETUP -eq 1 ]; then
-
-        fol_arr=($(grep -i -w FOLDERS $CONFIG_PATH | cut -d ' ' -f2-))
-        for folder in ${fol_arr[@]}; do
-            mkdir ~/$folder
-        done
-
-    else
-        while true; do
-            read -p "Which folder do you want to create in the home directory? [N]: " choice
-            case $choice in
-                [Nn] )
-                    break
-                    ;;
-                *)
-                    mkdir ~/$choice
-                    ;;
-            esac
-        done
-    fi
-}
-
 building_suckless () {
     
     notification "Building suckless software"
@@ -376,111 +262,6 @@ inst_fonts () {
 
 }
 
-manage_ip () {
-
-    if [ $VALUE_IP_SETUP -eq 1 ]; then
-
-        wlan=$(grep -i -w -A1 WLAN $CONFIG_PATH | awk 'NR==2')
-
-        ip_gate=$(grep -i -w GATE $CONFIG_PATH | awk '{print $2}')
-
-        ip_lan=$(grep -i -w LAN $CONFIG_PATH | awk '{print $2}')
-
-        ip_wifi=$(grep -i -w WIFI $CONFIG_PATH | awk '{print $2}')
-
-
-
-        for (( i=1; i<=3; i++)); do
-
-            sudo nmcli connection modify "Wired connection $i" ipv4.method manual ipv4.address $ip_lan/24 ipv4.gateway $ip_gate
-
-        done
-
-        sudo nmcli connection modify "$wlan" ipv4.method manual ipv4.address $ip_wifi/24 ipv4.gateway $ip_gate
-
-    else
-
-        read -p "What is the name of your Wlan?: " wlan
-        read -p "What is your ipv4.gateway?: " ip_gate
-        read -p "What ip for lan?: " ip_lan
-        read -p "What ip for wifi?: " ip_wifi
-
-        while true; do
-
-            read -p "Is it spelled correctly? [y/n]: " yn
-
-            case $yn in
-
-                [yY]* ) break;; 
-
-                [nN]* ) return 31;;
-
-                * ) echo "Enter 'y' or 'n'!";;
-            esac
-        done
-
-
-        for (( i=1; i<=3; i++)); do
-
-            sudo nmcli connection modify "Wired connection $i" ipv4.method manual ipv4.address $ip_lan/24 ipv4.gateway $ip_gate
-
-        done
-
-        sudo nmcli connection modify "$wlan" ipv4.method manual ipv4.address $ip_wifi/24 ipv4.gateway $ip_gate
-
-    fi
-
-}
-
-dwm_auto () {
-
-    if [ $VALUE_MONITOR_SETUP -eq 1 ] || [ $VALUE_KB_SETUP -eq 1 ]; then
-        echo "#This is a generated script!" > ~/.dwm/autostart.sh
-        echo "dwmblocks" >> ~/.dwm/autostart.sh
-    fi
-}
-
-monitor_setup () {
-
-    
-    if [ $VALUE_MONITOR_SETUP -eq 1 ]; then
-        mon_arr=($(grep -i -w MONITOR $CONFIG_PATH | cut -d ' ' -f2-))
-        turn_off=($(grep -i -w TURN-OFF $CONFIG_PATH | cut -d ' ' -f2-))
-
-
-        for mon in ${turn_off[@]}; do
-            echo "xrandr --output $mon --off " >> ~/.dwm/autostart.sh
-        done
-    
-
-        monitor_count=${#mon_arr[@]}
-
-
-        string="xrandr --auto --output ${mon_arr[0]}"
-
-        for (( i=1; i<$monitor_count; i++ )); do
-            string+=" --left-of ${mon_arr[i]}"
-        done
-
-        echo $string >> ~/.dwm/autostart.sh
-
-    fi
-
-}
-
-kb_setup () {
-
-    if [ $VALUE_KB_SETUP -eq 1]; then
-
-        kb_layout=$(grep -i -w KEYBOARD $CONFIG_PATH | awk '{print $3}')
-        echo "setxkbmap $kb_layout" >> ~/.dwm/autostart.sh
-
-    else
-
-        echo "setxkbmap de" >> ~/.dwm/autostart.sh
-    fi
-}
-
 
 create_remove () {
 
@@ -496,8 +277,6 @@ create_remove () {
     [ $? -ne 0 ] && return 53 || :
 
 }
-
-exe determine_config
 
 exe grub_setup
 
@@ -519,21 +298,11 @@ exe download_setup
 
 exe links_setup
 
-exe create_folder
-
 exe building_suckless
 
 exe inst_wallpaper
 
 exe inst_fonts
-
-exe manage_ip
-
-exe dwm_auto
-
-exe monitor_setup
-
-exe kb_setup
 
 exe create_remove
 

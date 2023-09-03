@@ -34,11 +34,104 @@ notification () {
     sleep 1
 }
 
+CONFIG_PATH="config"
+USE_CONFIG_FILE=0
+VALUE_KB_SETUP=0
+VALUE_PARTITIONING=0
+
+determine_config () {
+    notification "Config File"
+
+    while true; do
+        read -p "Which config file do you want to use? [D/T/L/V/N]: " ans
+        case $ans in
+            [Dd] )
+                curl https://raw.githubusercontent.com/d3ltaaa/.valc/main/setup/ssh_files/config_files/DESKTOP_config > config
+                USE_CONFIG_FILE=1
+                break
+                ;;
+            [Tt] )
+                curl https://raw.githubusercontent.com/d3ltaaa/.valc/main/setup/ssh_files/config_files/THINKPAD_config > config
+                USE_CONFIG_FILE=1
+                break
+                ;;
+            [Ll] )
+                curl https://raw.githubusercontent.com/d3ltaaa/.valc/main/setup/ssh_files/config_files/LAPTOP_config > config
+                USE_CONFIG_FILE=1
+                break
+                ;;
+            [Vv] )
+                curl https://raw.githubusercontent.com/d3ltaaa/.valc/main/setup/ssh_files/config_files/VIRTUAL_config > config
+                USE_CONFIG_FILE=1
+                break
+                ;;
+            [Nn] )
+                break
+                ;;
+        esac
+    done
+
+
+    if [[ $USE_CONFIG_FILE -eq 1 ]]; then
+
+        while true; do
+
+            invalid_value=0
+
+            printf "kb_setup: K \ntime_setup \nupd_cache \nena_parallel \npartitioning: P \ninst_part\n"
+
+            read -p "What do you want to use the config file for? [K/P]: " choice
+
+            choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
+
+            if [ -z "$choice" ]; then
+                USE_CONFIG_FILE=0
+            fi
+
+
+            for char in $(echo "$choice" | grep -o .); do
+                case "$char" in
+                    k)
+                        VALUE_KB_SETUP=1
+                         ;;
+                    p) 
+                        VALUE_PARTITIONING=1
+                        ;;
+                    *)
+                        invalid_value=1
+                        break
+                        ;;
+                esac
+            done
+
+            if [ $invalid_value -eq 0 ]; then
+                break;
+            fi
+
+        done
+    fi
+                
+}
+
+                
+
 kb_setup () {
     # kb-setup (in case sth goes wrong)
     notification "Loading keys"
-    loadkeys de-latin1
-    [ $? -ne 0 ] && return 10 || :
+    if [ "$VALUE_KB_SETUP" -eq 1 ]; then
+
+        kb_lan=$(grep -i -w KEYBOARD $CONFIG_PATH | awk '{print $2}')
+
+        loadkeys $kb_lan
+        [ $? -ne 0 ] && return 10 || :
+
+    else
+
+        loadkeys de-latin1
+        [ $? -ne 0 ] && return 10 || :
+
+    fi
+    
 }
 
 time_setup () {
@@ -256,7 +349,8 @@ generate_fstab () {
 fdisk_partitioning () {
 
     notification "fdisk partitioning"
-    
+
+
     lsblk -f -p
     read -p "What disk do you want to partition? [N]: " disk
     case $par in
@@ -267,7 +361,7 @@ fdisk_partitioning () {
 
             # wont work with more than 10 partitions since sda1 is in sda10
             if echo "$partitions" | grep "$disk"; then
-
+                
                 fdisk $disk
                 [ $? -ne 0 ] && return 18 || : 
 
@@ -279,6 +373,7 @@ fdisk_partitioning () {
     esac
 
 }
+
 cfdisk_partitioning () {
 
     notification "Cfdisk partitioning"
@@ -306,40 +401,203 @@ cfdisk_partitioning () {
 
 }
 
+check_for_efi () {
+
+    if [ -e /mnt/boot/EFI ]; then
+        echo "EFI exists"
+    else 
+        echo "EFI got lost"
+        read -p "What do you do now?"
+    fi
+}
+
+
 partitioning () {
    
     
-    # variable that needs to updated in the different partitioning types
-    # so that when setting file system types, it works
+    notification "Partitioning"
     
+    # if user wants to partition with config
+    if [ "$VALUE_PARTITIONING" -eq 1 ]; then
 
-    while true; do
+        # getting the right values from config
+        disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
+        par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
+        par_start_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==4'))
+        par_end_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==5'))
+        par_mount_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==6'))
+        par_type_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
+        par_home_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==8'))
+
+
+        # calculating the amount of partitions
+        amount_partition="${#disk_to_par[@]}"
+
+        current_disk="first" #variable to make sure, that disks are recognized correctly
+
+        for (( i=0; i<$amount_partition; i++ )); do
+
+            echo "$current_disk -> ${disk_to_par[i]}"
+            
+            # if clause to make sure disks are being passed to $current_disk
+            if [ "$current_disk" == "first" ]; then
+
+                # creating gpt label 
+                echo "$current_disk: First label created! ${disk_to_par[i]}" &&
+                parted -s /dev/${disk_to_par[i]} mklabel gpt &&
+                current_disk=${disk_to_par[i]}
+                [ $? -ne 0 ] && return 20 || : 
+
+            elif [ ! "$current_disk" == "${disk_to_par[i]}" ]; then
+
+                # creating gpt label on second disk
+                echo "$current_disk: Second label created! ${disk_to_par[i]}" &&
+                parted -s /dev/${disk_to_par[i]} mklabel gpt && 
+                current_disk=${disk_to_par[i]}
+                [ $? -ne 0 ] && return 21 || : 
+
+            fi
+            
+
+            # going through partitions and creating the partitions and changing the file system type
+            if [ "${par_type_arr[$i]}" == "fat-32" ]; then
+                echo "created /dev/${disk_to_par[i]} fat32" &&
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                echo "mkfs.fat -F32 /dev/${par_arr[i]}" &&
+                mkfs.fat -F32 /dev/${par_arr[i]} 
+
+                [ $? -ne 0 ] && return 22 || : 
+
+
+            elif [ "${par_type_arr[$i]}" == "swap" ]; then
+                echo "created /dev/${disk_to_par[i]} linux-swap" &&
+                parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                echo "mkswap /dev/${par_arr[i]}" && 
+                mkswap /dev/${par_arr[i]} 
+
+                [ $? -ne 0 ] && return 23 || : 
+
+            elif [ "${par_type_arr[$i]}" == "ext4" ]; then
+                echo "created /dev/${disk_to_par[i]} ext4" &&
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                echo "mkfs.ext4 /dev/${par_arr[i]}" &&
+                mkfs.ext4 /dev/${par_arr[i]} 
+
+                [ $? -ne 0 ] && return 24 || : 
+
+
+            elif [ "${par_type_arr[$i]}" == "exfat" ]; then
+                echo "created /dev/${disk_to_par[i]} extfat" &&
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary extfat ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                parted -s /dev/${disk_to_par[i]} mkpart primary extfat ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                echo "mkfs.extfat /dev/${par_arr[i]}" && 
+                mkfs.extfat /dev/${par_arr[i]} 
+
+                [ $? -ne 0 ] && return 25 || : 
+
+
+            fi
+
+
+
+
+        done
+
+        # go through the partitions and find home-partition than mount it and install kernel
+        for (( i=0; i<$amount_partition; i++ )); do
+
+            if [ "${par_home_arr[i]}" == "home" ]; then
+
+                mount /dev/${par_arr[i]} ${par_mount_arr[i]} &&
+                echo "mount /dev/${par_arr[i]} ${par_mount_arr[i]}" &&
+
+                [ $? -ne 0 ] && return 27 || : 
+
+                pacstrap /mnt base linux linux-firmware &&
+                echo "pacstrap /mnt base linux linux-firmware" &&
+
+                [ $? -ne 0 ] && return 29 || : 
+            fi
+
+        done
         
-        notification "Partitioning"
+        # go through partitions again and mount the rest
+        for (( i=0; i<$amount_partition; i++ )); do
 
-        printf "Cfdisk: D \nFdisk: F \nConfig: C \nNo: N \n"
-        read -p "How do you want to partition?: " ans
-        case $ans in
-            [Dd]* ) 
-                exe cfdisk_partitioning 
-                [ $? -ne 0 ] && return 14 || : 
-                ;;
-            [Ff]* ) 
-                exe fdisk_partitioning
-                [ $? -ne 0 ] && return 14 || : 
-                ;;
-            [Cc]* ) echo "config_partitioning"; break;;
-            [Nn]* ) break;;
-            * ) echo "Enter 'D', 'C' or 'N'!";;
-        esac
-    done
+            if [ "${par_type_arr[i]}" == "swap" ]; then
 
-    exe set_file_system && 
-    exe mount_partitions && 
-    exe install_kernel && 
-    exe generate_fstab
+                echo "swapon /dev/${par_arr[i]}" &&
+                swapon /dev/${par_arr[i]} 
+                [ $? -ne 0 ] && return 28 || : 
 
-    [ $? -ne 0 ] && return 14 || : 
+
+            elif [ "${par_home_arr[i]}" != "home" ]; then               
+                    
+                if [ ! -e "${par_mount_arr[i]}" ]; then
+
+                    mkdir -p ${par_mount_arr[i]}
+                    [ $? -ne 0 ] && return 26 || : 
+                    echo "Creating ${par_mount_arr[i]}"
+
+
+                fi
+
+                mount /dev/${par_arr[i]} ${par_mount_arr[i]} &&
+                echo "mount /dev/${par_arr[i]} ${par_mount_arr[i]}" &&
+
+                [ $? -ne 0 ] && return 27 || : 
+            else
+
+                echo "home partition already managed!"
+
+            fi
+
+        done
+        
+        # generate fstab
+        echo "genfstab -U /mnt >> /mnt/etc/fstab #migth not work" &&
+        genfstab -U /mnt >> /mnt/etc/fstab && #migth not work 
+        echo "cp config /mnt/config" && 
+        cp config /mnt/config && 
+        sleep 1
+        [ $? -ne 0 ] && return 30 || : 
+
+
+        
+
+    else
+
+        while true; do
+            
+            notification "Partitioning"
+    
+            printf "Cfdisk: D \nFdisk: F \nConfig: C \nNo: N \n"
+            read -p "How do you want to partition?: " ans
+            case $ans in
+                [Dd]* ) 
+                    exe cfdisk_partitioning 
+                    [ $? -ne 0 ] && return 14 || : 
+                    ;;
+                [Ff]* ) 
+                    exe fdisk_partitioning
+                    [ $? -ne 0 ] && return 14 || : 
+                    ;;
+                [Cc]* ) echo "config_partitioning"; break;;
+                [Nn]* ) break;;
+                * ) echo "Enter 'D', 'C' or 'N'!";;
+            esac
+        done
+    
+        exe set_file_system && 
+        exe mount_partitions && 
+        exe install_kernel && 
+        exe generate_fstab
+    
+        [ $? -ne 0 ] && return 14 || : 
+    fi
 
 }
 
@@ -357,6 +615,8 @@ inst_part () {
 
 printf "This is an install-script for the valc linux distribution."
 read temp
+
+exe determine_config
 
 exe kb_setup
 

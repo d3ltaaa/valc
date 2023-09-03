@@ -15,8 +15,12 @@ XORG_DDX: fbdev
 FOLDERS: Documents Downloads Pictures Code
 
 IP: 
+WLAN: 
+Wlan 12
+GATE: 192.168.2.1
 LAN:  192.168.2.45
 WIFI: 192.168.2.46
+
 
 MONITOR: 
 TURN-OFF: 

@@ -32,6 +32,88 @@ notification () {
     sleep 1
 }
 
+CONFIG_PATH="/config"
+USE_CONFIG_FILE=0
+VALUE_TIME_SETUP=0
+VALUE_LANG_SETUP=0
+VALUE_KB_SETUP=0
+VALUE_HOSTNAME_SETUP=0
+VALUE_USERNAME_SETUP=0
+
+
+determine_config () {
+
+    if [ -e $CONFIG_PATH ]; then
+        echo "config found"
+        USE_CONFIG_FILE=1
+    fi
+
+
+    if [[ $USE_CONFIG_FILE -eq 1 ]]; then
+
+        while true; do
+
+            invalid_value=0
+
+            echo "exe ena_parallel "
+            echo "exe time_setup: T"
+            echo "exe language_setup: L "
+            echo "exe kb_setup: K "
+            echo "exe host_name: H "
+            echo "exe host_setup "
+            echo "exe host_pw "
+            echo "exe user_name: U"
+            echo "exe user_add "
+            echo "exe user_pw "
+            echo "exe user_mod "
+            echo "exe inst_sudo "
+            echo "exe inst_important "
+            echo "exe grub_setup "
+            echo "exe network_manager "
+            echo "exe inst_part"
+
+            read -p "What do you want to use the config file for? [T/L/K/H/U]: " choice
+
+            choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
+
+            if [ -z "$choice" ]; then
+                USE_CONFIG_FILE=0
+            fi
+
+
+            for char in $(echo "$choice" | grep -o .); do
+                case "$char" in
+                    t)
+                        VALUE_TIME_SETUP=1
+                        ;;
+                    l)
+                        VALUE_LANG_SETUP=1
+                        ;;
+                    k)
+                        VALUE_KB_SETUP=1
+                        ;;
+                    h)
+                        VALUE_HOSTNAME_SETUP=1
+                        ;;
+                    u)
+                        VALUE_USERNAME_SETUP=1
+                        ;;
+                    *)
+                        invalid_value=1
+                        break
+                        ;;
+                esac
+            done
+
+            if [ $invalid_value -eq 0 ]; then
+                break;
+            fi
+
+        done
+    fi
+
+}
+
 
 ena_parallel () {
 
@@ -46,42 +128,72 @@ ena_parallel () {
 
 time_setup () {
     
-    # time
     notification "Time setup"
-    ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime &&
-    hwclock --systohc
-    [ $? -ne 0 ] && return 23 || :
+
+    # time
+    if [ $VALUE_TIME_SETUP -eq 1 ]; then
+        time_zone=$(grep -i -w TIME $CONFIG_PATH | awk '{print $2}') &&
+        ln -sf /usr/share/zoneinfo${time_zone} /etc/localtime &&
+        hwclock --systohc
+        [ $? -ne 0 ] && return 23 || :
+
+    else
+        ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime &&
+        hwclock --systohc
+        [ $? -ne 0 ] && return 23 || :
+    fi
 }
 
 language_setup () {
     # language
     notification "Language setup"
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen &&
-    locale-gen &&
-    echo "LANG=en_US.UTF-8" > /etc/locale.conf
-    [ $? -ne 0 ] && return 24 || :
+
+    
+    if [ $VALUE_LANG_SETUP -eq 1 ]; then
+
+        lang1=$(grep -i -w -A2 LANGUAGE $CONFIG_PATH | awk 'NR==2')
+        lang2=$(grep -i -w -A2 LANGUAGE $CONFIG_PATH | awk 'NR==3')
+
+        echo "$lang1" >> /etc/locale.gen &&
+        locale-gen &&
+        echo "$lang2" > /etc/locale.conf
+        [ $? -ne 0 ] && return 24 || :
+
+    else
+        echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen &&
+        locale-gen &&
+        echo "LANG=en_US.UTF-8" > /etc/locale.conf
+        [ $? -ne 0 ] && return 24 || :
+    fi
 }
 
 kb_setup () {
     
     # keyboard layout
     notification "Keyboard layout"
-    ans_layout=""
-    while true; do
+    if [ $VALUE_KB_SETUP -eq 1 ]; then
 
-        read -p "Do you want to use the German keyboard layout? [y/n]: " yn
+        kb=$(grep -i -w KEYBOARD $CONFIG_PATH | awk '{print $2}')
+        echo "KEYMAP=$kb" > /etc/vconsole.conf
+        [ $? -ne 0 ] && return 25 || :
+    else
+        ans_layout=""
+        while true; do
 
-        case $yn in
+            read -p "Do you want to use the German keyboard layout? [y/n]: " yn
 
-            [yY]* ) 
-                echo "KEYMAP=de-latin1" > /etc/vconsole.conf
-                [ $? -ne 0 ] && return 25 || :
+            case $yn in
 
-                break;;
-            [nN]* ) echo "Not accessible yet"; sleep 2;;
-            * ) echo "Enter 'y' or 'n'!";;
-        esac
-    done
+                [yY]* ) 
+                    echo "KEYMAP=de-latin1" > /etc/vconsole.conf
+                    [ $? -ne 0 ] && return 25 || :
+
+                    break;;
+                [nN]* ) echo "Not accessible yet"; sleep 2;;
+                * ) echo "Enter 'y' or 'n'!";;
+            esac
+        done
+    fi
 }
 
 host_name () {
@@ -89,21 +201,29 @@ host_name () {
     # Hostname
     notification "Hostname"
 
-    read -p "What is the hostname?: " hostname 
+    if [ $VALUE_HOSTNAME_SETUP -eq 1 ]; then
 
-    while true; do
+        hn=$(grep -i -w NAME $CONFIG_PATH | awk '{print $2}') 
 
-        read -p "Is it spelled correctly? [y/n]: " yn
+        hostname=$hn
+    else
 
-        case $yn in
+        read -p "What is the hostname?: " hostname 
 
-            [yY]* ) break;; 
+        while true; do
 
-            [nN]* ) return 26;;
+            read -p "Is it spelled correctly? [y/n]: " yn
 
-            * ) echo "Enter 'y' or 'n'!";;
-        esac
-    done
+            case $yn in
+
+                [yY]* ) break;; 
+
+                [nN]* ) return 26;;
+
+                * ) echo "Enter 'y' or 'n'!";;
+            esac
+        done
+    fi
 }
 
 host_setup () {
@@ -131,22 +251,28 @@ user_name () {
 
     # User
     notification "Username"
-    read -p "What is the Username?: " user
+
+    if [ $VALUE_USERNAME_SETUP -eq 1 ]; then
+        us=$(grep -i -w USER $CONFIG_PATH | awk '{print $2}')
+        user=$us
+    else
+        read -p "What is the Username?: " user
 
 
-    while true; do
+        while true; do
 
-        read -p "Is it spelled correctly? [y/n]: " yn
+            read -p "Is it spelled correctly? [y/n]: " yn
 
-        case $yn in
+            case $yn in
 
-            [yY]* ) break;; 
+                [yY]* ) break;; 
 
-            [nN]* ) return 29;;
+                [nN]* ) return 29;;
 
-            * ) echo "Enter 'y' or 'n'!";;
-        esac
-    done
+                * ) echo "Enter 'y' or 'n'!";;
+            esac
+        done
+    fi
 }
 
 user_add () {
@@ -219,22 +345,23 @@ inst_part () {
     [ $? -ne 0 ] && return 39 || :
     
 }
+exe determine_config
 
 exe ena_parallel
 
-exe time_setup
+exe time_setup #
 
-exe language_setup
+exe language_setup #
 
-exe kb_setup
+exe kb_setup #
 
-exe host_name
+exe host_name #
 
 exe host_setup 
 
 exe host_pw 
 
-exe user_name
+exe user_name #
 
 exe user_add
 
