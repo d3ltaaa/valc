@@ -28,11 +28,12 @@ MONITOR: HDMI-1 VDI-D-1
 TURN-OFF: VDI-D-1
 
 
-TABLET: no
+TABLET: 0
 
 
 PARTITION:
-sda1      0%  100% 100% /mnt/mnt/HDD  exfat
-nvme0n1p1 0%  2G   2G   /mnt/boot/EFI fat -32
-nvme0n1p2 2G  4G   2G   //            swap
-nvme0n1p3 4G  256G 252G /mnt          ext4
+sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3 
+0%           0%            2G        4G
+100%         2g            4G        256G
+/mnt/mnt/HDD /mnt/boot/EFI //        /mnt
+exfat        fat-32        swap      ext4
