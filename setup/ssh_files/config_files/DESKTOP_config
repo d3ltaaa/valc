@@ -6,7 +6,7 @@ USER: falk
 
 #         IN TTY             IN OS (.dwm/autostart)
 
-KEYBOARD: KEYMAP=de-latin1 de
+KEYBOARD: de-latin1 de
 
 TIME: /Europe/Berlin
 

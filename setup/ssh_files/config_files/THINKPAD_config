@@ -2,7 +2,7 @@ NAME: THINKPAD-FH
 
 USER: falk
 
-KEYBOARD: KEYMAP=de-latin1 de
+KEYBOARD: de-latin1 de
 
 TIME: /Europe/Berlin
 
