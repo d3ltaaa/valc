@@ -129,8 +129,9 @@ video_setup () {
     # video driver
     notification "Installing video driver"
     if [ $VALUE_VIDEO_SETUP -eq 1 ]; then
+
         ddx_driver=$(grep -i -w XORG_DDX $CONFIG_PATH | awk '{print $2}')
-        sudo pacman --noconfirm xf86-video-$ddx_driver
+        sudo pacman --noconfirm -S  xf86-video-$ddx_driver
 
     else
         while true; do
@@ -286,7 +287,6 @@ links_setup () {
     ln -s ~/.valc/setup/.bash_profile ~/ &&
     ln -s ~/.valc/setup/.bashrc ~/ &&
     ln -s ~/.valc/setup/.xbindkeysrc ~/ &&
-    ln -s ~/.valc/setup/ssh_files/config ~/.ssh &&
     ln -s ~/.valc/setup/ssh_files/repl_ip_in_ssh_config.sh ~/.ssh
     [ $? -ne 0 ] && return 49 || :
 
@@ -358,7 +358,7 @@ inst_fonts () {
 
     sudo mkdir -p /usr/share/fonts/TTF &&
     sudo mkdir -p /usr/share/fonts/ICONS &&
-    mkdir ~/Downloads &&
+    mkdir -p ~/Downloads &&
     curl https://fonts.google.com/download?family=Ubuntu%20Mono > ~/Downloads/UbuntuMono.zip &&
     curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.0/NerdFontsSymbolsOnly.zip > ~/Downloads/NerdFontIcons.zip &&
     sudo mv ~/Downloads/UbuntuMono.zip /usr/share/fonts/TTF &&
@@ -376,7 +376,21 @@ inst_fonts () {
 
 }
 
+
+dwm_auto () {
+
+    notification "Create dwm-auto"
+
+    if [ $VALUE_MONITOR_SETUP -eq 1 ] || [ $VALUE_KB_SETUP -eq 1 ]; then
+        echo "#This is a generated script!" > ~/.dwm/autostart.sh
+        echo "dwmblocks" >> ~/.dwm/autostart.sh
+    fi
+}
+
+
 manage_ip () {
+
+    notification "Manage ips"
 
     if [ $VALUE_IP_SETUP -eq 1 ]; then
 
@@ -432,16 +446,10 @@ manage_ip () {
 
 }
 
-dwm_auto () {
-
-    if [ $VALUE_MONITOR_SETUP -eq 1 ] || [ $VALUE_KB_SETUP -eq 1 ]; then
-        echo "#This is a generated script!" > ~/.dwm/autostart.sh
-        echo "dwmblocks" >> ~/.dwm/autostart.sh
-    fi
-}
 
 monitor_setup () {
 
+    notification "Monitor setup"
     
     if [ $VALUE_MONITOR_SETUP -eq 1 ]; then
         mon_arr=($(grep -i -w MONITOR $CONFIG_PATH | cut -d ' ' -f2-))
