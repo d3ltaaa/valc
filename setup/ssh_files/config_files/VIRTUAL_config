@@ -25,6 +25,6 @@ PARTITION:
 sda           sda       sda
 sda1          sda2      sda3
 0%            2G        4G
-2g            4G        256G
+2g            4G        100%
 /mnt/boot/EFI //        /mnt
 fat-32        swap      ext4
