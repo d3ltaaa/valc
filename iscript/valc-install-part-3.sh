@@ -85,6 +85,7 @@ inst_packages () {
         xournalpp discord \
     	neofetch \
         ranger \
+        udisks2 \
         git \
         neovim \
         dunst \

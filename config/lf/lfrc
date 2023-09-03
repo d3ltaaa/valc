@@ -107,12 +107,6 @@ cmd scp_push ${{
 
 }}
 
-cmd echo_f ${{
-    
-    echo "$fx"
-
-}}
-
 # remove defaults
 map m 
 map o
@@ -161,8 +155,6 @@ map gvs cd ~/.valc/setup
 map gvc cd ~/.valc/config
 map gvi cd ~/.valc/iscript
 map gusb cd /run/media
-
-map eee echo_f
 
 map xscp scp_push
 
