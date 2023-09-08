@@ -6,13 +6,18 @@ KEYBOARD: de-latin1 de
 
 TIME: /Europe/Berlin
 
-LANGUAGE: LANG=en_US.UTF-8
+LANGUAGE: 
+en_US.UTF-8 UTF-8
+LANG=en_US.UTF-8
 
 XORG_DDX: fbdev
 
 FOLDERS: Documents Downloads Pictures Code
 
 IP: 
+WLAN:
+Wlan 12
+GATE: 192.168.2.1
 LAN:  192.168.2.21
 WIFI: 192.168.2.22
 

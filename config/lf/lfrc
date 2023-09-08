@@ -49,6 +49,10 @@ cmd open ${{
         *.xopp) 
             dwmswallow $WINDOWID; xournalpp "$f"
             ;;
+
+        *.webm|*.mp4)
+            dwmswallow $WINDOWID; mpv "$f"
+            ;;
         *) $EDITOR "$f";;
     esac
 }}

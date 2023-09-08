@@ -383,7 +383,7 @@ dwm_auto () {
 
     if [ $VALUE_MONITOR_SETUP -eq 1 ] || [ $VALUE_KB_SETUP -eq 1 ]; then
         echo "#This is a generated script!" > ~/.dwm/autostart.sh
-        echo "dwmblocks" >> ~/.dwm/autostart.sh
+        echo "dwmblocks &" >> ~/.dwm/autostart.sh
     fi
 }
 
@@ -500,6 +500,8 @@ create_remove () {
     echo "cd" >> ~/remove.sh &&
     echo "sudo rm valc-install-part-3.sh" >> ~/remove.sh &&
     chmod +x ~/remove.sh
+
+    sudo mv /config ~/.config.cfg
 
     [ $? -ne 0 ] && return 53 || :
 

@@ -39,13 +39,13 @@ if [[ ! -d $1 ]]; then
     done
 fi
 
-if [[ ! -d ~/Transfer ]]; then
-    mkdir -p ~/Transfer
+if [[ ! -d ~/.transfer ]]; then
+    mkdir -p ~/.transfer
 fi
 
-scp -r ph$remote_connection_type:downloads/* ~/Transfer
-scp -r ~/Transfer/* server:$1
-mv ~/Transfer/* $1
+scp -r ph$remote_connection_type:downloads/* ~/.transfer
+scp -r ~/.transfer/* server:$1
+mv ~/.transfer/* $1
 
 ssh ph$remote_connection_type << 'EOF'
 if [[ ! -d scans ]]; then
