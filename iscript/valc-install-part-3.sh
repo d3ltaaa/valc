@@ -180,6 +180,8 @@ inst_packages () {
         dunst \
         xwallpaper \
         xclip \
+        mpv \
+        yt-dlp \
         acpi \
         upower \
         xbindkeys \
