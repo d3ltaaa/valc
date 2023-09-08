@@ -14,7 +14,7 @@ LANGUAGE: LANG=en_US.UTF-8
 
 XORG_DDX: fbdev
 
-FOLDERS: Documents Downloads Pictures Code
+FOLDERS: Documents Downloads Pictures Code Video
 
 
 
