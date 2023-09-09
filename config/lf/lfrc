@@ -50,7 +50,7 @@ cmd open ${{
             dwmswallow $WINDOWID; xournalpp "$f"
             ;;
 
-        *.webm|*.mp4)
+        *.webm|*.mkv|*.mp4)
             dwmswallow $WINDOWID; mpv "$f"
             ;;
         *) $EDITOR "$f";;
@@ -81,17 +81,13 @@ cmd unarchive ${{
 cmd rename ${{
     clear
     printf "Old Name: $f\n"
-    printf "New Name: "
-    read ans
+    read -p "New Name:" -e -i $(basename "$f") ans
     mv "$f" $ans
 }}
 
-cmd remove_dir ${{
-    sudo rm -r "$f"
-}}
 
-cmd remove_file ${{
-    rm "$f"
+cmd remove ${{
+    trash t $fx
 }}
 
 cmd make ${{
@@ -109,6 +105,10 @@ cmd scp_push ${{
     read directory
     scp $fx ${user}@${address}:${directory}
 
+}}
+
+cmd trash_item ${{
+    trash t $fx
 }}
 
 # remove defaults
@@ -131,8 +131,7 @@ map R reload
 
 map rr rename
 
-map rf remove_file 
-map rd remove_dir 
+map re remove
 
 map mf mkfile
 map md mkdir
@@ -151,6 +150,7 @@ map gd cd ~/Downloads
 map gD cd ~/Documents
 map gp cd ~/Pictures
 map gV cd ~/Videos
+map gt cd ~/.Trash
 map gS cd ~/.scripts
 map gC cd ~/.config
 map gc cd ~/Code
@@ -160,6 +160,8 @@ map gvs cd ~/.valc/setup
 map gvc cd ~/.valc/config
 map gvi cd ~/.valc/iscript
 map gusb cd /run/media
+
+map xtr trash_item
 
 map xscp scp_push
 

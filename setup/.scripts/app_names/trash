@@ -1,0 +1,133 @@
+#!/bin/bash
+
+path="/home/$USER/.Trash"
+
+if [[ ! -d $path ]]; then
+    mkdir -p $path
+fi
+
+
+if [[ ! -d $path/trash ]]; then
+    mkdir -p $path/trash
+fi
+
+
+if [[ ! -e $path/trash_history.log ]]; then
+    touch $path/trash_histroy.log
+fi
+
+
+_trash_() {
+
+    if [[ ! -e $1 ]]; then
+        echo "Does not exist!"
+        exit 1
+    fi
+
+    # get old file path
+    name=$(echo $1 | rev | cut -d'/' -f1 | rev)
+    old_path=$(echo $1 | rev | cut -d'/' -f1 --complement | rev)
+    date=$(date +"%d.%m.%Y - %H:%M")
+
+    echo "" >> $path/trash_history.log
+
+    if [[ -e $path/trash/$name ]]; then
+        new_name="$name"
+
+        while [[ -e $new_name ]]; do
+            echo "The file already exists in trash!"
+            read -p "Give it another name instead!: " new_name
+        done
+
+        mv $1 $path/trash/$new_name
+        echo "name:$new_name" >> $path/trash_history.log
+
+    else
+
+        mv $1 $path/trash
+        echo "name:$name" >> $path/trash_history.log
+
+    fi
+
+
+    echo "old path:$old_path" >> $path/trash_history.log
+    echo "full path:$old_path/$name" >> $path/trash_history.log
+    echo "time:$date" >> $path/trash_history.log
+
+}
+
+_recover_() {
+
+    name=$(grep "name:" $path/trash_history.log | grep "$1" | cut -d':' -f2)
+
+    if [[ $name == "" ]]; then
+        echo "Does not exist!"
+        exit 1
+    fi
+    
+    full_path=$(grep -A2 "name:$name" $path/trash_history.log | grep "full path:" | cut -d':' -f2)
+    old_path=$(grep -A1 "name:$name" $path/trash_history.log | grep "old path:" | cut -d':' -f2)
+
+    if [[ -e $full_path ]]; then
+        new_path="$full_path"
+
+        while [[ -e $new_path ]]; do
+            echo "The file already exists in the location!"
+            read -p "Give it another name instead!: " new_name
+            new_path="$old_path/$new_name"
+        done
+
+        echo "mv $path/trash/$name $new_path"
+        mv $path/trash/$name $new_path
+
+    else
+        
+        echo "mv $path/trash/$name $full_path"
+        mv $path/trash/$name $full_path
+
+    fi
+
+    # clear entry
+    line_num_begin=$(grep -n "name:$name" $path/trash_history.log | cut -d':' -f1) 
+    ((line_num_begin))
+    line_num_end=$(($line_num_begin + 3))
+    sed -i "${line_num_begin},${line_num_end}d" $path/trash_history.log
+    
+
+}
+
+
+if [[ $# -eq 1 ]]; then
+    echo "No Arguments"
+    exit 1
+
+elif [[ $# -eq 2 ]]; then
+    echo "One Arg: $2"
+
+    if [[ $1 == "r" ]]; then
+        _recover_ $2
+    elif [[ $1 == "t" ]]; then
+        _trash_ $2
+    fi
+
+else
+    echo "More arguments: $@"
+
+    if [[ $1 == "r" ]]; then
+            
+        for (( i=2; i<=$#; i++ )); do
+            echo "_recover_ ${!i}"
+            _recover_ ${!i}
+        done
+
+    elif [[ $1 == "t" ]]; then
+
+        for (( i=2; i<=$#; i++ )); do
+            echo "_trash_ ${!i}"
+            _trash_ ${!i}
+        done
+    fi
+
+fi
+
+
