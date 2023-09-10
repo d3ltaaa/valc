@@ -622,7 +622,6 @@ inst_part () {
 printf "This is an install-script for the valc linux distribution."
 read temp
 
-exe update_system
 
 exe determine_config
 
