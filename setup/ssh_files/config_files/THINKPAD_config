@@ -33,3 +33,4 @@ sda1          sda2      sda3
 2g            4G        256G
 /mnt/boot/EFI //        /mnt
 fat-32        swap      ext4
+no            no        home

@@ -78,7 +78,7 @@ determine_config () {
 
             invalid_value=0
 
-            printf "kb_setup: K \ntime_setup \nupd_cache \nena_parallel \npartitioning: P \ninst_part\n"
+            printf "update_system \nkb_setup: K \ntime_setup \nupd_cache \nena_parallel \npartitioning: P \ninst_part\n"
 
             read -p "What do you want to use the config file for? [K/P]: " choice
 
@@ -113,6 +113,12 @@ determine_config () {
                 
 }
 
+update_system () {
+
+    notification "Update System"
+    pacman -Syu --noconfirm 
+    [ $? -ne 0 ] && return 22 || : 
+}
                 
 
 kb_setup () {
@@ -615,6 +621,8 @@ inst_part () {
 
 printf "This is an install-script for the valc linux distribution."
 read temp
+
+exe update_system
 
 exe determine_config
 

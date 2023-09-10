@@ -38,3 +38,4 @@ sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3
 100%         2g            4G        256G
 /mnt/mnt/HDD /mnt/boot/EFI //        /mnt
 exfat        fat-32        swap      ext4
+no           no            no        home

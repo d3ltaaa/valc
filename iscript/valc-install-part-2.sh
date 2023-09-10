@@ -54,7 +54,7 @@ determine_config () {
         while true; do
 
             invalid_value=0
-
+            echo "exe update_system"
             echo "exe ena_parallel "
             echo "exe time_setup: T"
             echo "exe language_setup: L "
@@ -114,6 +114,12 @@ determine_config () {
 
 }
 
+update_system () {
+
+    notification "Update System"
+    pacman -Syu --noconfirm 
+    [ $? -ne 0 ] && return 22 || : 
+}
 
 ena_parallel () {
 
@@ -345,6 +351,9 @@ inst_part () {
     [ $? -ne 0 ] && return 39 || :
     
 }
+
+exe update_system
+
 exe determine_config
 
 exe ena_parallel

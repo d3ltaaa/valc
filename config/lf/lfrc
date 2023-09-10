@@ -1,5 +1,5 @@
 # Basic Settings
-set nopreview
+# set nopreview
 set hidden true
 set ignorecase true
 set drawbox

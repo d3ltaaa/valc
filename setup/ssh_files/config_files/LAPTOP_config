@@ -33,3 +33,4 @@ nvme0n1p1     nvme0n1p2 nvme0n1p3
 2g            4G        256G
 /mnt/boot/EFI //        /mnt
 fat-32        swap      ext4
+no            no        home
