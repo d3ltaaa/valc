@@ -1,4 +1,4 @@
-setxkbmap de
-xrandr --output DVI-D-1 --off &&
-xrandr --output DVI-D-1 --auto --right-of HDMI-1 
+#This is a generated script!
 dwmblocks &
+xrandr --auto --output eDP --left-of HDMI-1
+setxkbmap de

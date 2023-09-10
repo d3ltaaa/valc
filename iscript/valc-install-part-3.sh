@@ -168,6 +168,7 @@ inst_packages () {
         thunar \
         thermald \
     	lf \
+        udisks2 \
         feh \
         xdotool \
         zathura \
