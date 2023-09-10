@@ -518,12 +518,12 @@ partitioning () {
             if [ "${par_home_arr[i]}" == "home" ]; then
 
                 mount /dev/${par_arr[i]} ${par_mount_arr[i]} &&
-                echo "mount /dev/${par_arr[i]} ${par_mount_arr[i]}" &&
+                echo "mount /dev/${par_arr[i]} ${par_mount_arr[i]}" 
 
                 [ $? -ne 0 ] && return 27 || : 
 
-                pacstrap /mnt base linux linux-firmware &&
-                echo "pacstrap /mnt base linux linux-firmware" &&
+                pacstrap /mnt base linux linux-firmware linux-headers &&
+                echo "pacstrap /mnt base linux linux-firmware"
 
                 [ $? -ne 0 ] && return 29 || : 
             fi
