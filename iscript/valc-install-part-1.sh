@@ -341,7 +341,7 @@ mount_partitions () {
 install_kernel () {
 
     notification "Installing kernels"
-    pacstrap /mnt base linux linux-firmware
+    pacstrap /mnt base linux linux-firmware linux-headers
     [ $? -ne 0 ] && return 19 || : 
 
 }
