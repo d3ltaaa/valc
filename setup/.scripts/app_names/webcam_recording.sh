@@ -28,9 +28,23 @@ else
 fi
 
 # name
-name=$(date +"Rec_%d.%m_%H-%M")
+date_string=$(date +"%d.%m_%H-%M")
+folder_name=$(date +"node_%d.%m_%H-%M")
+rec_name=$(date +"rec_%d.%m_%H-%M")
+sum_name=$(date +"sum_%d.%m_%H-%M")
 
-read -p "Name: " -e -i $name name
+mkdir -p $path/$folder_name
 
 # actual command
-ffmpeg -f pulse -ac 2 -i $audio_dev -f v4l2 -i /dev/video0 -vcodec libx264 $path/$name.mp4
+ffmpeg -f pulse -ac 2 -i $audio_dev -f v4l2 -i /dev/video0 -vcodec libx264 $path/$folder_name/$name.mp4
+
+touch $path/$folder_name/$sum_name.txt
+
+echo "Tag:" > $path/$folder_name/$sum_name.txt
+
+echo "" > $path/$folder_name/$sum_name.txt
+
+echo "Gedanken:" > $path/$folder_name/$sum_name.txt
+
+nvim $path/$folder_name/$sum_name.txt
+
