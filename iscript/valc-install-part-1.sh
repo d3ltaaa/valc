@@ -497,7 +497,7 @@ partitioning () {
 
             elif [ "${par_type_arr[$i]}" == "exfat" ]; then
                 echo "created /dev/${disk_to_par[i]} extfat" &&
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary extfat ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
                 parted -s /dev/${disk_to_par[i]} mkpart primary extfat ${par_start_arr[$i]} ${par_end_arr[$i]} &&
                 echo "mkfs.extfat /dev/${par_arr[i]}" && 
                 mkfs.extfat /dev/${par_arr[i]} 
