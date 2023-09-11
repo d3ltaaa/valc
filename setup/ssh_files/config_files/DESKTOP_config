@@ -1,24 +1,23 @@
-HOSTNAME: DESKTOP-FH
-
+NAME: DESKTOP-FH
 
 USER: falk
-
-
-#         IN TTY             IN OS (.dwm/autostart)
 
 KEYBOARD: de-latin1 de
 
 TIME: /Europe/Berlin
 
-LANGUAGE: LANG=en_US.UTF-8
+LANGUAGE: 
+en_US.UTF-8 UTF-8
+LANG=en_US.UTF-8
 
 XORG_DDX: fbdev
 
 FOLDERS: Documents Downloads Pictures Code Video
 
-
-
 IP: 
+WLAN:
+Wlan 12
+GATE: 192.168.2.1
 LAN:  192.168.2.31
 WIFI: 192.168.2.32
 
@@ -36,6 +35,6 @@ sda          nvme0n1       nvme0n1   nvme0n1
 sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3 
 0%           0%            2G        4G
 100%         2g            4G        256G
-/mnt/mnt/HDD /mnt/boot/EFI //        /mnt
+/mnt/HDD     /boot/EFI     //        /
 exfat        fat-32        swap      ext4
 no           no            no        home

@@ -517,8 +517,8 @@ partitioning () {
 
             if [ "${par_home_arr[i]}" == "home" ]; then
 
-                mount /dev/${par_arr[i]} ${par_mount_arr[i]} &&
-                echo "mount /dev/${par_arr[i]} ${par_mount_arr[i]}" 
+                mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&
+                echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}" 
 
                 [ $? -ne 0 ] && return 27 || : 
 
@@ -542,17 +542,17 @@ partitioning () {
 
             elif [ "${par_home_arr[i]}" != "home" ]; then               
                     
-                if [ ! -e "${par_mount_arr[i]}" ]; then
+                if [ ! -e "/mnt${par_mount_arr[i]}" ]; then
 
-                    mkdir -p ${par_mount_arr[i]}
+                    mkdir -p /mnt${par_mount_arr[i]}
                     [ $? -ne 0 ] && return 26 || : 
-                    echo "Creating ${par_mount_arr[i]}"
+                    echo "Creating /mnt${par_mount_arr[i]}"
 
 
                 fi
 
-                mount /dev/${par_arr[i]} ${par_mount_arr[i]} &&
-                echo "mount /dev/${par_arr[i]} ${par_mount_arr[i]}" &&
+                mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&
+                echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}" &&
 
                 [ $? -ne 0 ] && return 27 || : 
             else

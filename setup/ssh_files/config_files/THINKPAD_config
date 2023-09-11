@@ -31,6 +31,6 @@ sda           sda       sda      sdb
 sda1          sda2      sda3     sdb1
 0%            2G        4G       0%
 2g            4G        256G     100%
-/mnt/boot/EFI //        /mnt     /mnt/CRUCIAL-SSD
+/boot/EFI     //        /        /mnt/CRUCIAL-SSD
 fat-32        swap      ext4     exfat
 no            no        home     no

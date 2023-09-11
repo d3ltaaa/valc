@@ -1,18 +1,23 @@
 #!/bin/bash
 
-CONFIG_PATH="~/.config.cfg"
+CONFIG_PATH=~/.config.cfg
+
 
 read -p "Manual ip management? [0/1]: " VALUE_IP_SETUP
 
 if [ $VALUE_IP_SETUP -eq 1 ]; then
 
         wlan=$(grep -i -w -A1 WLAN $CONFIG_PATH | awk 'NR==2')
+        echo $wlan
 
         ip_gate=$(grep -i -w GATE $CONFIG_PATH | awk '{print $2}')
+        echo $ip_gate
 
         ip_lan=$(grep -i -w LAN $CONFIG_PATH | awk '{print $2}')
+        echo $ip_lan
 
         ip_wifi=$(grep -i -w WIFI $CONFIG_PATH | awk '{print $2}')
+        echo $ip_wifi
 
 
 
