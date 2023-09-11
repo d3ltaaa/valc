@@ -500,7 +500,7 @@ partitioning () {
                 echo "parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
                 parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]} &&
                 echo "mkfs.extfat /dev/${par_arr[i]}" && 
-                mkfs.extfat /dev/${par_arr[i]} 
+                mkfs.exfat /dev/${par_arr[i]} 
 
                 [ $? -ne 0 ] && return 25 || : 
 
