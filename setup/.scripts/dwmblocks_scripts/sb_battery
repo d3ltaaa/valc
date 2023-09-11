@@ -4,6 +4,9 @@
 # acpi -bi
 # upower -i /org/freedesktop/UPower/devices/battery_BAT0
 
+if [[ ! -e /sys/class/power_supply/BAT0/capacity ]] || [[ ! -e /sys/class/power_supply/BAT0/status ]]; then
+    exit
+fi
 percent="$(cat /sys/class/power_supply/BAT0/capacity)"
 status="$(cat /sys/class/power_supply/BAT0/status)"
 # output="$(acpi -bi)"

@@ -1,0 +1,108 @@
+#!/bin/bash
+
+menu_blue () {
+
+    options=( "Connected devices" "Trusted devices" "Remove (trusted) devices" "Available devices" "Go back" "Close")
+
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+
+    connected_devices=($(bluetoothctl info | grep -w Name: | cut -d' ' -f2))
+
+    trusted_devices=($(bluetoothctl devices Trusted | grep -w Device | cut -d' ' -f3))
+
+    for (( i=0; i<${#connected_devices[@]}; i++ )); do
+        string_to_add=$(bluetoothctl devices Connected | grep -w ${connected_devices[$i]} | cut -d' ' -f2)
+        connected_devices[$i]+=" $string_to_add"
+    done
+
+    #example LinkBuds F8:4E:17:76:68:73
+    
+    for (( i=0; i<${#trusted_devices[@]}; i++ )); do
+        string_to_add=$(bluetoothctl devices Trusted | grep -w ${trusted_devices[$i]} | cut -d' ' -f2)
+        trusted_devices[$i]+=" $string_to_add"
+    done
+        
+
+
+    case $selected in 
+        "Currently connected")
+
+            select=$(printf '%s\n' "$(echo ${connected_devices[@]} | cut -d' ' -f1)" | dmenu -i)
+            
+            for (( i=0; i<${#connected_devices[@]}; i++ )); do
+                MAC_select=$(echo ${connected_devices[i]} | grep $select | cut -d' ' -f2)
+
+            done
+
+            echo "Trying to connect to: $MAC_select"
+
+            bluetoothctl disconnect $MAC_select
+
+            ;;
+
+        "Trusted devices")
+
+            select=$(printf '%s\n' "$(echo ${trusted_devices[@]} | cut -d' ' -f1)" | dmenu -i)
+
+            for (( i=0; i<${#trusted_devices[@]}; i++ )); do
+                MAC_select=$(echo ${trusted_devices[i]} | grep $select | cut -d' ' -f2)
+
+            done
+
+            echo "Trying to connect to: $MAC_select"
+
+            bluetoothctl connect $MAC_select
+            ;;
+
+        "Available devices")
+
+            duration=6
+
+            bluetoothctl scan on &
+
+            # Sleep for the desired duration
+            sleep "$duration"
+
+            # Stop the scan by killing the background process
+            kill $(pgrep bluetoothctl)
+
+            # Wait for the background process to finish
+            wait
+
+
+
+            available_devices=($(bluetoothctl devices | cut -d' ' -f3))
+    
+            select=$(printf '%s\n'  "${available_devices[@]}" | dmenu -i)
+
+
+            for (( i=0; i<${#available_devices[@]}; i++ )); do
+                string_to_add=$(bluetoothctl devices | grep -w ${available_devices[$i]} | cut -d' ' -f2)
+                available_devices[$i]+=" $string_to_add"
+            done
+
+
+            for (( i=0; i<${#available_devices[@]}; i++ )); do
+                MAC_select=$(echo ${available_devices[i]} | grep $select | cut -d' ' -f2)
+            done
+
+            echo "$MAC_select"
+
+
+            bluetoothctl connect $MAC_select
+
+            ;;
+
+        "Remove (trusted) devices")
+            ;;
+
+        "Go back")
+            # menu_main
+            ;;
+        "Close")
+            ;;
+    esac
+}
+
+menu_blue
