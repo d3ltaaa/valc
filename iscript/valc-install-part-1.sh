@@ -246,6 +246,16 @@ mount_partitions () {
                     mount $home_par /mnt
                     [ $? -ne 0 ] && return 18 || : 
 
+
+                    # get the uuid
+                    part_UUID=$(sudo blkid $home_par | grep -woP 'UUID="\K[^"]+') &&
+                    # get file system
+                    part_fs=$(lsblk -fp | grep -w $home_par | awk '{print $2}')
+                    # write line to fstab (home specific)
+                    echo "echo UUID=$part_UUID / $part_fs defaults 0 1  >> /etc/fstab" &&
+                    echo "UUID=$part_UUID / $part_fs defaults 0 1"  >> /etc/fstab
+                    [ $? -ne 0 ] && return 28 || : 
+
                     break
                 else
                     echo "No partition with that name!"
@@ -273,6 +283,15 @@ mount_partitions () {
                     mount $efi_par /mnt/boot/EFI
                     [ $? -ne 0 ] && return 18 || : 
 
+                    # get the uuid
+                    part_UUID=$(sudo blkid $efi_par | grep -woP 'UUID="\K[^"]+') &&
+                    # get file system
+                    part_fs=$(lsblk -fp | grep -w $efi_par | awk '{print $2}')
+                    # write line to fstab (efi specific)
+                    echo "echo UUID=$part_UUID /boot/EFI $part_fs defaults 0 2  >> /etc/fstab" &&
+                    echo "UUID=$part_UUID /boot/EFI $part_fs defaults 0 2"  >> /etc/fstab
+                    [ $? -ne 0 ] && return 28 || : 
+
                     break
                 else
                     echo "No partition with that name!"
@@ -299,6 +318,15 @@ mount_partitions () {
                 if echo "$partitions" | grep "$swap_par"; then
                     swapon $swap_partition 
                     [ $? -ne 0 ] && return 18 || : 
+
+                    # get the uuid
+                    part_UUID=$(sudo blkid $swap_par | grep -woP 'UUID="\K[^"]+') &&
+                    # get file system
+                    part_fs=$(lsblk -fp | grep -w $swap_par | awk '{print $2}')
+                    # write line to fstab (swap specific)
+                    echo "echo UUID=$part_UUID none $part_fs defaults 0 0  >> /etc/fstab" &&
+                    echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /etc/fstab
+                    [ $? -ne 0 ] && return 28 || : 
 
                     break
                 else
@@ -328,6 +356,15 @@ mount_partitions () {
                     mkdir -p $mount_path
                     mount $par $mount_path
                     [ $? -ne 0 ] && return 18 || : 
+
+                    # get the uuid
+                    part_UUID=$(sudo blkid $par | grep -woP 'UUID="\K[^"]+') &&
+                    # get file system
+                    part_fs=$(lsblk -fp | grep -w $par | awk '{print $2}')
+                    # write line to fstab (efi specific)
+                    echo "echo UUID=$part_UUID $mount_path $part_fs defaults 0 2  >> /etc/fstab" &&
+                    echo "UUID=$part_UUID $mount_path $part_fs defaults 0 2"  >> /etc/fstab
+                    [ $? -ne 0 ] && return 28 || : 
 
                 else
                     echo "No partition with that name!"
@@ -519,8 +556,16 @@ partitioning () {
 
                 mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&
                 echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}" 
-
                 [ $? -ne 0 ] && return 27 || : 
+
+                # get the uuid
+                echo "sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
+                part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
+                # write line to fstab (home specific)
+                echo "echo UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 1  >> /etc/fstab" &&
+                echo "UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 1"  >> /etc/fstab
+                [ $? -ne 0 ] && return 28 || : 
+
 
                 pacstrap /mnt base linux linux-firmware linux-headers &&
                 echo "pacstrap /mnt base linux linux-firmware"
@@ -531,22 +576,31 @@ partitioning () {
         done
         
         # go through partitions again and mount the rest
+        # write to fstab
         for (( i=0; i<$amount_partition; i++ )); do
 
             if [ "${par_type_arr[i]}" == "swap" ]; then
 
                 echo "swapon /dev/${par_arr[i]}" &&
                 swapon /dev/${par_arr[i]} 
+                echo "echo UUID=$UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 0  >> /etc/fstab"
                 [ $? -ne 0 ] && return 28 || : 
 
+                # get the UUID
+                echo "sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
+                part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
+                # write line to fstab (swap specific)
+                echo "echo UUID=$part_UUID none ${par_type_arr[i]} defaults 0 0  >> /etc/fstab" &&
+                echo "UUID=$part_UUID none ${par_type_arr[i]} defaults 0 0"  >> /etc/fstab
+                [ $? -ne 0 ] && return 30 || : 
 
             elif [ "${par_home_arr[i]}" != "home" ]; then               
-                    
+
                 if [ ! -e "/mnt${par_mount_arr[i]}" ]; then
 
+                    echo "Creating /mnt${par_mount_arr[i]}"
                     mkdir -p /mnt${par_mount_arr[i]}
                     [ $? -ne 0 ] && return 26 || : 
-                    echo "Creating /mnt${par_mount_arr[i]}"
 
 
                 fi
@@ -555,6 +609,15 @@ partitioning () {
                 echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}" &&
 
                 [ $? -ne 0 ] && return 27 || : 
+
+                # get the uuid
+                echo "sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
+                part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
+                # write line to fstab 
+                echo "echo UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 2  >> /etc/fstab" &&
+                echo "UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 2"  >> /etc/fstab
+                [ $? -ne 0 ] && return 28 || : 
+
             else
 
                 echo "home partition already managed!"
@@ -563,9 +626,6 @@ partitioning () {
 
         done
         
-        # generate fstab
-        echo "genfstab -U /mnt >> /mnt/etc/fstab #migth not work" &&
-        genfstab -U /mnt >> /mnt/etc/fstab && #migth not work 
         echo "cp config /mnt/config" && 
         cp config /mnt/config && 
         sleep 1
@@ -580,7 +640,7 @@ partitioning () {
             
             notification "Partitioning"
     
-            printf "Cfdisk: D \nFdisk: F \nConfig: C \nNo: N \n"
+            printf "Cfdisk: D \nFdisk: F \nNo: N \n"
             read -p "How do you want to partition?: " ans
             case $ans in
                 [Dd]* ) 
@@ -591,7 +651,6 @@ partitioning () {
                     exe fdisk_partitioning
                     [ $? -ne 0 ] && return 14 || : 
                     ;;
-                [Cc]* ) echo "config_partitioning"; break;;
                 [Nn]* ) break;;
                 * ) echo "Enter 'D', 'C' or 'N'!";;
             esac
@@ -599,8 +658,8 @@ partitioning () {
     
         exe set_file_system && 
         exe mount_partitions && 
-        exe install_kernel && 
-        exe generate_fstab
+        exe install_kernel 
+        # exe generate_fstab
     
         [ $? -ne 0 ] && return 14 || : 
     fi

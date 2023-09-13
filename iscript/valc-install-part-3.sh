@@ -68,12 +68,11 @@ determine_config () {
             echo "building_suckless"
             echo "inst_wallpaper"
             echo "inst_fonts"
-            echo "manage_ip: I"
             echo "manage_monitor: M"
             echo "kb_setup: K"
 
 
-            read -p "What do you want to use the config file for? [V/C/I/M/K]: " choice
+            read -p "What do you want to use the config file for? [V/C/M/K]: " choice
 
             choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
 
@@ -89,9 +88,6 @@ determine_config () {
                         ;;
                     c)
                         VALUE_FOLDER_SETUP=1
-                        ;;
-                    i)
-                        VALUE_IP_SETUP=1
                         ;;
                     m)
                         VALUE_MONITOR_SETUP=1
@@ -485,8 +481,6 @@ exe building_suckless
 exe inst_wallpaper
 
 exe inst_fonts
-
-exe manage_ip
 
 exe dwm_auto
 
