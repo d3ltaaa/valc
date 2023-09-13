@@ -163,6 +163,7 @@ inst_packages () {
     	firefox \
         thunar \
         thermald \
+        fuse-exfat \
     	lf \
         udisks2 \
         feh \
