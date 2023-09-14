@@ -253,6 +253,7 @@ mount_partitions () {
                     part_fs=$(lsblk -fp | grep -w $home_par | awk '{print $2}')
                     # write line to fstab (home specific)
                     echo "echo UUID=$part_UUID / $part_fs defaults 0 1  >> /mnt/etc/fstab" &&
+                    mkdir -p /mnt/etc/fstab
                     echo "UUID=$part_UUID / $part_fs defaults 0 1"  >> /mnt/etc/fstab
                     [ $? -ne 0 ] && return 28 || : 
 
@@ -289,6 +290,7 @@ mount_partitions () {
                     part_fs=$(lsblk -fp | grep -w $efi_par | awk '{print $2}')
                     # write line to fstab (efi specific)
                     echo "echo UUID=$part_UUID /boot/EFI $part_fs defaults 0 2  >> /mnt/etc/fstab" &&
+                    mkdir -p /mnt/etc/fstab
                     echo "UUID=$part_UUID /boot/EFI $part_fs defaults 0 2"  >> /mnt/etc/fstab
                     [ $? -ne 0 ] && return 28 || : 
 
@@ -325,6 +327,7 @@ mount_partitions () {
                     part_fs=$(lsblk -fp | grep -w $swap_par | awk '{print $2}')
                     # write line to fstab (swap specific)
                     echo "echo UUID=$part_UUID none $part_fs defaults 0 0  >> /mnt/etc/fstab" &&
+                    mkdir -p /mnt/etc/fstab
                     echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /mnt/etc/fstab
                     [ $? -ne 0 ] && return 28 || : 
 
@@ -363,6 +366,7 @@ mount_partitions () {
                     part_fs=$(lsblk -fp | grep -w $par | awk '{print $2}')
                     # write line to fstab (efi specific)
                     echo "echo UUID=$part_UUID $mount_path $part_fs defaults 0 2  >> /mnt/etc/fstab" &&
+                    mkdir -p /mnt/etc/fstab
                     echo "UUID=$part_UUID $mount_path $part_fs defaults 0 2"  >> /mnt/etc/fstab
                     [ $? -ne 0 ] && return 28 || : 
 
@@ -563,6 +567,7 @@ partitioning () {
                 part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 # write line to fstab (home specific)
                 echo "echo UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 1  >> /mnt/etc/fstab" &&
+                mkdir -p /mnt/etc/fstab
                 echo "UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 1"  >> /mnt/etc/fstab
                 [ $? -ne 0 ] && return 28 || : 
 
@@ -590,6 +595,7 @@ partitioning () {
                 part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 # write line to fstab (swap specific)
                 echo "echo UUID=$part_UUID none ${par_type_arr[i]} defaults 0 0  >> /mnt/etc/fstab" &&
+                mkdir -p /mnt/etc/fstab
                 echo "UUID=$part_UUID none ${par_type_arr[i]} defaults 0 0"  >> /mnt/etc/fstab
                 [ $? -ne 0 ] && return 30 || : 
 
@@ -614,6 +620,7 @@ partitioning () {
                 part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 # write line to fstab 
                 echo "echo UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 2  >> /mnt/etc/fstab" &&
+                mkdir -p /mnt/etc/fstab
                 echo "UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 2"  >> /mnt/etc/fstab
                 [ $? -ne 0 ] && return 28 || : 
 
