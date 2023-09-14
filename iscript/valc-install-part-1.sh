@@ -567,8 +567,8 @@ partitioning () {
                 [ $? -ne 0 ] && return 27 || : 
 
                 # get the uuid
-                echo "sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
-                part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
+                echo "sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
+                part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 # write line to fstab (home specific)
                 echo "echo UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 1  >> /mnt/etc/fstab" &&
                 mkdir -p /mnt/etc
@@ -596,8 +596,8 @@ partitioning () {
                 [ $? -ne 0 ] && return 28 || : 
 
                 # get the UUID
-                echo "sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
-                part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
+                echo "sudo blkid /mnt/${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
+                part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 # write line to fstab (swap specific)
                 echo "echo UUID=$part_UUID none ${par_type_arr[i]} defaults 0 0  >> /mnt/etc/fstab" &&
                 mkdir -p /mnt/etc
@@ -622,8 +622,8 @@ partitioning () {
                 [ $? -ne 0 ] && return 27 || : 
 
                 # get the uuid
-                echo "sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
-                part_UUID=$(sudo blkid /mnt${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
+                echo "sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+'" &&
+                part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 # write line to fstab 
                 echo "echo UUID=$part_UUID ${par_mount_arr[i]} ${par_type_arr[i]} defaults 0 2  >> /mnt/etc/fstab" &&
                 mkdir -p /mnt/etc
