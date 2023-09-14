@@ -383,6 +383,7 @@ dwm_auto () {
     if [ $VALUE_MONITOR_SETUP -eq 1 ] || [ $VALUE_KB_SETUP -eq 1 ]; then
         mkdir ~/.dwm
         touch ~/.dwm/autostart.sh
+        chmod +x ~/.dwm/autostart.sh
 
         echo "#This is a generated script!" > ~/.dwm/autostart.sh
         echo "dwmblocks &" >> ~/.dwm/autostart.sh
