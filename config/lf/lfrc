@@ -161,6 +161,7 @@ map gvc cd ~/.valc/config
 map gvi cd ~/.valc/iscript
 map gusb cd /run/media
 
+map gmnt cd /mnt
 map xtr trash_item
 
 map xscp scp_push
