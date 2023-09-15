@@ -168,15 +168,16 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
-	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} }, 
-    { MODKEY|ShiftMask,	        	XK_s,	   spawn,	       SHCMD("menu_system") },
+	{ MODKEY|ShiftMask,             XK_q,       quit,          {0} },
+	{ MODKEY|ControlMask|ShiftMask, XK_q,       quit,          {1} }, 
+    { MODKEY|ShiftMask,	        	XK_s,	    spawn,	       SHCMD("menu_system") },
+    { MODKEY,                       XK_s,       spawn,         SHCMD("menu_options") },
     { 0,                            0x1008ff13, spawn,         SHCMD("scr_volume inc") },
     { 0,                            0x1008ff11, spawn,         SHCMD("scr_volume dec") },
     { 0,                            0x1008ff12, spawn,         SHCMD("scr_volume mute") }, 
     { 0,                            0x1008ff03, spawn,         SHCMD("scr_light down") }, 
     { 0,                            0x1008ff02, spawn,         SHCMD("scr_light up") }, 
-    { MODKEY,                       XK_s,      spawn,          SHCMD("com.symless.synergy") },
+    { MODKEY|ControlMask,           XK_s,      spawn,          SHCMD("com.symless.synergy") },
 
 }; 
 
