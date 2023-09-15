@@ -13,7 +13,7 @@ fi
 
 
 if [[ ! -e $path/trash_history.log ]]; then
-    touch $path/trash_histroy.log
+    touch $path/trash_history.log
 fi
 
 
