@@ -53,6 +53,19 @@ install_tor () {
     fi
 
 }
+
+copy_configs () {
+
+    if [[ -e /run/media/$USER/INST/config/ip ]]; then
+
+        echo "Copying ssh files ..."
+        cp /run/media/$USER/INST/config/ip/* /home/$USER/.ssh/ && echo "Succeeded!"
+    else
+        echo "No ssh files to copy!"
+    fi
+
+}
+
 check_for_fritzing () {
 
     fritzing_name=$(ls $APP_PATH | grep fritzing)
@@ -91,8 +104,31 @@ check_for_tor () {
     fi
 }
 
+add_git_config () {
+
+    git_output=$(cat ~/.gitconfig | grep -w name)
+    if [ -z $git_output ]; then
+        read -p "What is your email?: " email
+        read -p "What is your git name?: " git_name
+
+        git config --global user.email "$email" && 
+        git config --global user.name "$git_name" && 
+        echo "Succeeded!"
+    else
+        echo "Git already configured!"
+    fi
+
+}
+
+run_synergy () {
+    cat /run/media/$USER/INST/config/synergy_code | xclip -selection clipboard
+    flatpak run com.symless.synergy
+}
+
 check_for_disk
 check_for_fritzing
 check_for_synergy
 check_for_tor
-
+copy_configs
+add_git_config
+run_synergy
