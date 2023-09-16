@@ -59,5 +59,8 @@ if [ $VALUE_IP_SETUP -eq 1 ]; then
 
         nmcli connection modify "$wlan" ipv4.method manual ipv4.address $ip_wifi/24 ipv4.gateway $ip_gate
 
-    fi
+fi
+
+sudo systemctl restart NetworkManager
+
 

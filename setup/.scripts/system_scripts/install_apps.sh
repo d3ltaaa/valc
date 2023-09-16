@@ -107,7 +107,7 @@ check_for_tor () {
 add_git_config () {
 
     git_output=$(cat ~/.gitconfig | grep -w name)
-    if [ -z $git_output ]; then
+    if [ -z "$git_output" ]; then
         read -p "What is your email?: " email
         read -p "What is your git name?: " git_name
 
