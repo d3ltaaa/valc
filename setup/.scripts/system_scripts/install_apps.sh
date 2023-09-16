@@ -31,7 +31,6 @@ install_synergy () {
     else
         echo "Installing: Synergy ..."
         flatpak install $APP_PATH/$synergy_name && \
-        flatpak update && \
         flatpak list | grep synergy && \
         echo "Installed: Synergy!" || \
         echo "Failed installing: Synergy!"
