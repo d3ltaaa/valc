@@ -121,7 +121,7 @@ add_git_config () {
 }
 
 run_synergy () {
-    cat /run/media/$USER/INST/config/synergy_code | xclip -selection clipboard
+    cat /run/media/$USER/INST/config/synergy_code | tr -d '\n' | xclip -selection clipboard
     flatpak run com.symless.synergy
 }
 
