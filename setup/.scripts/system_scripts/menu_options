@@ -103,49 +103,141 @@ menu_wifi () {
 
 menu_blue () {
 
-    options=( "Connect to device" "Scan for devices" "Go back" "Close")
+    options=( "Show devices"  "Connect devices" "Go back")
 
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
 
-    case $selected in
-        "Connect to device" )
+    case $selected in 
 
-            device_amount=$(bluetoothctl devices Paired | wc -l)
+        "Show devices")
 
-            if [[ $device_amount = 1 ]]; then
+            devices_options=()
+            devices_list=($(bluetoothctl devices | grep -w Device | cut -d' ' -f3))
 
-                # select=$(bluetoothctl devices Paired | awk '{print $3}' | printf "%s\n" | dmenu -l 1 -i)
-                # select=$(bluetoothctl devices Paired | printf "\n "| awk '{print $3}' | dmenu -l 1 -i)
-                select=$(printf "$(bluetoothctl devices Paired | awk '{print $3}')\n " | dmenu -l 1)
-                MAC=$(bluetoothctl devices Paired | awk {'print $2'})
-                    [ -z $MAC ] && MAC=NoDeviceFound # Prevents accidental disconnect error
+            # go through devices 
+            for (( i=0; i<${#devices_list[@]}; i++)); do
 
-            else
-                select=$(bluetoothctl devices Paired | awk '{print $3}' | dmenu -i)
-                MAC=$(bluetoothctl devices Paired | grep $select | awk {'print $2'}) 
-                    [ -z $MAC ] && MAC=NoDeviceFound # Prevents accidental disconnect error
-            fi
+                if bluetoothctl info | grep -w Name | grep ${devices_list[i]} || bluetoothctl devices Trusted | grep -w Device | grep ${devices_list[i]}; then
 
-            connect=$(bluetoothctl info $MAC | grep Connected: | awk '{print $2}')
+                    devices_options+=(${devices_list[i]})
 
-            if [[ $connect = no ]]; then 
-                notify-send "Attempting to connect to $select"
-                bluetoothctl connect $MAC && notify-send "Connected Successfully" || notify-send "Failed to Connect"
+                    if bluetoothctl info | grep -w Name | grep ${devices_list[i]}; then
+                        devices_options[i]+=" (Connected)"
+                    fi
 
-            elif [[ $connect = yes ]]; then
-                notify-send "Attempting to disconnect $select" && notify-send "Disconnected Successfully" || notify-send "Failed to Disconnect"
-                bluetoothctl disconnect $MAC 
+                    if bluetoothctl devices Trusted | grep -w Device | grep ${devices_list[i]}; then
+                        devices_options[i]+=" (Trusted)"
+                    fi
+                fi
 
-            fi
-            menu_blue
+            done
+
+            devices_options+=("Go back")
+
+            select=$(printf '%s\n' "${devices_options[@]}" | dmenu -i)
+
+            case $select in 
+                "Go back")
+                    menu_blue
+                    ;;
+                *)
+
+                    case $select in 
+                        *"(Connected) (Trusted)"*)
+
+                            options=("Disconnect" "Untrust" "Go back")
+
+                            further_select=$(printf '%s\n' "${options[@]}" | dmenu -i -p "$select")
+
+                            select=$(echo $select | cut -d' ' -f1)
+
+                            MAC_select=$(bluetoothctl devices | grep $select | cut -d' ' -f2)
+
+                            echo $MAC_select
+
+                            case $further_select in 
+                                "Disconnect")
+                                    echo "Disconnecting $select ($MAC_select) ..."
+                                    bluetoothctl disconnect $MAC_select
+                                    menu_blue
+                                    ;;
+                                "Untrust")
+                                    echo "Untrusting $select ($MAC_select) ..."
+                                    bluetoothctl untrust $MAC_select
+                                    menu_blue
+                                    ;;
+                                "Go back")
+                                    menu_blue
+                                    ;;
+                            esac
+                            ;;
+                        *"(Connected)"*)
+
+                            options=("Disconnect" "Trust" "Go back")
+
+                            further_select=$(printf '%s\n' "${options[@]}" | dmenu -i -p "$select")
+
+                            select=$(echo $select | cut -d' ' -f1)
+
+                            MAC_select=$(bluetoothctl devices | grep $select | cut -d' ' -f2)
+
+                            echo $MAC_select
+
+                            case $further_select in 
+                                "Disconnect")
+                                    echo "Disconnecting $select ($MAC_select) ..."
+                                    bluetoothctl disconnect $MAC_select
+                                    menu_blue
+                                    ;;
+                                "Trust")
+                                    echo "Trusting $select ($MAC_select) ..."
+                                    bluetoothctl trust $MAC_select
+                                    menu_blue
+                                    ;;
+                                "Go back")
+                                    menu_blue
+                                    ;;
+                            esac
+                            ;;
+                        *"(Trusted)"*)
+
+                            options=("Connect" "Untrust" "Go back")
+
+                            further_select=$(printf '%s\n' "${options[@]}" | dmenu -i -p "$select")
+
+                            select=$(echo $select | cut -d' ' -f1)
+
+                            MAC_select=$(bluetoothctl devices | grep $select | cut -d' ' -f2)
+
+                            echo $MAC_select
+
+                            case $further_select in 
+                                "Connect")
+                                    echo "Connecting $select ($MAC_select) ..."
+                                    bluetoothctl connect $MAC_select
+                                    menu_blue
+                                    ;;
+                                "Untrust")
+                                    echo "Untrusting $select ($MAC_select) ..."
+                                    bluetoothctl untrust $MAC_select
+                                    menu_blue
+                                    ;;
+                                "Go back")
+                                    menu_blue
+                                    ;;
+                            esac
+                            ;;
+                    esac
+                    
+                    ;;
+            esac
             ;;
 
-        "Scan for devices" )
-             
+        
+        "Connect devices")
 
             duration=6
-    
-            # Start the scan in the background
+
             bluetoothctl scan on &
 
             # Sleep for the desired duration
@@ -157,36 +249,71 @@ menu_blue () {
             # Wait for the background process to finish
             wait
 
-            # Fetch the list of devices
-            select_to_connect=$(bluetoothctl devices | awk '{print $3}' | dmenu -i)
 
-            MAC=$(bluetoothctl devices | grep $select_to_connect | awk {'print $2'}) 
-                [ -z $MAC ] && MAC=NoDeviceFound # Prevents accidental disconnect error
-            
-            connect=$(bluetoothctl info $MAC | grep Connected: | awk '{print $2}')
 
-            if [[ $connect = no ]]; then 
-                
-                notify-send "Attempting to connect to $select_to_connect"
-                bluetoothctl connect $MAC && notify-send "Connected Successfully" || notify-send "Failed to Connect"
+            available_devices=($(bluetoothctl devices | cut -d' ' -f3))
+    
+            # add go back option
+            devices_options=()
 
-            elif [[ $connect = yes ]]; then
-                notify-send "Attempting to disconnect $select_to_connect" && notify-send "Disconnected Successfully" || notify-send "Failed to Disconnect"
-                bluetoothctl disconnect $MAC 
+            for (( i=0; i<${#available_devices[@]}; i++)); do
 
-            fi
+                if  bluetoothctl devices Connected | grep -w Device | grep ${available_devices[i]}; then
 
-            menu_blue
+                    echo "${available_devices[i]} already connected!"
+
+                else
+
+                    if bluetoothctl devices Trusted | grep -w Device | grep ${available_devices[i]}; then
+
+                        echo "${available_devices[i]} not connected but trusted!"
+
+                    else
+
+                        devices_options+=("${available_devices[i]}")
+                    fi
+
+                fi
+
+            done
+
+            devices_options+=("Go back")
+
+            select=$(printf '%s\n'  "${devices_options[@]}" | dmenu -i)
+
+            case $select in
+
+                "Go back")
+                    menu_blue
+                    ;;
+                *)
+
+                    for (( i=0; i<${#available_devices[@]}; i++ )); do
+                        string_to_add=$(bluetoothctl devices | grep -w ${available_devices[$i]} | cut -d' ' -f2)
+                        available_devices[$i]+=" $string_to_add"
+                    done
+
+
+                    for (( i=0; i<${#available_devices[@]}; i++ )); do
+                        MAC_select=$(echo ${available_devices[i]} | grep $select | cut -d' ' -f2)
+                    done
+
+                    echo "Trying to connect to: $MAC_select"
+                    bluetoothctl connect $MAC_select
+                    menu_blue
+                    ;;
+
+            esac
+
 
             ;;
-        "Go back" )
-            menu_options 
-            ;;
-        "Close" )
+
+
+        "Go back")
+            menu_main
             ;;
     esac
 
-    # menu_main
 }
 
 menu_mon () {
