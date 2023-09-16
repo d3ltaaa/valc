@@ -177,7 +177,7 @@ static const Key keys[] = {
     { 0,                            0x1008ff12, spawn,         SHCMD("scr_volume mute") }, 
     { 0,                            0x1008ff03, spawn,         SHCMD("scr_light down") }, 
     { 0,                            0x1008ff02, spawn,         SHCMD("scr_light up") }, 
-    { MODKEY|ControlMask,           XK_s,      spawn,          SHCMD("com.symless.synergy") },
+    { MODKEY|ControlMask,           XK_s,      spawn,          SHCMD("flatpak run com.symless.synergy") },
 
 }; 
 
