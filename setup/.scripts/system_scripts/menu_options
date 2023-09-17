@@ -158,12 +158,14 @@ menu_blue () {
                             case $further_select in 
                                 "Disconnect")
                                     echo "Disconnecting $select ($MAC_select) ..."
-                                    bluetoothctl disconnect $MAC_select
+                                    bluetoothctl disconnect $MAC_select && dunstify "Disconnected $select!" || \
+                                        dunstify "Disconnecting failed!"
                                     menu_blue
                                     ;;
                                 "Untrust")
                                     echo "Untrusting $select ($MAC_select) ..."
-                                    bluetoothctl untrust $MAC_select
+                                    bluetoothctl untrust $MAC_select && dunstify "Untrust $select succeeded!" || \
+                                        dunstify "Untrust failed!"
                                     menu_blue
                                     ;;
                                 "Go back")
@@ -186,12 +188,14 @@ menu_blue () {
                             case $further_select in 
                                 "Disconnect")
                                     echo "Disconnecting $select ($MAC_select) ..."
-                                    bluetoothctl disconnect $MAC_select
+                                    bluetoothctl disconnect $MAC_select && dunstify "Disconnected $select!" || \
+                                        dunstify "Disconnecting failed!"
                                     menu_blue
                                     ;;
                                 "Trust")
                                     echo "Trusting $select ($MAC_select) ..."
-                                    bluetoothctl trust $MAC_select
+                                    bluetoothctl trust $MAC_select $$ dunstify "Trusting $selected succeeded!" || \
+                                        dunstify "Trusting failed!"
                                     menu_blue
                                     ;;
                                 "Go back")
@@ -214,12 +218,14 @@ menu_blue () {
                             case $further_select in 
                                 "Connect")
                                     echo "Connecting $select ($MAC_select) ..."
-                                    bluetoothctl connect $MAC_select
+                                    bluetoothctl connect $MAC_select && dunstify "Connected to $select" || \
+                                        dunstify "Connection failed!"
                                     menu_blue
                                     ;;
                                 "Untrust")
                                     echo "Untrusting $select ($MAC_select) ..."
-                                    bluetoothctl untrust $MAC_select
+                                    bluetoothctl untrust $MAC_select && dunstify "Untrust successful!" || \
+                                        dunstify "Untrust failed!"
                                     menu_blue
                                     ;;
                                 "Go back")
@@ -299,7 +305,8 @@ menu_blue () {
                     done
 
                     echo "Trying to connect to: $MAC_select"
-                    bluetoothctl connect $MAC_select
+                    bluetoothctl connect $MAC_select && dunstify "Connected to $select!" || \
+                        dunstify "Connection failed!"
                     menu_blue
                     ;;
 
