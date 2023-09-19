@@ -1,0 +1,210 @@
+#!/bin/bash
+
+path="/home/$USER/.Trash"
+
+if [[ ! -d $path ]]; then
+    mkdir -p $path
+fi
+
+
+if [[ ! -d $path/trash ]]; then
+    mkdir -p $path/trash
+fi
+
+
+if [[ ! -e $path/trash_history.log ]]; then
+    touch $path/trash_history.log
+fi
+
+
+_trash_() {
+
+    # if file does not exist
+    if [[ ! -e $1 ]]; then
+        echo "Does not exist!"
+        exit 1
+    fi
+
+    # get old file path
+    name=$(echo $1 | rev | cut -d'/' -f1 | rev)
+    old_path=$(echo $1 | rev | cut -d'/' -f1 --complement | rev)
+    date=$(date +"%d.%m.%Y - %H:%M")
+
+
+    # if it already exists in trash
+    if [[ -e $path/trash/$name ]]; then
+        new_name="$name"
+
+        # rename it in a loop
+        while [[ -e $new_name ]]; do
+            echo "The file already exists in trash!"
+            read -p "Give it another name instead!: " new_name
+        done
+
+        # move it to the trash
+        mv $1 $path/trash/$new_name
+        echo "name:$new_name" >> $path/trash_history.log
+
+    else
+
+        # move it to the trash
+        mv $1 $path/trash
+        echo "name:$name" >> $path/trash_history.log
+
+    fi
+
+
+    # update trash_history.log
+    echo "old path:$old_path" >> $path/trash_history.log
+    echo "full path:$old_path/$name" >> $path/trash_history.log
+    echo "time:$date" >> $path/trash_history.log
+    echo "" >> $path/trash_history.log
+
+}
+
+_recover_() {
+
+    # update name_to_search
+    name_to_search=$1
+
+    # find out how many lines losely match
+    grep_count=$(grep -i "name:" $path/trash_history.log | grep -c "$name_to_search" | cut -d':' -f1)
+    name=$(grep -i "name:" $path/trash_history.log | grep "$name_to_search" | cut -d':' -f2)
+
+    if [[ $grep_count == "0" ]]; then
+        echo "Element not found in trash!"
+        return 1
+    fi
+
+    # if more than one line match
+    if [[ ! $grep_count == "1" ]]; then
+        # look if one has a "hard" match / the word does not continue after $name_to_search (-w)
+        grep_count=$(grep -i "name:" $path/trash_history.log | grep -c -w "$name_to_search" | cut -d':' -f1)
+        name=$(grep -i "name:" $path/trash_history.log | grep -w "$name_to_search" | cut -d':' -f2)
+    fi
+
+
+    # if nothing matches exactly 
+    while [[ ! $grep_count == "1" ]]; do
+        # ask for another more specific word to search for
+        clear
+        echo "There is not one specific element that matches the search!: "
+        grep -i "name:" $path/trash_history.log | grep "$name_to_search"
+        read -p "Search for: " -e -i "$name_to_search" name_to_search
+
+        # get grep count of new word
+        grep_count=$(grep -i "name:" $path/trash_history.log | grep -c "$name_to_search" | cut -d':' -f1)
+        name=$(grep -i "name:" $path/trash_history.log | grep "$name_to_search" | cut -d':' -f2)
+
+        # if more than one match
+        if [[ ! $grep_count == "1" ]]; then
+            # look if now one has a "hard" (-w)
+            grep_count=$(grep -i "name:" $path/trash_history.log | grep -c -w "$name_to_search" | cut -d':' -f1)
+            name=$(grep -i "name:" $path/trash_history.log | grep -w "$name_to_search" | cut -d':' -f2)
+
+        fi
+        # if still not one line can be singled out, than loop
+    done
+
+
+
+    # finally one line was found
+    # update name, full_path and old_path
+    
+    full_path=$(grep -A2 -w "name:$name" $path/trash_history.log | grep "full path:" | cut -d':' -f2)
+    old_path=$(grep -A1 -w "name:$name" $path/trash_history.log | grep "old path:" | cut -d':' -f2)
+
+    
+
+    # check if the old path is occupied
+    if [[ -e $full_path ]]; then
+        new_path="$full_path"
+
+        # ask for another name to give the file, so it does not collide
+        new_name=$(basename $full_path)
+        while [[ -e $new_path ]]; do
+            echo "The file already exists in the location!"
+            read -p "Give it another name instead!: " -e -i $new_name new_name
+            new_path="$old_path/$new_name"
+        done
+
+        # prompt for continue
+        CONTINUE=""
+        until [[ $CONTINUE =~ (y|n) ]]; do
+            echo "Recover - $name"
+            read -rp "Path - $full_path [y/n]: " -e -i y CONTINUE
+        done
+
+        if [[ $CONTINUE == "y" ]]; then
+            echo "Recovering ..."
+        else
+            echo "Recovering cancelled!"
+            exit 
+        fi
+        # move out of trash
+        echo "mv $path/trash/$name $new_path"
+        mv $path/trash/$name $new_path
+    
+    else
+        
+        # prompt for continue
+        CONTINUE=""
+        until [[ $CONTINUE =~ (y|n) ]]; do
+            echo "Recover - $name"
+            read -rp "Path - $full_path [y/n]: " -e -i y CONTINUE
+        done
+
+        if [[ $CONTINUE == "y" ]]; then
+            echo "Recovering ..."
+        else
+            echo "Recovering cancelled!"
+            exit 
+        fi
+
+        # move out of trash
+        echo "mv $path/trash/$name $full_path"
+        mv $path/trash/$name $full_path
+
+    fi
+
+    # clear entry
+    line_num_begin=$(grep -n -w "name:$name" $path/trash_history.log | cut -d':' -f1) 
+    ((line_num_begin))
+    line_num_end=$(($line_num_begin + 3))
+    sed -i "${line_num_begin},${line_num_end}d" $path/trash_history.log
+    
+
+}
+
+
+if [[ $# -eq 1 ]]; then
+    echo "No Arguments"
+    exit 1
+
+elif [[ $# -eq 2 ]]; then
+
+    if [[ $1 == "r" ]]; then
+        clear
+        _recover_ $2
+    elif [[ $1 == "t" ]]; then
+        _trash_ $2
+    fi
+
+else
+    if [[ $1 == "r" ]]; then
+            
+        for (( i=2; i<=$#; i++ )); do
+            clear
+            _recover_ ${!i}
+        done
+
+    elif [[ $1 == "t" ]]; then
+
+        for (( i=2; i<=$#; i++ )); do
+            _trash_ ${!i}
+        done
+    fi
+
+fi
+
+

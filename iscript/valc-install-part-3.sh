@@ -165,6 +165,7 @@ inst_packages () {
         thermald \
         fuse-exfat \
     	lf \
+        picom \
         udisks2 \
         feh \
         xdotool \
@@ -388,6 +389,7 @@ dwm_auto () {
 
         echo "#This is a generated script!" > ~/.dwm/autostart.sh
         echo "dwmblocks &" >> ~/.dwm/autostart.sh
+        echo "picom &" >> ~/.dwm/autostart.sh
     fi
 }
 
