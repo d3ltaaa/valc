@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # check if on thinkpad
-device_name=$(grep NAME: .config.cfg | awk '{print $2}')
+device_name=$(grep NAME: /home/falk/.config.cfg | awk '{print $2}')
 if [[ ! "$device_name" == "THINKPAD-FH" ]]; then
     echo "Executing the script on the wrong device!"
     exit 1
@@ -31,7 +31,6 @@ fi
 
 
 # name
-name=""
 date_string=$(date +"%d.%m_%H-%M")
 folder_name=$(date +"node_%d.%m_%H-%M")
 rec_name=$(date +"rec_%d.%m_%H-%M")
@@ -42,7 +41,7 @@ read -rp "Path: " -e -i "/mnt/CRUCIAL-SSD/Videos/Recordings/$folder_name" path
 mkdir -p $path
 
 # actual command
-ffmpeg -f pulse -ac 2 -i $audio_dev -f v4l2 -i /dev/video0 -vcodec libx264 $path/$name.mp4
+ffmpeg -f pulse -ac 2 -i $audio_dev -f v4l2 -i /dev/video0 -vcodec libx264 $path/$rec_name.mp4
 
 # After recording
 touch $path/$sum_name.txt
@@ -53,7 +52,8 @@ echo "" >> $path/$sum_name.txt
 
 echo "Gedanken:" >> $path/$sum_name.txt
 
-nvim $path/$sum_name.txt &
+st -e bash -c "nvim $path/$sum_name.txt" &
 
-mpv $path/$name.mp4
+dwmswallow $WINDOWID; mpv $path/$rec_name.mp4
+
 
