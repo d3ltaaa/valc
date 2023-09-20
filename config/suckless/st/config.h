@@ -21,7 +21,7 @@ static int borderpx = 40;
 static char *shell = "/bin/sh";
 char *utmp = NULL;
 /* scroll program: to enable use a string like "scroll" */
-char *scroll = NULL; 
+char *scroll = NULL;
 char *stty_args = "stty raw pass8 nl -echo -iexten -cstopb 38400";
 
 /* identification sequence returned in DA and DECID */
@@ -105,6 +105,8 @@ char *termname = "st-256color";
  *
  *	stty tabs
  */
+
+/* Terminal colors (16 first used in escape sequence) */
 unsigned int tabspaces = 4;
 
 /* bg opacity */
@@ -151,6 +153,22 @@ unsigned int defaultbg = 259;
 unsigned int defaultcs = 256;
 static unsigned int defaultrcs = 257;
 
+unsigned int const currentBg = 6, buffSize = 2048;
+/// Enable double / triple click yanking / selection of word / line.
+int const mouseYank = 1, mouseSelect = 0;
+/// [Vim Browse] Colors for search results currently on screen.
+unsigned int const highlightBg = 160, highlightFg = 15;
+char const wDelS[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^`{|}~", wDelL[] = " \t";
+char *nmKeys [] = {              ///< Shortcusts executed in normal mode
+  "R/Building\nN", "r/Building\n", "X/juli@machine\nN", "x/juli@machine\n",
+  "Q?[Leaving vim, starting execution]\n","F/: error:\nN", "f/: error:\n", "DQf"
+};
+unsigned int const amountNmKeys = sizeof(nmKeys) / sizeof(*nmKeys);
+/// Style of the {command, search} string shown in the right corner (y,v,V,/)
+Glyph styleSearch = {' ', ATTR_ITALIC | ATTR_BOLD_FAINT, 7, 16};
+Glyph style[] = {{' ',ATTR_ITALIC|ATTR_FAINT,15,16}, {' ',ATTR_ITALIC,232,11},
+                 {' ', ATTR_ITALIC, 232, 4}, {' ', ATTR_ITALIC, 232, 12}};
+
 /*
  * Default shape of cursor
  * 2: Block ("█")
@@ -179,6 +197,7 @@ static unsigned int mousebg = 0;
  * doesn't match the ones requested.
  */
 static unsigned int defaultattr = 11;
+
 /*
  * Force mouse select/shortcuts while mask is active (when MODE_MOUSE is set).
  * Note that if you want to use ShiftMask with selmasks, set this to an other
@@ -192,8 +211,8 @@ static uint forcemousemod = ShiftMask;
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
-	{ ControlMask,          Button4, kscrollup,      {.i = 1} },
-	{ ControlMask,          Button5, kscrolldown,    {.i = 1} },
+	{ ShiftMask,            Button4, kscrollup,      {.i = 1} },
+	{ ShiftMask,            Button5, kscrolldown,    {.i = 1} },
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
 	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
@@ -223,8 +242,7 @@ static Shortcut shortcuts[] = {
 	{ ControlMask,          XK_Page_Down,   kscrolldown,    {.i = -1} },
     { ControlMask,          XK_k,           kscrollup,      {.i =  1} },
 	{ ControlMask,          XK_j,           kscrolldown,    {.i =  1} },
-
-
+	{ MODKEY,               XK_c,           normalMode,     {.i =  0} },
 };
 
 /*
