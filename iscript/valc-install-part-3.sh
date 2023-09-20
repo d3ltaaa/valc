@@ -389,7 +389,6 @@ dwm_auto () {
 
         echo "#This is a generated script!" > ~/.dwm/autostart.sh
         echo "dwmblocks &" >> ~/.dwm/autostart.sh
-        echo "picom &" >> ~/.dwm/autostart.sh
     fi
 }
 
@@ -424,6 +423,7 @@ monitor_setup () {
 
     fi
 
+    echo "picom &" >> ~/.dwm/autostart.sh
 }
 
 kb_setup () {

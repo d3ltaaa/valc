@@ -45,15 +45,15 @@ mkdir -p $path
 ffmpeg -f pulse -ac 2 -i $audio_dev -f v4l2 -i /dev/video0 -vcodec libx264 $path/$name.mp4
 
 # After recording
-touch $path/$folder_name/$sum_name.txt
+touch $path/$sum_name.txt
 
-echo "Tag:" >> $path/$folder_name/$sum_name.txt
+echo "Tag:" >> $path/$sum_name.txt
 
-echo "" >> $path/$folder_name/$sum_name.txt
+echo "" >> $path/$sum_name.txt
 
-echo "Gedanken:" >> $path/$folder_name/$sum_name.txt
+echo "Gedanken:" >> $path/$sum_name.txt
 
-nvim $path/$folder_name/$sum_name.txt &
+nvim $path/$sum_name.txt &
 
 mpv $path/$name.mp4
 
