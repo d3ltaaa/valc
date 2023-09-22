@@ -2,38 +2,85 @@
 
 # WORK IN PROGRESS
 
-# Prompt the user to select an output device
-devices=$(pacmd list-sinks | grep -E 'index:|device.description' | awk '{if ($1 == "index:") printf "%s ", $2; else printf "%s\n", $0}')
-selected_device=$(echo "$devices" | dmenu -i -l 10 -p "Select output device:" | awk '{print $1}')
+get_devices() {
+	
 
-# Prompt the user to select a volume level
-volume=$(pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $selected_device + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,')
-new_volume=$(echo -e "5%+\n5%-\n10%+\n10%-\nCustom" | dmenu -i -p "Set volume for $selected_device to $volume%:" | sed 's/%//')
-case $new_volume in
-    5%+)
-        pactl set-sink-volume $selected_device +5%
-        ;;
-    5%-)
-        pactl set-sink-volume $selected_device -5%
-        ;;
-    10%+)
-        pactl set-sink-volume $selected_device +10%
-        ;;
-    10%-)
-        pactl set-sink-volume $selected_device -10%
-        ;;
-    Custom)
-        custom_volume=$(echo "" | dmenu -p "Enter custom volume (0-100):" | sed 's/%//')
-        if [[ $custom_volume =~ ^[0-9]+$ ]]; then
-            pactl set-sink-volume $selected_device $custom_volume%
-        fi
-        ;;
-esac
+	default=$(pacmd list-sinks | grep '*' | awk '{ print $3 }')
+        default=$((default + 1))	
+	devices=$(pacmd list-sinks | grep device.description | sed 's/device.description = //' | tr -d '"' | tr -d '\t' | awk -v idx="$default" '{if (NR==idx) $1="*"$1; print}')
+	selected=$(printf '%s\n' "${devices[@]}" | dmenu -i)
 
-# Display the volume levels of all running applications
-sink_inputs=$(pacmd list-sink-inputs | grep -E 'index:|application.process.binary|media.name' | awk '{if ($1 == "index:") printf "%s ", $2; else printf "%s\n", $0}')
-echo "$sink_inputs" | while read -r index application_name media_name; do
-    volume=$(pactl list sink-inputs | grep -A 15 "Sink Input #$index$" | grep '^[[:space:]]Volume:' | awk '{print $5}')
-    echo "$application_name ($media_name): $volume"
-done | dmenu -i -l 10 -p "Application volumes:"
+	echo "devices = $devices"
+	echo " selected = $selected"
+	echo "${#devices[@]}"
+   	for i in "${!devices[@]}"; do
+		echo "y"
+		if [[ "${devices[$i]}" == "$selected" ]]; then
+			index="$i"
+			echo "yep: index: $index"
+			break
+       		fi
+		echo "x"
+	done	
+	#	echo "selected: $selected"
+	#echo "index: $index"
+
+
+}
+
+action_func () {
+	options=("volume up" "volume down" "Mute")
+	selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+	case $selected in
+		"volume up")
+			pactl set-sink-volume 2 +30%
+			;;
+		"volume down")
+			pactl set-sink-volume @DEFAULT_SINK@ -5%
+			;;
+		"Mute")
+			pactl set-sink-mute @DEFAULT_SINK@ 0
+			;;
+	esac
+}
+
+set_default_func () {
+	options=("Linkbuds" "HP-Speaker" "Asus-Speaker")
+
+	selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+	case $selected in
+		"Linkbuds")
+			pactl set-default-sink 2
+			;;
+		"HP-Speaker")
+			pactl set-default-sink 1
+			;;
+		"Asus-Speaker")
+			pactl set-default-sink 0
+			;;
+	esac
+
+}
+
+main_func () {
+	options=("Output-device" "General Volume" "Application Volume")
+	selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+	case $selected in
+		"Output-device")
+			set_default_func
+			main_func
+			;;
+		"General Volume")
+			action_func	
+			main_func
+			;;
+		"General Volume")
+			
+			main_func
+			;;
+	esac	
+}
+get_devices
 

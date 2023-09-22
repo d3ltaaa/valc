@@ -1,0 +1,140 @@
+#!/bin/bash
+
+
+menu_wifi () {
+    # get wifi status
+    # connection_lan=$(nmcli -t -f NAME connection show --active | head -n 1)
+    connection_lan=$(nmcli connection show --active | grep ethernet | cut -d' ' -f3)
+    search_for=$(nmcli connection show --active | grep wifi | cut -d' ' -f1)
+    if [ ! -z $search_for ]; then
+        connection_wifi=$(nmcli -f NAME connection show --active | grep -w $search_for)
+    else
+        connection_wifi=""
+    fi
+    wifi_status=$(nmcli radio wifi)
+
+
+    case $connection_lan in
+        "")
+            status_lan="Not connected"
+            ;;
+        *)
+            status_lan="Connection $connection_lan"
+            ;;
+    esac
+
+    case $connection_wifi in
+        "")
+            case $wifi_status in
+                "enabled")
+                    status_wifi="Enabled"
+                    ;;
+                *)
+                    status_wifi="Disabled"
+                    ;;
+            esac
+            ;;
+        *)
+            status_wifi="Connected to $connection_wifi"
+            ;;
+    esac
+
+
+    echo $status_lan
+    echo $status_wifi
+
+    # options=("Internet ($status)" "Wifi list" "Go back")
+
+    options=("Wired - ($status_lan)" "Wifi - ($status_wifi)" "Go back")
+
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    case $selected in
+        "Wired - ($status_lan)")
+            menu_wifi
+            ;;
+        "Wifi - (Enabled)")
+
+            further_options=("List devices" "Disable Controller" "Go back")
+
+            further_selected=$(printf '%s\n' "${further_options[@]}" | dmenu -i)
+
+            case $further_selected in
+
+                "List devices")
+                    if [ ! -z "$(nmcli -f SSID dev wifi list)" ]; then
+                        wifi_selected="$(nmcli -f SSID dev wifi list | tail -n +2 | awk '{$1=$1};1' | dmenu -i)"
+                        echo "selected wifi: $wifi_selected"
+                    fi
+
+                    if [ ! -z $wifi_selected ]; then
+
+                        password=$(:| dmenu -i -p "Password:")
+
+                        nmcli d wifi connect "$wifi_selected" password "$password"  
+                    fi
+
+                    menu_wifi
+                    ;;
+                "Disable Controller")
+                    nmcli radio wifi off
+                    menu_wifi
+                    ;;
+                "Go back")
+                    menu_wifi
+                    ;;
+            esac
+            ;;
+        "Wifi - (Disabled)")
+            ;;
+        "Wifi - ($status_wifi)")
+            ;;
+        "Go back")
+            menu_main
+            ;;
+    esac
+
+    case $selected in 
+        "Wired - ($status_lan)")
+            menu_wifi
+            ;;
+        "Internet ($status)")
+
+            case $status in
+                "Disabled")
+                    nmcli radio wifi on
+                    menu_wifi
+                    ;;
+                "Enabled - Wired")
+                    menu_wifi
+                    ;;
+                "Enabled - Not Connected")
+                    nmcli radio wifi off
+                    menu_wifi
+                    ;;
+                *)
+                    nmcli radio wifi off
+                    menu_wifi
+                    ;;
+            esac
+            ;;
+
+        "Wifi list")
+
+            selected="$(nmcli -f SSID dev wifi list | tail -n +2 | awk '{$1=$1};1' | dmenu -i)"
+            echo "selected wifi: $selected"
+
+            password=$(:| dmenu -i -p "Password:")
+
+            nmcli d wifi connect "$selected" password "$password"  
+
+            menu_wifi
+            ;;
+
+        "Go back")
+
+            menu_options menu_main
+            ;;
+    esac 
+}
+menu_wifi

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+case $BUTTON in 
+    1) 
+        st -e bash -c "
+        sudo pacman --noconfirm -Syu && dunstify System 'Up to date!'"
+        ;;
+esac
+
+updates=$(pacman -Qu | wc -l)
+
+if [[ ! $updates -eq 0 ]]; then
+    echo "    $updates     "
+fi

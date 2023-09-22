@@ -1,8 +1,9 @@
 #!/bin/bash
 
+
 menu_main () {
     # Define first layer
-    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Phone server" "USB" "Close")
+    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Phone server" "USB" "Updates" "Close")
 
     # display options
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
@@ -35,105 +36,110 @@ menu_main () {
         "USB")
             menu_usb
             ;;
+        "Updates")
+            menu_updates
+            ;;
         "Close")
             ;;
     esac
 }
 
-connect_to_wifi () {
-    # 0/1 "$wifi_selected"/"$wifi_to_disconnect"
-    
-    case $1 in
-        "1")
-            # if wifi_selected is known already
-            if nmcli connection show | grep -q -w "$2"; then
-
-                # if no error pops up while connecting without password
-                nmcli con up "$2" || \
-
-                    # try with password
-                    password=$(:| dmenu -i -p "Password:") && \
-                    nmcli d wifi connect "$2" password "$password"  
-
-                # if wifi_selected is not known 
-            elif [[ ! -z $2 ]]; then
-
-                # try with password
-                password=$(:| dmenu -i -p "Password:")
-                nmcli d wifi connect "$2" password "$password"  
-            fi
-            ;;
-        "0")
-            nmcli con down "$2"
-            ;;
-        *)
-            echo "Improper use of arguments!"
-            dunstify "Improper use of arguments"
-            ;;
-    esac
-}
-
-
-list_wifi_devices () {
-
-    # wifi_selected 
-
-    # if the list command does work
-    if [[ ! -z "$(nmcli -f SSID dev wifi list)" ]]; then
-        wifi_list="$(nmcli -f SSID dev wifi list | tail -n +2 | awk '{$1=$1};1')"
-        wifi_selected=$(echo -e "Go back\n$wifi_list" | dmenu -i)
-        echo "selected wifi: $wifi_selected"
-    fi
-
-
-    case $wifi_selected in
-        "Go back")
-            return
-            ;;
-        *)
-
-            connect_to_wifi 1 "$wifi_selected"
-            ;;
-    esac
-
-}
-
-
-turn_wifi_controller () {
-    case $1 in
-        "1")
-            nmcli radio wifi on
-            ;;
-        "0")
-            nmcli radio wifi off
-            ;;
-        *)
-            echo "Wrong use of arguments"
-            dunstify "Wrong use of arguments"
-            ;;
-    esac
-}
-
-remove_wifi_connection () {
-
-    wifi_list="$(nmcli -t -f NAME connection show | awk '{$1=$1};1')"
-    wifi_select=$(echo -e "Go back\n$wifi_list" | dmenu -i)
-
-    case $wifi_select in
-        "lo")
-            return
-            ;;
-        "Go back")
-            return
-            ;;
-        *)
-            nmcli connection delete "$wifi_select"
-            ;;
-    esac
-
-}
 
 menu_wifi () {
+
+    connect_to_wifi () {
+        # 0/1 "$wifi_selected"/"$wifi_to_disconnect"
+        
+        case $1 in
+            "1")
+                # if wifi_selected is known already
+                if nmcli connection show | grep -q -w "$2"; then
+    
+                    # if no error pops up while connecting without password
+                    nmcli con up "$2" || \
+    
+                        # try with password
+                        password=$(:| dmenu -i -p "Password:") && \
+                        nmcli d wifi connect "$2" password "$password"  
+    
+                    # if wifi_selected is not known 
+                elif [[ ! -z $2 ]]; then
+    
+                    # try with password
+                    password=$(:| dmenu -i -p "Password:")
+                    nmcli d wifi connect "$2" password "$password"  
+                fi
+                ;;
+            "0")
+                nmcli con down "$2"
+                ;;
+            *)
+                echo "Improper use of arguments!"
+                dunstify "Improper use of arguments"
+                ;;
+        esac
+    }
+    
+    
+    list_wifi_devices () {
+    
+        # wifi_selected 
+    
+        # if the list command does work
+        if [[ ! -z "$(nmcli -f SSID dev wifi list)" ]]; then
+            wifi_list="$(nmcli -f SSID dev wifi list | tail -n +2 | awk '{$1=$1};1')"
+            wifi_selected=$(echo -e "Go back\n$wifi_list" | dmenu -i)
+            echo "selected wifi: $wifi_selected"
+        fi
+    
+    
+        case $wifi_selected in
+            "Go back")
+                return
+                ;;
+            *)
+    
+                connect_to_wifi 1 "$wifi_selected"
+                ;;
+        esac
+    
+    }
+    
+    
+    turn_wifi_controller () {
+        case $1 in
+            "1")
+                nmcli radio wifi on
+                ;;
+            "0")
+                nmcli radio wifi off
+                ;;
+            *)
+                echo "Wrong use of arguments"
+                dunstify "Wrong use of arguments"
+                ;;
+        esac
+    }
+    
+    remove_wifi_connection () {
+    
+        wifi_list="$(nmcli -t -f NAME connection show | awk '{$1=$1};1')"
+        wifi_select=$(echo -e "Go back\n$wifi_list" | dmenu -i)
+    
+        case $wifi_select in
+            "lo")
+                return
+                ;;
+            "Go back")
+                return
+                ;;
+            *)
+                nmcli connection delete "$wifi_select"
+                ;;
+        esac
+    
+    }
+
     # get wifi status
     # connection_lan=$(nmcli -t -f NAME connection show --active | head -n 1)
     connection_lan=$(nmcli connection show --active | grep ethernet | cut -d' ' -f3)
@@ -712,6 +718,26 @@ menu_usb () {
 
 }
 
+menu_updates () {
+
+
+    updates=$(pacman -Qu | wc -l)
+    options=("Update $updates packages" "Go back")
+
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    case $selected in
+        "Update $updates packages")
+            st -e bash -c "
+            sudo pacman --noconfirm -Syu && dunstify System 'Up to date!'"
+            ;;
+        "Go back")
+            menu_main
+            ;;
+    esac
+
+}
+
 case $1 in
     "wifi" )
         menu_wifi
@@ -730,6 +756,9 @@ case $1 in
         ;;
     "usb" )
         menu_usb
+        ;;
+    "updates")
+        menu_updates
         ;;
     * )
         menu_main

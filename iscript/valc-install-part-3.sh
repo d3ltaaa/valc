@@ -190,6 +190,7 @@ inst_packages () {
     	fuse2 \
         ripgrep \
         pamixer \
+        pulsemixer \
         sox \
         gimp \
     	imagemagick

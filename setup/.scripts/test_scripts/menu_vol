@@ -1,0 +1,184 @@
+#!/bin/bash
+
+
+# todo: applications with same name like firefox firefox lead to errors
+
+menu_vol () {
+
+    update_variables () {
+
+        sink_amount=$(pulsemixer --list-sinks | grep Sink: | wc -l)
+
+        output=$(pulsemixer --list-sinks | grep Sink:  | cut -d',' -f2 | sed 's/^.//' | cut -d' ' -f1 --complement)
+
+        sink_list=()
+
+        for (( i=1; i<=$sink_amount; i++ )); do
+            sink_list+=("$(printf "$output" | awk -v num=$i 'NR==num')")
+        done
+
+    }
+
+
+    change_output_device () {
+
+        update_variables
+        further_further_options=()
+        further_further_options+=("${sink_list[@]}")
+        further_further_options+=("Go back")
+
+        further_further_selected=$(printf '%s\n' "${further_further_options[@]}" | dmenu -i)
+
+        case $further_further_selected in
+            "Go back")
+                menu_vol
+                ;;
+            *)
+                #get corresponding index
+                index=$(pulsemixer --list-sinks | grep "$further_further_selected" | grep Sink: | awk '{print $3}' | cut -d'-' -f2 | sed 's/,//')
+                pacmd set-default-sink $index 
+                menu_vol
+                ;;
+        esac
+
+
+    }
+
+
+    default_sink=$(pulsemixer --list |grep "Default" | grep "Sink:" | cut -d',' -f2 | sed 's/^.//' | cut -d' ' -f1 --complement)
+
+    if [[ $(pulsemixer --get-mute) -eq 1 ]]; then
+        default_volume="M"
+    else
+        default_volume="$(pulsemixer --get-volume | awk '{print $1}')%"
+    fi
+
+    options=("Output: $default_sink" "Volume: $default_volume" "Applications" "Go back")
+
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+
+    case $selected in
+
+        "Output: $default_sink")
+
+            further_options=("Change Output device" "Go back")
+
+            further_selected=$(printf '%s\n' "${further_options[@]}" | dmenu -i)
+
+            case $further_selected in
+                "Change Output device")
+                    change_ouput_device
+                    ;;
+                "Go back")
+                    menu_vol
+                    ;;
+            esac
+            ;;
+
+        "Volume: $default_volume")
+
+            further_further_selected=""
+
+            while true; do
+
+                further_further_options=("+10%" "-10%" "Mute" "Go back")
+
+
+                global_volume="$(pulsemixer --get-volume | awk '{print $1}')%"
+                if [[ "$(pulsemixer --get-mute)" == "1" ]]; then
+                    global_volume="M"
+                fi
+                further_further_selected=$(printf '%s\n' "${further_further_options[@]}" | dmenu -i -p "Global: $global_volume")
+
+                case $further_further_selected in
+
+                    "+10%")
+                        pulsemixer --change-volume +10
+                        ;;
+                    "-10%")
+                        pulsemixer --change-volume -10
+                        ;;
+                    "Mute")
+                        pulsemixer --toggle-mute
+                        ;;
+                    "Go back")
+                        break
+                        ;;
+                esac
+                        
+
+
+            done
+            
+            if [[ "$further_further_selected" == "Go back" ]]; then
+                menu_vol
+            fi
+
+            ;;
+
+        "Applications")
+
+                application_amount=$(pulsemixer --list | grep -c "Sink input:")
+                output=$(pulsemixer --list | grep "Sink input:" | cut -d',' -f2 | awk '{print $2}' | sed 's/,//')
+                application_list=()
+                for (( i=1; i<=$application_amount; i++ )); do
+                    application_list+=("$(printf "$output" | awk -v num=$i 'NR==num')")
+                done
+
+                fff_options=()
+                fff_options+=("${application_list[@]}")
+                fff_options+=("Go back")
+                fff_selected=$(printf '%s\n' "${fff_options[@]}" | dmenu -i)
+
+                case $fff_selected in
+                    "Go back")
+                        menu_vol
+                        ;;
+                    *)
+
+                        while true; do
+
+                            ffff_options=("+10%" "-10%" "Mute" "Go back")
+
+                            # get sink-input-id
+                            sink_input_id=$(pulsemixer --list-sinks | grep "$fff_selected" | grep "sink-input-" | awk '{print $4}' | sed 's/,//')
+
+                            application_volume="$(pulsemixer --id "$sink_input_id" --get-volume | awk '{print $1}')%"
+                            if [[ "$(pulsemixer --id "$sink_input_id" --get-mute)" == "1" ]]; then
+                                application_volume="M"
+                            fi
+
+                            ffff_selected=$(printf '%s\n' "${ffff_options[@]}" | dmenu -i -p "$fff_selected: $application_volume")
+
+                            case $ffff_selected in
+                                "Go back")
+                                    break
+                                    ;;
+                                "+10%")
+                                    pulsemixer --id "$sink_input_id" --change-volume +10
+                                    ;;
+                                "-10%")
+                                    pulsemixer --id "$sink_input_id" --change-volume -10
+                                    ;;
+                                "Mute")
+                                    pulsemixer --id "$sink_input_id" --toggle-mute
+                                    ;;
+                            esac
+
+                        done
+
+                        if [[ "$ffff_selected" == "Go back" ]]; then
+                            menu_vol
+                        fi
+
+                        ;;
+
+                esac
+
+                ;;
+    esac
+
+
+}
+
+menu_vol
