@@ -3,7 +3,7 @@
 
 menu_main () {
     # Define first layer
-    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Phone server" "USB" "Updates" "Close")
+    options=("Wifi" "Bluetooth" "Monitors" "Audio" "Tablet-Mode" "Energy-Mode" "Themes" "Phone server" "USB" " Updates" "Close")
 
     # display options
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
@@ -36,7 +36,7 @@ menu_main () {
         "USB")
             menu_usb
             ;;
-        "Updates")
+        " Updates")
             menu_updates
             ;;
         "Close")
