@@ -178,6 +178,7 @@ inst_packages () {
         neovim \
         dunst \
         xwallpaper \
+        ffmpeg4.4 \
         xclip \
         mpv \
         yt-dlp \

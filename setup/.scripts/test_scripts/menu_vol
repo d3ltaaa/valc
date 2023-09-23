@@ -119,11 +119,17 @@ menu_vol () {
         "Applications")
 
                 application_amount=$(pulsemixer --list | grep -c "Sink input:")
-                output=$(pulsemixer --list | grep "Sink input:" | cut -d',' -f2 | awk '{print $2}' | sed 's/,//')
-                application_list=()
-                for (( i=1; i<=$application_amount; i++ )); do
-                    application_list+=("$(printf "$output" | awk -v num=$i 'NR==num')")
+                output=($(pulsemixer --list | grep "Sink input:" | cut -d',' -f2 | awk '{print $2}' | sed 's/,//'))
+
+
+                for element in "${output[@]}"; do
+                    # Check if the element is not already in the unique array
+
+                    if [[ ! " ${application_list[@]} " =~ " $element " ]]; then
+                        application_list+=("$element")
+                    fi
                 done
+
 
                 fff_options=()
                 fff_options+=("${application_list[@]}")
@@ -136,16 +142,37 @@ menu_vol () {
                         ;;
                     *)
 
+                        sink_input_id=()
+                        sink_input_id=($(pulsemixer --list-sinks | grep "$fff_selected" | grep "sink-input-" | awk '{print $4}' | sed 's/,//'))
+
+                        if [[ ${#sink_input_id[@]} -gt 1 ]]; then
+
+                            temp_options=(${sink_input_id[@]})
+                            temp_options+=("Go back")
+
+                            sink_input_id=""
+                            sink_input_id="$(printf '%s\n' "${temp_options[@]}" | dmenu -i)"
+
+                            case $sink_input_id in
+                                "Go back")
+                                    menu_vol
+                                    ;;
+                            esac
+
+                        fi
+
                         while true; do
 
                             ffff_options=("+10%" "-10%" "Mute" "Go back")
 
                             # get sink-input-id
-                            sink_input_id=$(pulsemixer --list-sinks | grep "$fff_selected" | grep "sink-input-" | awk '{print $4}' | sed 's/,//')
+
 
                             application_volume="$(pulsemixer --id "$sink_input_id" --get-volume | awk '{print $1}')%"
+
+                            
                             if [[ "$(pulsemixer --id "$sink_input_id" --get-mute)" == "1" ]]; then
-                                application_volume="M"
+                                    application_volume="M"
                             fi
 
                             ffff_selected=$(printf '%s\n' "${ffff_options[@]}" | dmenu -i -p "$fff_selected: $application_volume")
