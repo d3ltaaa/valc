@@ -512,8 +512,8 @@ partitioning () {
 
             VALUE_EXTERN=""
             if [ ! "${par_home_arr[$i]}" == "extern" ]; then
-                until [[ $VALUE_IP_SETUP =~ (Y|y|N|n) ]]; do
-                    if [ ! -z $VALUE_IP_SETUP ]; then
+                until [[ $VALUE_EXTERN =~ (Y|y|N|n) ]]; do
+                    if [ ! -z $VALUE_EXTERN ]; then
                         echo "Enter 'y' or 'n'!"
                     fi
                     read -p "Do you want to change the external disk? [Y/N]: " -e -i n VALUE_EXTERN
