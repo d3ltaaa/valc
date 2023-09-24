@@ -33,8 +33,8 @@ TABLET: 0
 PARTITION: dual
 sda          nvme0n1       nvme0n1   nvme0n1
 sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3 
-0%           0%            2G        18G
-100%         2g            18G       256G
+0%           0%            2G        20G
+100%         2g            20G       256G
 /mnt/HDD     /boot/EFI     //        /
 exfat        fat-32        swap      ext4
 extern       no            no        home

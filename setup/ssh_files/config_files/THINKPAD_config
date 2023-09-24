@@ -29,8 +29,8 @@ TABLET: 0
 PARTITION:
 sda           sda       sda      sdb
 sda1          sda2      sda3     sdb1
-0%            2G        10G       0%
-2g            10G       100%     100%
+0%            2G        12G       0%
+2g            12G       100%     100%
 /boot/EFI     //        /        /mnt/CRUCIAL-SSD
 fat-32        swap      ext4     exfat
 no            no        home     extern

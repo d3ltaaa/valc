@@ -29,8 +29,8 @@ TABLET: 1
 PARTITION:
 nvme0n1       nvme0n1   nvme0n1
 nvme0n1p1     nvme0n1p2 nvme0n1p3 
-0%            2G        18G
-2g            18G       100%
+0%            2G        22G
+2g            22G       100%
 /boot/EFI     //        /
 fat-32        swap      ext4
 no            no        home
