@@ -418,8 +418,13 @@ network_manager () {
 
 systemd_setup () {
 
+    notification "systemd & initcpio"
     sed -i 's/#HandlePowerKey=poweroff/HandlePowerKey=poweroff/' /etc/systemd/logind.conf
     sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=hibernate/' /etc/systemd/logind.conf
+    sed -i 's/^HOOKS=(base udev/HOOKS=(base udev resume/' /etc/mkinitcpio.conf
+
+    mkinitcpio -P
+    grub-mkconfig -o /boot/grub/grub.cfg
 
 }
 
