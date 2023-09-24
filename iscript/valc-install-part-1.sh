@@ -511,7 +511,7 @@ partitioning () {
             
 
             VALUE_EXTERN=""
-            if [ ! "${par_home_arr[$i]}" == "extern" ]; then
+            if [ "${par_home_arr[$i]}" == "extern" ]; then
                 until [[ $VALUE_EXTERN =~ (Y|y|N|n) ]]; do
                     if [ ! -z $VALUE_EXTERN ]; then
                         echo "Enter 'y' or 'n'!"
