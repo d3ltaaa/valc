@@ -1,20 +1,23 @@
 #!/bin/bash
 
 # Define the options for the system actions menu
-options=("Shutdown" "Restart" "Sleep")
+options=("󰐥  Shutdown" "󰤁  Hibernate" "  Restart" "󰤄  Sleep")
 
 # Use dmenu to display the options and prompt the user to select one
 selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
 
 # Depending on which option was selected, perform the corresponding system action
 case $selected in
-    "Shutdown")
+    "󰐥  Shutdown")
         systemctl poweroff
         ;;
-    "Restart")
+    "󰤁  Hibernate")
+        systemctl hibernate
+        ;;
+    "  Restart")
         systemctl reboot
         ;;
-    "Sleep")
+    "󰤄  Sleep")
         systemctl hybrid-sleep
         ;;
 esac
