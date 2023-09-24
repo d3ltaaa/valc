@@ -330,12 +330,13 @@ grub_setup () {
 
 
     if [[ $VALUE_GRUB_SETUP -eq 1 ]]; then
+
         disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
         par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
         par_type_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
         dual_boot="$(cat .config.cfg | grep -w PARTITION: | awk '{print $2}')"
 
-        for (( i=0; i<${par_type_arr[@]}; i++ )); do
+        for (( i=0; i<${#par_type_arr[@]}; i++ )); do
             if [[ "${par_type_arr[$i]}" == "swap" ]]; then
                 sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="resume=\/dev\/'"${par_arr[$i]}"'"/' /etc/default/grub
             fi
