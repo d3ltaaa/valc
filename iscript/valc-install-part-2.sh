@@ -416,6 +416,13 @@ network_manager () {
 
 }
 
+systemd_setup () {
+
+    sed -i 's/#HandlePowerKey=poweroff/HandlePowerKey=poweroff/' /etc/systemd/logind.conf
+    sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=hibernate/' /etc/systemd/logind.conf
+
+}
+
 inst_part () {
    
     notification "Installing next valc-installation-part"
@@ -458,6 +465,8 @@ exe inst_important
 exe grub_setup
 
 exe network_manager
+
+exe systemd_setup
 
 exe inst_part
 
