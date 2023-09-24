@@ -510,50 +510,60 @@ partitioning () {
             fi
             
 
-            # going through partitions and creating the partitions and changing the file system type
-            if [ "${par_type_arr[$i]}" == "fat-32" ]; then
-                echo "created /dev/${disk_to_par[i]} fat32" &&
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
-                parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]} &&
-                echo "mkfs.fat -F32 /dev/${par_arr[i]}" &&
-                mkfs.fat -F32 /dev/${par_arr[i]} 
-
-                [ $? -ne 0 ] && return 22 || : 
-
-
-            elif [ "${par_type_arr[$i]}" == "swap" ]; then
-                echo "created /dev/${disk_to_par[i]} linux-swap" &&
-                parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]} &&
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
-                echo "mkswap /dev/${par_arr[i]}" && 
-                mkswap /dev/${par_arr[i]} 
-
-                [ $? -ne 0 ] && return 23 || : 
-
-            elif [ "${par_type_arr[$i]}" == "ext4" ]; then
-                echo "created /dev/${disk_to_par[i]} ext4" &&
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
-                parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]} &&
-                echo "mkfs.ext4 /dev/${par_arr[i]}" &&
-                mkfs.ext4 /dev/${par_arr[i]} 
-
-                [ $? -ne 0 ] && return 24 || : 
-
-
-            elif [ "${par_type_arr[$i]}" == "exfat" ]; then
-                echo "created /dev/${disk_to_par[i]} extfat" &&
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
-                parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]} &&
-                echo "mkfs.extfat /dev/${par_arr[i]}" && 
-                mkfs.exfat /dev/${par_arr[i]} 
-
-                [ $? -ne 0 ] && return 25 || : 
-
-
+            VALUE_EXTERN=""
+            if [ ! "${par_home_arr[$i]}" == "extern" ]; then
+                until [[ $VALUE_IP_SETUP =~ (Y|y|N|n) ]]; do
+                    if [ ! -z $VALUE_IP_SETUP ]; then
+                        echo "Enter 'y' or 'n'!"
+                    fi
+                    read -p "Do you want to change the external disk? [Y/N]: " -e -i n VALUE_EXTERN
+                done
             fi
 
+            if [[ ! "$VALUE_EXTERN" =~ (N|n) ]]; then
+
+                # going through partitions and creating the partitions and changing the file system type
+                if [ "${par_type_arr[$i]}" == "fat-32" ]; then
+                    echo "created /dev/${disk_to_par[i]} fat32" &&
+                    echo "parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                    parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                    echo "mkfs.fat -F32 /dev/${par_arr[i]}" &&
+                    mkfs.fat -F32 /dev/${par_arr[i]} 
+
+                    [ $? -ne 0 ] && return 22 || : 
 
 
+                elif [ "${par_type_arr[$i]}" == "swap" ]; then
+                    echo "created /dev/${disk_to_par[i]} linux-swap" &&
+                    parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                    echo "parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                    echo "mkswap /dev/${par_arr[i]}" && 
+                    mkswap /dev/${par_arr[i]} 
+
+                    [ $? -ne 0 ] && return 23 || : 
+
+                elif [ "${par_type_arr[$i]}" == "ext4" ]; then
+                    echo "created /dev/${disk_to_par[i]} ext4" &&
+                    echo "parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                    parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                    echo "mkfs.ext4 /dev/${par_arr[i]}" &&
+                    mkfs.ext4 /dev/${par_arr[i]} 
+
+                    [ $? -ne 0 ] && return 24 || : 
+
+
+                elif [ "${par_type_arr[$i]}" == "exfat" ]; then
+                    echo "created /dev/${disk_to_par[i]} extfat" &&
+                    echo "parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}" &&
+                    parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]} &&
+                    echo "mkfs.extfat /dev/${par_arr[i]}" && 
+                    mkfs.exfat /dev/${par_arr[i]} 
+
+                    [ $? -ne 0 ] && return 25 || : 
+
+
+                fi
+            fi
 
         done
 
