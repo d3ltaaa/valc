@@ -39,6 +39,7 @@ VALUE_LANG_SETUP=0
 VALUE_KB_SETUP=0
 VALUE_HOSTNAME_SETUP=0
 VALUE_USERNAME_SETUP=0
+VALUE_GRUB_SETUP=0
 
 
 determine_config () {
@@ -68,11 +69,11 @@ determine_config () {
             echo "exe user_mod "
             echo "exe inst_sudo "
             echo "exe inst_important "
-            echo "exe grub_setup "
+            echo "exe grub_setup: G "
             echo "exe network_manager "
             echo "exe inst_part"
 
-            read -p "What do you want to use the config file for? [T/L/K/H/U]: " choice
+            read -p "What do you want to use the config file for? [T/L/K/H/U/G]: " choice
 
             choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
 
@@ -97,6 +98,10 @@ determine_config () {
                         ;;
                     u)
                         VALUE_USERNAME_SETUP=1
+                        ;;
+
+                    g)
+                        VALUE_GRUB_SETUP=1
                         ;;
                     *)
                         invalid_value=1
@@ -323,6 +328,73 @@ grub_setup () {
     grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader=GRUB --removable 
     [ $? -ne 0 ] && return 35 || :
 
+
+    if [[ $VALUE_GRUB_SETUP -eq 1 ]]; then
+        disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
+        par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
+        par_type_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
+        dual_boot="$(cat .config.cfg | grep -w PARTITION: | awk '{print $2}')"
+
+        for (( i=0; i<${par_type_arr[@]}; i++ )); do
+            if [[ "${par_type_arr[$i]}" == "swap" ]]; then
+                sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="resume=\/dev\/'"${par_arr[$i]}"'"/' /etc/default/grub
+            fi
+        done
+
+        if [[ "$dual_boot" == "dual" ]]; then
+            sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=-1/' /etc/default/grub
+            sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
+        else
+            sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
+        fi
+
+    else
+
+        GRUB_PAR=""
+
+        until [[ -e $GRUB_PAR ]]; do
+
+            if [[ ! -z $GRUB_PAR ]]; then
+
+                echo "Give valid partition name (or 'no')!"
+
+            fi
+
+            read -p "What is the swap partition (GRUB-SETUP): " -e -i "/dev/" GRUB_PAR
+
+            if [[ $GRUB_PAR == "no" ]]; then
+                break
+            fi
+
+        done
+        
+        if [[ ! $GRUB_PAR == "no" ]]; then
+            sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="resume=\/dev\/'"$GRUB_PAR"'"/' /etc/default/grub
+        fi
+
+
+
+        GRUB_DUAL=""
+
+        until [[ $GRUB_DUAL =~ (dual|no) ]]; do
+
+            if [[ ! -z $GRUB_DUAL ]]; then
+
+                echo "Either: dual or no!"
+
+            fi
+
+            read -p "Do you want to dual boot?" -e -i "no" GRUB_DUAL
+
+        done
+        
+        if [[ "$GRUB_DUAL" == "dual" ]]; then
+            sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=-1/' /etc/default/grub
+            sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
+        else
+            sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
+        fi
+    fi
 
     # sed -i 's/quiet/pci=noaer/g' /etc/default/grub
     # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub
