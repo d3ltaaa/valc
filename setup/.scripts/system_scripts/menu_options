@@ -278,16 +278,16 @@ menu_blue () {
             # go through devices 
             for (( i=0; i<${#devices_list[@]}; i++)); do
 
-                if bluetoothctl info | grep -w Name | grep ${devices_list[i]} || bluetoothctl devices Trusted | grep -w Device | grep ${devices_list[i]}; then
+                if bluetoothctl info | grep -w Name | grep ${devices_list[$i]} || bluetoothctl devices Trusted | grep -w Device | grep ${devices_list[$i]}; then
 
-                    devices_options+=(${devices_list[i]})
+                    devices_options+=(${devices_list[$i]})
 
                     if bluetoothctl info | grep -w Name | grep ${devices_list[i]}; then
-                        devices_options[i]+=" (󰂯  Connected)"
+                        devices_options[$i]+=" (󰂯  Connected)"
                     fi
 
                     if bluetoothctl devices Trusted | grep -w Device | grep ${devices_list[i]}; then
-                        devices_options[i]+=" (󰂳  Trusted)"
+                        devices_options[$i]+=" (󰂳  Trusted)"
                     fi
                 fi
 
@@ -306,7 +306,7 @@ menu_blue () {
                     case $select in 
                         *"(󰂯  Connected) (󰂳  Trusted)"*)
 
-                            options=("󰂲  Disconnect" "󰂱  Untrust" "  Go back")
+                            options=("󰂲  Disconnect" "󰂲  Untrust" "  Go back")
 
                             further_select=$(printf '%s\n' "${options[@]}" | dmenu -i -p "$select")
 
@@ -355,7 +355,7 @@ menu_blue () {
                                     ;;
                                 "󰂱  Trust")
                                     echo "Trusting $select ($MAC_select) ..."
-                                    bluetoothctl trust $MAC_select $$ dunstify "Trusting $selected succeeded!" || \
+                                    bluetoothctl trust $MAC_select && dunstify "Trusting $select succeeded!" || \
                                         dunstify "Trusting failed!"
                                     menu_blue
                                     ;;
