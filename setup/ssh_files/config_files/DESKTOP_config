@@ -30,7 +30,7 @@ TURN-OFF: DVI-D-1
 TABLET: 0
 
 
-PARTITION:
+PARTITION: dual
 sda          nvme0n1       nvme0n1   nvme0n1
 sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3 
 0%           0%            2G        18G
