@@ -127,7 +127,7 @@ video_setup () {
     if [ $VALUE_VIDEO_SETUP -eq 1 ]; then
 
         graphics_driver=$(grep -i -w GRAPHICS_DRIVER: $CONFIG_PATH | awk '{print $2}')
-        sudo pacman --noconfirm -S  $grahpics_driver
+        sudo pacman --noconfirm -S  $graphics_driver
 
     else
         while true; do
