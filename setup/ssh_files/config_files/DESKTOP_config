@@ -10,7 +10,7 @@ LANGUAGE:
 en_US.UTF-8 UTF-8
 LANG=en_US.UTF-8
 
-GRAPHICS_DRIVER: nvidia
+GRAPHICS_DRIVER: nvidia-open
 
 FOLDERS: Documents Downloads Pictures Code Video
 
