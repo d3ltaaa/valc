@@ -10,7 +10,7 @@ LANGUAGE:
 en_US.UTF-8 UTF-8
 LANG=en_US.UTF-8 
 
-XORG_DDX: fbdev
+GRAPHICS_DRIVER: xf86-video-fbdev
 
 FOLDERS: Documents Downloads Pictures Code Video
 
