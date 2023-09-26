@@ -347,6 +347,7 @@ grub_setup () {
             sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
         else
             # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
+            echo "ok"
         fi
 
     else
@@ -394,6 +395,7 @@ grub_setup () {
             sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
         else
             # sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=0/' /etc/default/grub
+            echo ok
         fi
     fi
 
