@@ -404,18 +404,18 @@ monitor_setup () {
     
     if [ $VALUE_MONITOR_SETUP -eq 1 ]; then
         mon_arr=($(grep -i -w MONITOR $CONFIG_PATH | cut -d ' ' -f2-))
-        turn_off=($(grep -i -w TURN-OFF $CONFIG_PATH | cut -d ' ' -f2-))
+        # turn_off=($(grep -i -w TURN-OFF $CONFIG_PATH | cut -d ' ' -f2-))
 
 
-        for mon in ${turn_off[@]}; do
-            echo "xrandr --output $mon --off " >> ~/.dwm/autostart.sh
-        done
+        # for mon in ${turn_off[@]}; do
+        #     echo "xrandr --output $mon --off " >> ~/.dwm/autostart.sh
+        # done
     
 
         monitor_count=${#mon_arr[@]}
 
 
-        string="xrandr --auto --output ${mon_arr[0]}"
+        string="xrandr --output ${mon_arr[0]}"
 
         for (( i=1; i<$monitor_count; i++ )); do
             string+=" --left-of ${mon_arr[i]}"
