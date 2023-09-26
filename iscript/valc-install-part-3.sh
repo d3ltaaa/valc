@@ -126,8 +126,8 @@ video_setup () {
     notification "Installing video driver"
     if [ $VALUE_VIDEO_SETUP -eq 1 ]; then
 
-        ddx_driver=$(grep -i -w XORG_DDX $CONFIG_PATH | awk '{print $2}')
-        sudo pacman --noconfirm -S  xf86-video-$ddx_driver
+        graphics_driver=$(grep -i -w GRAPHICS_DRIVER: $CONFIG_PATH | awk '{print $2}')
+        sudo pacman --noconfirm -S  $grahpics_driver
 
     else
         while true; do
