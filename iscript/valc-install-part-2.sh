@@ -334,7 +334,7 @@ grub_setup () {
         disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
         par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
         par_type_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
-        dual_boot="$(grep -w PARTITION: $CONFIG_PATH | awk '{print $2}')"
+        dual_boot=$(grep -i -w PARTITION: $CONFIG_PATH | awk '{print $2}')
 
         for (( i=0; i<${#par_type_arr[@]}; i++ )); do
             if [[ "${par_type_arr[$i]}" == "swap" ]]; then
@@ -343,7 +343,7 @@ grub_setup () {
         done
 
         if [[ "$dual_boot" == "dual" ]]; then
-            sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=-1/' /etc/default/grub
+            sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=-1/' /etc/default/grub
             sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
         else
             sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
