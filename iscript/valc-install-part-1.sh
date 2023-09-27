@@ -405,7 +405,9 @@ fdisk_partitioning () {
     lsblk -f -p
     read -p "What disk do you want to partition? [N]: " disk
     case $par in
-        [Nn] ) ;;
+        [Nn] ) 
+            echo ok
+            ;;
         *)
             partitions=$(lsblk -p -n -o NAME)
             partition_count=$(echo "$partitions" | grep -c "$disk")
@@ -432,7 +434,9 @@ cfdisk_partitioning () {
     lsblk -f -p
     read -p "What disk do you want to partition? [N]: " disk
     case $par in
-        [Nn] ) ;;
+        [Nn] ) 
+            echo ok
+            ;;
         *)
             partitions=$(lsblk -p -n -o NAME)
             partition_count=$(echo "$partitions" | grep -c "$disk")
