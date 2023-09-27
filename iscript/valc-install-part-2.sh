@@ -352,17 +352,18 @@ grub_setup () {
 
     else
 
-        GRUB_PAR=""
+        GRUB_PAR="temp"
 
-        until [[ -e $GRUB_PAR ]]; do
+        until [[ -e /dev/$GRUB_PAR ]]; do
 
-            if [[ ! -z $GRUB_PAR ]]; then
+            if [[ ! -z /dev/$GRUB_PAR ]]; then
 
                 echo "Give valid partition name (or 'no')!"
 
             fi
 
-            read -p "What is the swap partition (GRUB-SETUP): " -e -i "/dev/" GRUB_PAR
+            lsblk
+            read -p "What is the swap partition (GRUB-SETUP): /dev/" GRUB_PAR
 
             if [[ $GRUB_PAR == "no" ]]; then
                 break
@@ -370,7 +371,7 @@ grub_setup () {
 
         done
         
-        if [[ ! $GRUB_PAR == "no" ]]; then
+        if [[ ! "$GRUB_PAR" == "no" ]]; then
             sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="resume=\/dev\/'"$GRUB_PAR"'"/' /etc/default/grub
         fi
 
