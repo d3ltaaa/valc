@@ -387,7 +387,7 @@ grub_setup () {
 
             fi
 
-            read -p "Do you want to dual boot?" -e -i "no" GRUB_DUAL
+            read -p "Do you want to dual boot?: " -e -i "no" GRUB_DUAL
 
         done
         
