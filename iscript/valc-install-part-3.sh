@@ -176,6 +176,8 @@ inst_packages () {
         ranger \
         git \
         neovim \
+        telegram-desktop \
+        virtualbox \
         dunst \
         xwallpaper \
         ffmpeg4.4 \
