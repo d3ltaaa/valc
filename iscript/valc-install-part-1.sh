@@ -169,7 +169,7 @@ set_file_system () {
 
         lsblk -f -p
         read -p "What partition would you like set a file system for? [N]: " partition_to_set
-        case $partition_to_set in
+        case "$partition_to_set" in
             [Nn] ) break;;
             * )
                 partitions=$(lsblk -p -n -o NAME)
@@ -404,7 +404,8 @@ fdisk_partitioning () {
 
     lsblk -f -p
     read -p "What disk do you want to partition? [N]: " disk
-    case $par in
+
+    case $disk in
         [Nn] ) 
             echo ok
             ;;
@@ -433,7 +434,7 @@ cfdisk_partitioning () {
     
     lsblk -f -p
     read -p "What disk do you want to partition? [N]: " disk
-    case $par in
+    case $disk in
         [Nn] ) 
             echo ok
             ;;
