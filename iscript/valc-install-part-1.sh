@@ -359,8 +359,8 @@ mount_partitions () {
                 if echo "$partitions" | grep "$par"; then
                     read -p "Where do you want to mount the partition?: " mount_path
 
-                    mkdir -p $mount_path
-                    mount $par $mount_path
+                    mkdir -p /mnt$mount_path
+                    mount $par /mnt$mount_path
                     [ $? -ne 0 ] && return 18 || : 
 
                     # get the uuid
