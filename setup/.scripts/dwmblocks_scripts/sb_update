@@ -7,8 +7,8 @@ case $BUTTON in
         ;;
 esac
 
-updates=$(pacman -Qu | wc -l)
+updates="$(pacman -Qu | wc -l)"
 
-if [[ ! $updates -eq 0 ]]; then
+if [[ ! "$updates" == "0" ]]; then
     echo "    $updates     "
 fi
