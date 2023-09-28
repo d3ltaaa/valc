@@ -59,7 +59,6 @@ return packer.startup(function(use)
 
     use("shaunsingh/nord.nvim")
 
-
     if packer_bootstrap then
         require("packer").sync()
     end
