@@ -12,6 +12,6 @@ export EDITOR=nvim
 
 PS1='[\u@\h \W]\$ '
 
-if [[ ! "$(tty)" = "/dev/tty1" ]]; then
-    neofetch
-fi
+# if [[ ! "$(tty)" = "/dev/tty1" ]]; then
+#     
+# fi
