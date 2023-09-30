@@ -63,10 +63,25 @@ copy_configs () {
 
         echo "Copying ssh files ..."
         cp /run/media/$USER/INST/config/ip/* /home/$USER/.ssh/ && echo "Succeeded!"
-        echo "Reading ip and writing to config ..."
-        ip_address=$(curl -4 icanhazip.com) && \
-        sed -i "/Host server/{n;n;s/HostName.*/HostName $ip_address/}" ~/.ssh/config && \
-        echo "Succeeded!"
+        CONTINUE=""
+        until [[ "$CONTINUE" =~ (Y|y|N|n) ]]; do
+            if [ ! -z $CONTINUE ]; then
+                echo "Type 'y' or 'n'"
+            fi
+            read -p "Are you on the right network to replace the ip in config? [y/n]: " CONTINUE
+        done
+
+        case $CONTINUE in
+            [Yy])
+                echo "Reading ip and writing to config ..."
+                ip_address=$(curl -4 icanhazip.com) && \
+                sed -i "/Host server/{n;n;s/HostName.*/HostName $ip_address/}" ~/.ssh/config && \
+                echo "Succeeded!"
+                ;;
+            [Nn])
+                echo "Skipping ip setup - connect to the right network and try again!"
+                ;;
+        esac
 
     else
         echo "No ssh files to copy!"
