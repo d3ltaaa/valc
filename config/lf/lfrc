@@ -96,14 +96,21 @@ cmd make ${{
 
 cmd scp_push ${{
 
-    printf "Send file $f\n"
-    printf "User? "
-    read user
-    printf "Server? "
-    read address
-    printf "Directory? "
-    read directory
-    scp $fx ${user}@${address}:${directory}
+    echo "Sending: $fx"
+
+    client="temp"
+    until grep -w "$client" /home/$USER/.ssh/config; do
+
+        if [ ! "$client" == "temp" ]; then
+            echo "This client does not exist!"
+        fi
+
+        read -p "Client: " client
+    done
+
+    read -p "Directory: " directory
+
+    scp $fx ${client}:${directory}
 
 }}
 
@@ -111,14 +118,18 @@ cmd trash_item ${{
     trash t $fx
 }}
 
+cmd echo_f ${{
+    echo $fx
+}}
+
 # remove defaults
 map m 
+map e
 map o
 map n
 map "'"
 map '"'
 map c
-map e
 map f
 map r
 
@@ -165,5 +176,5 @@ map gmnt cd /mnt
 map xtr trash_item
 
 map xscp scp_push
-
+map xee echo_f
 map C clear
