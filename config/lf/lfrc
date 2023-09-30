@@ -113,7 +113,7 @@ cmd scp_push ${{
         read -p "Client: " client
     done
 
-    read -p "Directory: " directory
+    read -p "Directory: " -e -i "/home/$USER/" directory
 
     scp $fx ${client}:${directory}
 
