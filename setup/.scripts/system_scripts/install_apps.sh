@@ -32,8 +32,11 @@ install_synergy () {
         echo "Installing: Synergy ..."
         flatpak install $APP_PATH/$synergy_name && \
         flatpak list | grep synergy && \
+        run_synergy && \
         echo "Installed: Synergy!" || \
         echo "Failed installing: Synergy!"
+
+
     fi
 }
 
@@ -60,6 +63,11 @@ copy_configs () {
 
         echo "Copying ssh files ..."
         cp /run/media/$USER/INST/config/ip/* /home/$USER/.ssh/ && echo "Succeeded!"
+        echo "Reading ip and writing to config ..."
+        ip_address=$(curl -4 icanhazip.com) && \
+        sed -i "/Host server/{n;n;s/HostName.*/HostName $ip_address/}" ~/.ssh/config && \
+        echo "Succeeded!"
+
     else
         echo "No ssh files to copy!"
     fi
@@ -124,11 +132,9 @@ run_synergy () {
     cat /run/media/$USER/INST/config/synergy_code | tr -d '\n' | xclip -selection clipboard
     flatpak run com.symless.synergy
 }
-
 check_for_disk
-check_for_fritzing
-check_for_synergy
-check_for_tor
 copy_configs
 add_git_config
-run_synergy
+check_for_fritzing
+check_for_tor
+check_for_synergy
