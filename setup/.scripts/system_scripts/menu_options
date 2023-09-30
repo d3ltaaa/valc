@@ -3,7 +3,7 @@
 
 menu_main () {
     # Define first layer
-    options=(" Wifi" "󰂯 Bluetooth" "󰕾 Audio" "󰍹 Monitors" "󰓶 Tablet-Mode" "󰐦 Energy-Mode" " Themes" " Phone server" "󱊞 USB" " Updates" "󰅙 Close")
+    options=(" Wifi" "󰂯 Bluetooth" "󰕾 Audio" "󰍹 Monitors" "󰓶 Tablet-Mode" "󰐦 Energy-Mode" " Themes" "  server" "󱊞 USB" " Updates" "󰅙 Close")
 
     # display options
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i -p " Settings")
@@ -30,7 +30,7 @@ menu_main () {
         " Themes")
             menu_themes
             ;;
-        " Phone server")
+        "  server")
             menu_server
             ;;
         "󱊞 USB")
@@ -781,32 +781,61 @@ menu_server () {
         status="Disabled"
     fi
 
-    
-    options=( "  Internet ($status)" "󰋫  Get Remnote images" "󰋫  Get Images" "󰈙  Get Documents" "  Go back" ) 
+    options=( "  Internet ($status)" "  Clients" "  Phone" "  Go back" )
     selected=$(printf '%s\n' "${options[@]}" | dmenu -i )
-
+    
     case $selected in 
         "  Internet ($status)")
             menu_wifi
             ;;
-        "󰋫  Get Remnote images")
-            st -e bash -c "
-            transfer_from_remote.sh ~/Pictures/Remnote
-            "
+
+        "  Clients")
+
+            options_list=($(grep -w Host ~/.ssh/config | awk '{print $2}'))
+            options_list+=( "  Go back" )
+            selected_list=$(printf '%s\n' "${options_list[@]}" | dmenu -i )
+
+            case $selected_list in 
+                "  Go back")
+                    menu_server
+                    ;;
+                *)
+                    st -e bash -c "
+                    echo Connecting to $selected_list...
+                    ssh $selected_list
+                    "
+                    ;;
+            esac
             ;;
-        "󰋫  Get Images")
-            st -e bash -c "
-            transfer_from_remote.sh ~/Pictures/Server
-            "
+
+        "  Phone")
+            
+            options=( "󰋫  Get Remnote images" "󰋫  Get Images" "󰈙  Get Documents" "  Go back" ) 
+            selected=$(printf '%s\n' "${options[@]}" | dmenu -i )
+
+            case $selected in 
+
+                "󰋫  Get Remnote images")
+                    st -e bash -c "
+                    transfer_from_remote.sh ~/Pictures/Remnote
+                    "
+                    ;;
+                "󰋫  Get Images")
+                    st -e bash -c "
+                    transfer_from_remote.sh ~/Pictures/Server
+                    "
+                    ;;
+                "󰈙  Get Documents")
+                    st -e bash -c "
+                    transfer_from_remote.sh ~/Documents
+                    "
+                    ;;
+                "  Go back")
+                    menu_server
+                    ;;
+            esac
             ;;
-        "󰈙  Get Documents")
-            st -e bash -c "
-            transfer_from_remote.sh ~/Documents
-            "
-            ;;
-        "  Go back")
-            menu_options 
-            ;;
+
     esac
 
 }
