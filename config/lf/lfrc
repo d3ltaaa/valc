@@ -95,8 +95,13 @@ cmd make ${{
 }}
 
 cmd scp_push ${{
+    clear
 
-    echo "Sending: $fx"
+    if [[ "$1" == "c" ]]; then
+        echo "Copying to remote: $fx"
+    elif [[ "$1" == "m" ]]; then
+        echo "Moving to remote: $fx"
+    fi
 
     client="temp"
     until grep -w "$client" /home/$USER/.ssh/config; do
@@ -112,7 +117,13 @@ cmd scp_push ${{
 
     scp $fx ${client}:${directory}
 
+    if [[ "$1" == "m" ]]; then
+        trash t $fx
+    fi
+
 }}
+
+
 
 cmd trash_item ${{
     trash t $fx
@@ -174,7 +185,7 @@ map gusb cd /run/media
 
 map gmnt cd /mnt
 map xtr trash_item
-
-map xscp scp_push
+map xmv scp_push m
+map xcp scp_push c
 map xee echo_f
 map C clear
