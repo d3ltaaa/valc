@@ -1,5 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-//
+
 #include "/home/falk/.config/suckless/themes/arch-dark.h"
 
 /*
@@ -79,7 +79,7 @@ const int boxdraw = 1;
 const int boxdraw_bold = 1;
 
 /* braille (U28XX):  1: render as adjacent "pixels",  0: use font */
-const int boxdraw_braille = 1;
+const int boxdraw_braille = 0;
 
 /*
  * bell volume. It must be a value between -100 and 100. Use 0 for disabling
@@ -105,12 +105,7 @@ char *termname = "st-256color";
  *
  *	stty tabs
  */
-
-/* Terminal colors (16 first used in escape sequence) */
 unsigned int tabspaces = 4;
-
-/* bg opacity */
-float alpha = 1.0;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
@@ -143,6 +138,7 @@ static const char *colorname[] = {
 	ST_FOREGROUND_COLOR, /* default foreground colour */
 	ST_BACKGROUND_COLOR, /* default background colour */
 };
+
 
 /*
  * Default colors (colorname index)
@@ -211,8 +207,6 @@ static uint forcemousemod = ShiftMask;
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
-	{ ShiftMask,            Button4, kscrollup,      {.i = 1} },
-	{ ShiftMask,            Button5, kscrolldown,    {.i = 1} },
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
 	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
@@ -238,10 +232,6 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
-	{ ControlMask,          XK_Page_Up,     kscrollup,      {.i = -1} },
-	{ ControlMask,          XK_Page_Down,   kscrolldown,    {.i = -1} },
-    { ControlMask,          XK_k,           kscrollup,      {.i =  1} },
-	{ ControlMask,          XK_j,           kscrolldown,    {.i =  1} },
 	{ MODKEY,               XK_c,           normalMode,     {.i =  0} },
 };
 
