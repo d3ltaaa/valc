@@ -153,6 +153,7 @@ inst_packages () {
 
     sudo pacman -Syu
     sudo pacman --noconfirm -S xorg xorg-xinit webkit2gtk base-devel \
+        tmux \
     	alsa-utils \
         pulseaudio \
         pavucontrol \
