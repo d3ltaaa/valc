@@ -1,0 +1,78 @@
+// dwm
+MODKEY|ShiftMask|q              quit {0}                        --> idk
+MODKEY|ControlMask|ShiftMask|q  quit {1}                        --> restart dwm
+
+// Tag manipulation
+MODKEY|Tab                      view {0}                        --> go to last tag
+MODKEY|ShiftMask|0              tag {.ui = ~0 }                 --> move to all tags
+MODKEY|1                                                        --> go to tag 0
+MODKEY|2                                                        --> go to tag 1
+MODKEY|3                                                        --> go to tag 2
+MODKEY|4                                                        --> go to tag 3
+MODKEY|5                                                        --> go to tag 4
+MODKEY|6                                                        --> go to tag 5
+
+// Layout manipulation
+MODKEY|t                        setlayout {.v = &layouts[0]}    --> tiling layou
+MODKEY|f                        setlayout {.v = &layouts[1]}    --> floating layout
+MODKEY|ShiftMask|f              togglefloating {0}              --> toggle floating window
+MODKEY|Return                   togglefullscr {0}               --> toggle fullscreen
+// MODKEY|o                     setlayout {0}                   --> toggle between layouts
+
+// Window manipulation
+MODKEY|h                        focusstack {.i = -1 }           --> focus counter clockwise
+MODKEY|l                        focusstack {.i = +1 }           --> focus clockwise
+MODKEY|ShiftMask|h              rotatestack {.i = -1 }          --> move counter clockwise
+MODKEY|ShiftMask|l              rotatestack {.i = +1 }          --> move clockwise
+MODKEY|ControlMask|h            setmfact {.f = -0.05}           --> move divide to left
+MODKEY|ControlMask|l            setmfact {.f = +0.05}           --> move divide to right
+MODKEY|p                        zoom {0}                        --> move to focus/ pull to front
+MODKEY|0                        view {.ui = ~0 }                --> view all windows
+MODKEY|x                        killclient {0}                  --> close windows
+
+// Monitor manipulation
+MODKEY|i                        focusmon {.i = -1 }             --> go to left monitor
+MODKEY|o                        focusmon {.i = +1 }             --> go to right monitor
+MODKEY|ShiftMask|i              tagmon {.i = -1 }               --> move to left monitor
+MODKEY|ShiftMask|o              tagmon {.i = +1 }               --> move to right monitor
+
+// Gap manipulation
+MODKEY|ControlMask|g            togglegaps {0}                  --> toggle gaps
+MODKEY|ControlMask|Mod1Mask|g   defaultgaps {0}                 --> default gaps
+MODKEY|ControlMask|h            incrgaps {.i = +1 }             --> increase all gaps
+MODKEY|ControlMask|l            incrgaps {.i = -1 }             --> decrease all gaps
+MODKEY|ControlMask|j            incrogaps {.i = +1 }            --> increase outer gaps
+MODKEY|ControlMask|k            incrogaps {.i = -1 }            --> decrease outer gaps
+MODKEY|ControlMask|Mod1Mask|h   incrigaps {.i = +1 }            --> decrease horizontal gaps
+MODKEY|ControlMask|Mod1Mask|l   incrigaps {.i = -1 }            --> increase horizontal gaps
+// MODKEY|ControlMask|             incrihgaps {.i = +1 }           -->
+// MODKEY|ControlMask|             incrihgaps {.i = -1 }           --> 
+// MODKEY|ControlMask|             incrivgaps {.i = +1 }           --> 
+// MODKEY|ControlMask|             incrivgaps {.i = -1 }           --> 
+// MODKEY|ControlMask|             incrohgaps {.i = +1 }           --> 
+// MODKEY|ControlMask|             incrohgaps {.i = -1 }           --> 
+// MODKEY|ControlMask|             incrovgaps {.i = +1 }           --> 
+// MODKEY|ControlMask|             incrovgaps {.i = -1 }           --> 
+
+// Special Windows
+MODKEY|space                    spawn {.v = dmenucmd }          --> open dmenu
+MODKEY|ShiftMask|Return         spawn {.v = termcmd }           --> open terminal
+MODKEY|b                        togglebar {0}                   --> toggle bar
+MODKEY|e                        togglescratch {.ui = 0 }        --> open terminal as scratch
+MODKEY|n                        togglescratch {.ui = 1 }        --> open spotify as scratch
+
+// custom
+0|0x1008ff13                    spawn SHCMD("scr_volume inc")   --> volume up
+0|0x1008ff11                    spawn SHCMD("scr_volume dec")   --> volume down
+0|0x1008ff12                    spawn SHCMD("scr_volume mute")  --> volume mute
+0|0x1008ff03                    spawn SHCMD("scr_light down")   --> light dimmer
+0|0x1008ff02                    spawn SHCMD("scr_light up")     --> light brighter
+MODKEY|s                        spawn SHCMD("menu_options")     --> open options menu
+MODKEY|ShiftMask|s              spawn SHCMD("menu_system")      --> open system menu
+MODKEY|ControlMask|s            spawn SHCMD("flatpak run com.symless.synergy") --> open synergy
+
+// Miscellaneous
+// MODKEY|i                        incnmaster {.i = +1 }           --> layout top/bottom
+// MODKEY|d                        incnmaster {.i = -1 }           --> layout top/bottom
+// MODKEY|u                        swalstopsel{0}                  --> idk
+
