@@ -292,8 +292,9 @@ links_setup () {
     ln -s ~/.valc/setup/.bash_profile ~/ &&
     ln -s ~/.valc/setup/.bashrc ~/ &&
     ln -s ~/.valc/setup/.xbindkeysrc ~/ &&
-    mkdir -p ~/.ssh
-    ln -s ~/.valc/setup/ssh_files/repl_ip_in_ssh_config.sh ~/.ssh/repl_ip_in_ssh_config.sh
+    ln -s ~/.valc/config/tmux ~/.config/ && 
+    mkdir -p ~/.ssh && 
+    ln -s ~/.valc/setup/ssh_files/repl_ip_in_ssh_config.sh ~/.ssh/repl_ip_in_ssh_config.sh 
     [ $? -ne 0 ] && return 49 || :
 
 }
