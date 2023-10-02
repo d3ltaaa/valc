@@ -13,13 +13,13 @@ keymap.set("n", "<leader>h",       "<C-w>h") -- move left
 keymap.set("n", "<leader>l",       "<C-w>l") -- move right
 keymap.set("n", "<leader>k",       "<C-w>k") -- move up
 keymap.set("n", "<leader>j",       "<C-w>j") -- move down
-keymap.set("n", "<leader>cw", ":close<CR>") -- close current split window
+keymap.set("n", "<leader>xw", ":close<CR>") -- close current split window
 
 -- tab navigation
 keymap.set("n", "<leader>t", ":tabnew<CR>") -- open new tab
 keymap.set("n", "<leader>i", ":tabp<CR>") -- left tab
 keymap.set("n", "<leader>o", ":tabn<CR>") -- right tab
-keymap.set("n", "<leader>ct", ":tabclose<CR>") -- close current tab
+keymap.set("n", "<leader>xt", ":tabclose<CR>") -- close current tab
 
 -- plugin keymaps
 -- keymap.set("n", "<leader>m", ":MaximizerToggle<CR>")

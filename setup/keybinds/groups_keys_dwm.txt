@@ -39,12 +39,12 @@ MODKEY|ShiftMask|o              tagmon {.i = +1 }               --> move to righ
 // Gap manipulation
 MODKEY|ControlMask|g            togglegaps {0}                  --> toggle gaps
 MODKEY|ControlMask|Mod1Mask|g   defaultgaps {0}                 --> default gaps
-MODKEY|ControlMask|h            incrgaps {.i = +1 }             --> increase all gaps
-MODKEY|ControlMask|l            incrgaps {.i = -1 }             --> decrease all gaps
-MODKEY|ControlMask|j            incrogaps {.i = +1 }            --> increase outer gaps
-MODKEY|ControlMask|k            incrogaps {.i = -1 }            --> decrease outer gaps
-MODKEY|ControlMask|Mod1Mask|h   incrigaps {.i = +1 }            --> decrease horizontal gaps
-MODKEY|ControlMask|Mod1Mask|l   incrigaps {.i = -1 }            --> increase horizontal gaps
+// MODKEY|ControlMask|             incrgaps {.i = +1 }             --> increase all gaps
+// MODKEY|ControlMask|             incrgaps {.i = -1 }             --> decrease all gaps
+// MODKEY|ControlMask|             incrogaps {.i = +1 }            --> increase outer gaps
+// MODKEY|ControlMask|             incrogaps {.i = -1 }            --> decrease outer gaps
+// MODKEY|ControlMask|Mod1Mask|    incrigaps {.i = +1 }            --> decrease horizontal gaps
+// MODKEY|ControlMask|Mod1Mask|    incrigaps {.i = -1 }            --> increase horizontal gaps
 // MODKEY|ControlMask|             incrihgaps {.i = +1 }           -->
 // MODKEY|ControlMask|             incrihgaps {.i = -1 }           --> 
 // MODKEY|ControlMask|             incrivgaps {.i = +1 }           --> 

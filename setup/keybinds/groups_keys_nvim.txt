@@ -1,5 +1,3 @@
-Window manipulation
-
 ## vim
 "space"nh --> no highlights
 
@@ -10,13 +8,13 @@ Window manipulation
 "space"l  --> move right
 "space"k  --> move up
 "space"j  --> move down
-"space"cw --> close window
+"space"xw --> close window
 
 # Tab maniuplation
 "space"t  --> new tab
 "space"i  --> move left
 "space"o  --> move right
-"space"ct --> close tab
+"space"xt --> close tab
 
 # Special windows
 "space"e  --> nvimtreetoggle/explorer
