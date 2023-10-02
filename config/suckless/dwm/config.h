@@ -1,5 +1,4 @@
 /* See LICENSE file for copyright and license details. */
-//
 #include "/home/falk/.config/suckless/themes/arch-dark.h"
 
 /* appearance */
@@ -56,7 +55,6 @@ typedef struct {
 
 const char *spcmd1[] = {"st", "-n", "spterm", "-g", "144x41",  NULL };
 const char *spcmd2[] = {"st", "-n", "spspot", "-g", "144x41", "-e", "ncspot", NULL };
-const char *spcmd3[] = {"st", "-n", "spspot", "-g", "144x41", "-e", "ncspot", NULL };
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
@@ -170,11 +168,11 @@ static const Key keys[] = {
 	// { MODKEY|ControlMask,           XK_,      incrovgaps,     {.i = -1 } },
 
     // Special Windows
-	{ MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,            			XK_e,  	   togglescratch,  {.ui = 0 } },
-	{ MODKEY,            			XK_n,  	   togglescratch,  {.ui = 1 } },
+	{ MODKEY,                       XK_space,   spawn,          {.v = dmenucmd } },
+	{ MODKEY|ShiftMask,             XK_Return,  spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_b,       togglebar,      {0} },
+	{ MODKEY,            			XK_e,  	    togglescratch,  {.ui = 0 } },
+	{ MODKEY,            			XK_n,  	    togglescratch,  {.ui = 1 } },
 
     // custom
     { 0,                            0x1008ff13, spawn,         SHCMD("scr_volume inc") },
