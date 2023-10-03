@@ -695,20 +695,107 @@ menu_vol () {
 
 menu_mon () {
 
-   # Run xrandr and search for HDMI-A-0
-   if xrandr | grep -q "HDMI-A-0 connected"; then
-       # HDMI-A-0 is connected, enabling the monitor
-       xrandr --output HDMI-A-0 --auto --right-of eDP
-       # xrandr --output DVI-D-1 --off && xrandr --output DVI-D-1 --auto --right-of HDMI-1
-       xwallpaper --zoom ~/.config/wall/picture 
+    monitor_count=$(xrandr --listmonitors | awk 'NR==1 {print $2}')
+    monitor_array=($(xrandr | grep -w connected | awk '{print $1}'))
+    echo $monitor_count
+    echo ${monitor_array[0]}
+    echo ${monitor_array[1]}
+    monitor_array+=("Go back")
 
-   else
-       # HDMI-A-0 is not connected, disabling the monitor
-       xrandr --output HDMI-A-0 --off
-       xwallpaper --zoom ~/.config/wall/picture 
-   fi  
+    options=("Rearrange monitors" "Go back")
+    selected=$(printf '%s\n' "${options[@]}" | dmenu -i )
+
+    case $selected in 
+
+        "Rearrange monitors")
+
+            selected_main=$(printf '%s\n' "${monitor_array[@]}" | dmenu -i -p "Select main" )
+
+
+            if [[ ! "$selected_main" == "Go back" ]]; then
+                # delete main from array
+                monitor_array=( "${monitor_array[@]/$selected_main}" )
+                string_command="xrandr --output " 
+            fi
+
+            while true; do
+
+                options=("Add another monitor" "Output current configuration" "Go back")
+
+                selected_options=$(printf '%s\n' "${options[@]}" | dmenu -i )
+
+                case $selected_options in
+
+                    "Add another monitor")
+
+                        another_mon=$(printf '%s\n' "${monitor_array[@]}" | dmenu -i )
+
+                        if [[ ! "$another_mon" == "Go back" ]]; then
+
+                            monitor_array=( "${monitor_array[@]/$another_mon}" )
+                        else
+                            menu_mon
+                        fi
+
+                        options_pos=("above" "below" "right-of" "left-of" "Go back")
+
+
+                        next_mon_pos=$(printf '%s\n' "${options_pos[@]}" | dmenu -i )
+
+
+                        case $next_mon_pos in
+
+                            "Go back")
+                                menu_mon
+                                break
+                                ;;
+                            *)
+                                echo $string_command 
+
+                                string_command+="$another_mon --$next_mon_pos "
+                                echo $string_command
+                                # break, since i dont know how to handle three-->what should string_command look like?
+                                ;;
+                        esac
+
+                        ;;
+
+                    "Output current configuration")
+                        # turn everything else off:
+                        new_mon_arr=($(xrandr | grep -w disconnected | awk '{print $1}'))
+                        for mon in ${new_mon_arr[@]}; do
+                            echo "xrandr --output $mon --off"
+                            xrandr --output $mon --off
+                        done
+
+
+                        string_command+="$selected_main"
+                        $string_command --auto
+                        echo $string_command
+                        xwallpaper --zoom ~/.config/wall/picture &
+
+                        break
+                        ;;
+
+                    "Go back")
+                        menu_mon
+                        break
+                        ;;
+                esac
+            done
+            
+            ;;
+
+        "Go back")
+            menu_main
+            ;;
+    esac
+
+    
+
 
 }
+
 
 menu_tablet () {
     

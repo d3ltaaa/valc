@@ -12,7 +12,7 @@ case $connection_ in
     "Wlan 12" )
         remote_connection_type=wifi
         ;;
-    "Wlan FH" )
+    "Wlan-FH" )
         remote_connection_type=spot
         ;;
     * )
