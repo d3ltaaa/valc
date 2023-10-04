@@ -272,8 +272,12 @@ menu_blue () {
 
         "󰾰  Show devices")
 
+            bluetoothctl power on
+            bluetoothctl agent on
+
             devices_options=()
             devices_list=($(bluetoothctl devices | grep -w Device | cut -d' ' -f3))
+            
 
             # go through devices 
             for (( i=0; i<${#devices_list[@]}; i++)); do
@@ -402,6 +406,9 @@ menu_blue () {
 
         
         "󰂱  Connect devices")
+
+            bluetoothctl power on
+            bluetoothctl agent on
 
             duration=6
 
