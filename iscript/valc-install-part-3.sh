@@ -434,7 +434,7 @@ monitor_setup () {
 
 kb_setup () {
 
-    if [ $VALUE_KB_SETUP -eq 1]; then
+    if [[ $VALUE_KB_SETUP -eq 1]]; then
 
         kb_layout=$(grep -i -w KEYBOARD $CONFIG_PATH | awk '{print $3}')
         echo "setxkbmap $kb_layout" >> ~/.dwm/autostart.sh
