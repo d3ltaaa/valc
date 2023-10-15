@@ -1,0 +1,25 @@
+#!/bin/bash
+# get wifi status
+connection_lan=$(nmcli -t -f NAME connection show --active | head -n 1)
+
+connection_wifi=$(nmcli radio wifi)
+
+if [[ $connection_lan == "Wired connection 1" ]]; then
+    echo "        "
+elif [[ $connection_wifi == "enabled" && $connection_lan == "lo" ]]; then
+    echo "    󰤫    "
+elif [[ $connection_wifi == "enabled" ]]; then
+    echo "        "
+else 
+    echo "    󰤯    "
+fi
+
+case $BUTTON in
+    1) menu_options wifi
+       ;;
+esac
+
+echo "        "
+
+
+

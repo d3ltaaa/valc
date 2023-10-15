@@ -1,0 +1,8 @@
+#!/bin/bash
+
+case $BUTTON in
+    1) menu_options
+esac
+
+echo "       "
+

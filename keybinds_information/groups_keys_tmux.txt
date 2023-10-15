@@ -1,0 +1,36 @@
+# session
+
+-n M-O      new -s ns                                                   --> new session
+ R          command-prompt -I "#{session_name}" "rename-session '%%'"   --> rename current session
+
+
+# window
+
+Enter       new-window                                                  --> new window
+ r          command-prompt -I "#{window_name}" "rename-window '%%'"     --> rename current window
+-n M-Tab    last-window   # cycle thru MRU tabs                         --> go to last window
+-n M-i      previous-window                                             --> go to previous window
+-n M-o      next-window                                                 --> go to next window
+-n M-X      kill-window                                                 --> delete window
+
+
+# panes
+
+-n M-h      select-pane -L                                              --> go to left pane
+-n M-j      select-pane -D                                              --> go to upper pane
+-n M-k      select-pane -U                                              --> go to pane below
+-n M-l      select-pane -R                                              --> go to right pane
+-n M-C-h    resize-pane -L 5                                            --> resize to left 
+-n M-C-l    resize-pane -R 5                                            --> resize to right 
+-n M-C-k    resize-pane -U 5                                            --> resize upwards
+-n M-C-j    resize-pane -D 5                                            --> resize downwards
+-n M-J      swap-pane -D                                                --> swap down 
+-n M-K      swap-pane -U                                                --> swap up
+-n M-Enter  resize-pane -Z                                              --> fullscreen current pane
+-n M-x      kill-pane                                                   --> delete pane
+
+
+#  layout
+
+ b          split-window -h -c "#{pane_current_path}"                   --> split horizontally
+ v          split-window -v -c "#{pane_current_path}"                   --> split vertically

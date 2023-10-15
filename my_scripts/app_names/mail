@@ -1,0 +1,4 @@
+#!/bin/bash
+# dwmswallow $WINDOWID; firefox --new-window mail.proton.me
+firefox --new-window mail.proton.me
+

@@ -1,0 +1,191 @@
+# Basic Settings
+# set nopreview
+set hidden true
+set ignorecase true
+set drawbox
+# set icons true
+
+
+# Custom Functions
+cmd mkdir ${{
+    clear
+    printf "Directory Name: "
+    read ans
+    mkdir $ans
+}}
+
+cmd mkfile ${{
+    clear
+    printf "File Name: "
+    read ans
+    $EDITOR $ans
+}}
+
+cmd setwallpaper ${{
+    xwallpaper --zoom "$f"
+    cp "$f" ~/.config/wall/picture
+}}
+
+# Image view
+cmd viewimg ${{
+    pkill -SIGINT feh
+    feh --scale-down --auto-zoom "$f" &
+    sleep 0.4
+    # xdotool key Alt+j
+}}
+
+cmd open ${{
+    case "$f" in 
+        *.jpg|*.jpeg|*.png) 
+            dwmswallow $WINDOWID; feh --scale-down --auto-zoom "$f"
+            # pkill -SIGINT feh
+            # feh --scale-down --auto-zoom "$f" &
+            # sleep 0.4
+            # xdotool key Alt+k
+            ;;
+        *.pdf) 
+            dwmswallow $WINDOWID; zathura "$f"
+            ;;
+        *.xopp) 
+            dwmswallow $WINDOWID; xournalpp "$f"
+            ;;
+
+        *.webm|*.mkv|*.mp4)
+            dwmswallow $WINDOWID; mpv "$f"
+            ;;
+        *) $EDITOR "$f";;
+    esac
+}}
+
+# favorites
+cmd fave ${{
+    cp "$f" ~/Pictures/Wallpapers/Favorites
+}}
+
+cmd rm_fave ${{
+    rm ~/Pictures/Wallpapers/Favorites/"$f"
+}}
+
+
+# Archive bindings
+cmd unarchive ${{
+  case "$f" in
+      *.zip) unzip "$f" ;;
+      *.tar.gz) tar -xzvf "$f" ;;
+      *.tar.bz2) tar -xjvf "$f" ;;
+      *.tar) tar -xvf "$f" ;;
+      *) echo "Unsupported format" ;;
+  esac
+}}
+
+cmd rename ${{
+    clear
+    printf "Old Name: $f\n"
+    read -p "New Name:" -e -i $(basename "$f") ans
+    mv "$f" $ans
+}}
+
+
+cmd remove ${{
+    trash t $fx
+}}
+
+cmd make ${{
+    make && sudo make install
+}}
+
+cmd scp_push ${{
+    clear
+
+    if [[ "$1" == "c" ]]; then
+        echo "Copying to remote: $fx"
+    elif [[ "$1" == "m" ]]; then
+        echo "Moving to remote: $fx"
+    fi
+
+    client="temp"
+    until grep -w "$client" /home/$USER/.ssh/config; do
+
+        if [ ! "$client" == "temp" ]; then
+            echo "This client does not exist!"
+        fi
+
+        read -p "Client: " client
+    done
+
+    read -p "Directory: " -e -i "/home/$USER/" directory
+
+    scp $fx ${client}:${directory}
+
+    if [[ "$1" == "m" ]]; then
+        trash t $fx
+    fi
+
+}}
+
+
+
+cmd trash_item ${{
+    trash t $fx
+}}
+
+cmd echo_f ${{
+    echo $fx
+}}
+
+# remove defaults
+map m 
+map e
+map o
+map n
+map "'"
+map '"'
+map c
+map f
+map r
+
+# Basic Functions
+map . set hidden!
+map p paste
+map y copy
+map <enter> open
+map R reload
+
+map rr rename
+
+map re remove
+
+map mf mkfile
+map md mkdir
+map mm make 
+
+map zz unarchive
+
+map bv viewimg
+map bg setwallpaper
+map bf fave
+map br rm_fave
+
+map gr cd /
+map gh cd ~/
+map gd cd ~/Downloads
+map gD cd ~/Documents
+map gp cd ~/Pictures
+map gV cd ~/Videos
+map gt cd ~/.Trash
+map gS cd ~/.scripts
+map gC cd ~/.config
+map gc cd ~/Code
+map gSC cd ~/.config/suckless
+map gva cd ~/.valc
+map gvs cd ~/.valc/setup
+map gvc cd ~/.valc/config
+map gvi cd ~/.valc/iscript
+map gusb cd /run/media
+
+map gmnt cd /mnt
+map xtr trash_item
+map xmv scp_push m
+map xcp scp_push c
+map xee echo_f
+map C clear

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+
+light_down () {
+   
+    brillo -U 10
+}
+
+light_up () {
+
+    brillo -A 10
+
+}
+
+case "$1" in
+
+	"up") light_up;;
+
+	"down") light_down;;
+
+	*) echo "unknown command" && exit 1;;
+
+esac
