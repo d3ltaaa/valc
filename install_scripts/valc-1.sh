@@ -751,7 +751,7 @@ inst_part_2 () {
 
     notification "$fname"
 
-    curl https://raw.githubusercontent.com/d3ltaaa/valc/main/iscript/valc-install-part-2.sh > /mnt/valc-install-part-2.sh &&
+    curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_scripts/valc-2.sh > /mnt/valc-2.sh &&
     chmod +x /mnt/valc-install-part-2.sh
     [ $? -ne 0 ] && return 21 || : 
 
