@@ -320,7 +320,7 @@ config_partitioning () {
             
     
             VALUE_SKIP="n"
-            if [[ $(awk 'NR==1' $INSTALL_OPTION_PATH) -eq 0 ]] && [[ $par_func_arr{[@]} == "extern" ]] || [[ ${par_func_arr[@]} == "home" ]]; then
+            if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") -eq 0 ]] && ( [[ "${par_func_arr[$i]}" == "extern" ]] || [[ "${par_func_arr[$i]}" == "home" ]] ); then
                 VALUE_SKIP="y"
                 echo "${par_func_arr[@]} -> skip"
             fi
