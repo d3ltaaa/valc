@@ -183,23 +183,23 @@ download_config () {
     case $VALUE_config in
 
         "d" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/config_files/DESKTOP_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_config > config
             break
             ;;
         "t" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/config_files/THINKPAD_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_config > config
             break
             ;;
         "l" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/config_files/LAPTOP_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_config > config
             break
             ;;
         "v" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/config_files/VIRTUAL_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_config > config
             break
             ;;
         "s" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/config_files/STANDARD_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config > config
             break
             ;;
     esac
