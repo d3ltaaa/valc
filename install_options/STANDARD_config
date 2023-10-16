@@ -1,0 +1,134 @@
+
+KEYBOARD: de-latin1 de
+
+PARALLEL: 15
+
+TIME: /Europe/Berlin
+
+LANGUAGE: 
+en_US.UTF-8 UTF-8
+LANG=en_US.UTF-8 
+
+NAME: ARCH-FH
+
+USER: falk
+
+USER_GROUPS: wheel,audio,video
+
+PARTITION:
+sda           sda       sda   sda
+sda1          sda2      sda3  sda4
+0%            2G        20G   50G
+2g            20G       50G   100%
+/boot/EFI     //        /     /home
+fat-32        swap      ext4  ext4
+no            no        root  home
+
+IMPORTANT_PACKAGES:
+grub
+efibootmgr
+dosfstools
+os-prober
+mtools
+networkmanager
+:IMPORTANT_PACKAGES
+
+GRAPHICS_DRIVER: xf86-video-fbdev
+
+PACKAGES:
+xorg
+xorg-xinit
+webkit2gtk
+base-devel
+tmux
+alsa-utils
+pulseaudio
+pavucontrol
+bluez
+bluez-utils
+pulseaudio-bluetooth
+blueman
+firefox
+thunar
+thermald
+fuse-exfat
+lf
+picom
+udisks2
+feh
+xdotool
+zathura
+zathura-pdf-mupdf
+xournalpp discord
+neofetch
+ranger
+git
+neovim
+telegram-desktop
+virtualbox
+dunst
+xwallpaper
+ffmpeg4.4
+xclip
+mpv
+yt-dlp
+acpi
+upower
+xbindkeys
+flatpak
+xdg-desktop-portal-gtk
+unzip
+fuse2
+ripgrep
+pamixer
+pulsemixer
+sox
+gimp
+imagemagick
+:PACKAGES
+
+
+SERVICES:
+NetworkManager
+bluetooth.service
+pulseaudio
+sshd
+thermald
+:SERVICES
+
+
+YAY_PACKAGES:
+ncspot
+brillo
+xvkbd
+:YAY_PACKAGES
+
+VAR_PACKAGES:
+remnote
+auto-cpufreq
+:VAR_PACKAGES
+
+BUILD:
+~/.config/suckless/dwm
+~/.config/suckless/st
+~/.config/suckless/dmenu
+~/.config/suckless/dwmblocks
+:BUILD
+
+LINKS:
+/usr/local/share/valc/home_files:~/
+/usr/local/share/valc/config_files:~/.config
+/usr/local/share/valc/my_scripts:~/.scripts
+:LINKS
+
+FOLDER: Documents Downloads Pictures Code Video
+
+MONITOR: 
+
+AUTOSTART:
+xrandr --output HDMI-1 --above eDP-1 
+picom &
+dwmblocks &
+xwallpaper --zoom ~/.config/wall/picture
+setxkbmap de
+:AUTOSTART
