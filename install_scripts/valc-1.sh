@@ -74,7 +74,6 @@ determine_config () {
 
         # echo "download_config           "
         # echo "determine_config          "
-        # echo "update_system             "
         echo "kb_setup_live:           a"
         # echo "time_setup_live           "
         # echo "upd_cache                 "
@@ -113,7 +112,7 @@ determine_config () {
         echo "dwm_auto:                v"
         # echo "create_remove             "
 
-        read -p "What do you want to use the config file for?: " -i -e "ab1cdefghijklmnopqrstuv" VALUE_ans
+        read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuv" VALUE_ans
 
         VALUE_ans=$(echo "$VALUE_ans" | tr '[:upper:]' '[:lower:]')
 
@@ -121,31 +120,31 @@ determine_config () {
 
             case "$char" in
 
-                a) echo "kb_setup_live" >> install;;
-                b) echo "ena_parallel_live" >> install;;
-                1) echo "config_partitioning" >> install;;
-                2) echo "cfdisk_partitioning" >> install;;
-                3) echo "fdisk_partitioning" >> install;;
-                c) echo "ena_parallel" >> install;;
-                d) echo "time_setup" >> install;;
-                e) echo "language_setup" >> install;;
-                f) echo "kb_setup" >> install;;
-                g) echo "host_name" >> install;;
-                h) echo "user_name" >> install;;
-                i) echo "user_mod" >> install;;
-                j) echo "important packages" >> install;;
-                k) echo "grub_setup" >> install;;
-                l) echo "systemd_setup" >> install;;
-                m) echo "inst_packages" >> install;;
-                n) echo "enable_services" >> install;;
-                o) echo "yay_installations" >> install;;
-                p) echo "inst_var_packages" >> install;;
-                q) echo "building_software" >> install;;
-                r) echo "inst_wallpaper" >> install;;
-                s) echo "inst_fonts" >> install;;
-                t) echo "links_setup" >> install;;
-                u) echo "create_folder" >> install;;
-                v) echo "dwm_auto" >> install;;
+                a) echo "kb_setup_live" >> /install;;
+                b) echo "ena_parallel_live" >> /install;;
+                1) echo "config_partitioning" >> /install;;
+                2) echo "cfdisk_partitioning" >> /install;;
+                3) echo "fdisk_partitioning" >> /install;;
+                c) echo "ena_parallel" >> /install;;
+                d) echo "time_setup" >> /install;;
+                e) echo "language_setup" >> /install;;
+                f) echo "kb_setup" >> /install;;
+                g) echo "host_name" >> /install;;
+                h) echo "user_name" >> /install;;
+                i) echo "user_mod" >> /install;;
+                j) echo "important packages" >> /install;;
+                k) echo "grub_setup" >> /install;;
+                l) echo "systemd_setup" >> /install;;
+                m) echo "inst_packages" >> /install;;
+                n) echo "enable_services" >> /install;;
+                o) echo "yay_installations" >> /install;;
+                p) echo "inst_var_packages" >> /install;;
+                q) echo "building_software" >> /install;;
+                r) echo "inst_wallpaper" >> /install;;
+                s) echo "inst_fonts" >> /install;;
+                t) echo "links_setup" >> /install;;
+                u) echo "create_folder" >> /install;;
+                v) echo "dwm_auto" >> /install;;
                 *)
                     invalid_value=1
                     break
@@ -183,38 +182,29 @@ download_config () {
     case $VALUE_config in
 
         "d" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_config > /config
             break
             ;;
         "t" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_config > /config
             break
             ;;
         "l" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_config > /config
             break
             ;;
         "v" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_config > /config
             break
             ;;
         "s" )
-            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config > config
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config > /config
             break
             ;;
     esac
 
 }
 
-update_system () {
-
-    fname="update_system"
-
-    notification "$fname"
-
-    pacman -Syu --noconfirm 
-    [ $? -ne 0 ] && return 22 || : 
-}
 
 kb_setup_live () {
 
@@ -330,23 +320,28 @@ config_partitioning () {
             
     
             VALUE_SKIP="n"
-            if [[ $(awk 'NR==1' $INSTALL_OPTION_PATH) -eq 0 ]] && [[ ${[@]} == "extern" ]] || [[ ${par_func_arr[@]} == "home" ]]; then
+            if [[ $(awk 'NR==1' $INSTALL_OPTION_PATH) -eq 0 ]] && [[ $par_func_arr{[@]} == "extern" ]] || [[ ${par_func_arr[@]} == "home" ]]; then
                 VALUE_SKIP="y"
+                echo "${par_func_arr[@]} -> skip"
             fi
     
             if [ "${par_type_arr[$i]}" == "fat-32" ]; then
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]}"
                 parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]} 
                 [ $? -ne 0 ] && return 22 || : 
     
             elif [ "${par_type_arr[$i]}" == "swap" ]; then
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]}"
                 parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]} 
                 [ $? -ne 0 ] && return 23 || : 
     
             elif [ "${par_type_arr[$i]}" == "ext4" ]; then
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]}" 
                 parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]} 
                 [ $? -ne 0 ] && return 24 || : 
     
             elif [ "${par_type_arr[$i]}" == "exfat" ]; then
+                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}"
                 parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}
                 [ $? -ne 0 ] && return 25 || : 
             fi
@@ -355,18 +350,22 @@ config_partitioning () {
     
                 # going through partitions and creating the partitions and changing the file system type
                 if [ "${par_type_arr[$i]}" == "fat-32" ]; then
+                    echo "mkfs.fat -F32 /dev/${par_arr[i]} "
                     mkfs.fat -F32 /dev/${par_arr[i]} 
                     [ $? -ne 0 ] && return 22 || : 
     
                 elif [ "${par_type_arr[$i]}" == "swap" ]; then
+                    echo "mkswap /dev/${par_arr[i]}"
                     mkswap /dev/${par_arr[i]} 
                     [ $? -ne 0 ] && return 23 || : 
     
                 elif [ "${par_type_arr[$i]}" == "ext4" ]; then
+                    echo "mkfs.ext4 /dev/${par_arr[i]} "
                     mkfs.ext4 /dev/${par_arr[i]} 
                     [ $? -ne 0 ] && return 24 || : 
     
                 elif [ "${par_type_arr[$i]}" == "exfat" ]; then
+                    echo "mkfs.exfat /dev/${par_arr[i]} "
                     mkfs.exfat /dev/${par_arr[i]} 
                     [ $? -ne 0 ] && return 25 || : 
                 fi
@@ -380,6 +379,7 @@ config_partitioning () {
     
             if [ "${[i]}" == "root" ]; then
     
+                echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&"
                 mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&
                 [ $? -ne 0 ] && return 27 || : 
     
@@ -388,12 +388,16 @@ config_partitioning () {
                 part_fs=$(lsblk -fp | grep -w /dev/${par_arr[i]} | awk '{print $2}')
     
                 # write line to fstab (root specific)
+                echo "mkdir -p /mnt/etc"
+                echo "touch /mnt/etc/fstab"
+                echo "echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 1"  >> /mnt/etc/fstab"
                 mkdir -p /mnt/etc
                 touch /mnt/etc/fstab
                 echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 1"  >> /mnt/etc/fstab
                 [ $? -ne 0 ] && return 28 || : 
     
-                pacstrap /mnt base linux linux-firmware linux-headers &&
+                echo "pacstrap /mnt base linux linux-firmware linux-headers"
+                pacstrap /mnt base linux linux-firmware linux-headers
                 [ $? -ne 0 ] && return 29 || : 
             fi
     
@@ -412,6 +416,9 @@ config_partitioning () {
                 part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 part_fs=$(lsblk -fp | grep -w /dev/${par_arr[i]} | awk '{print $2}')
                 # write line to fstab (swap specific)
+                echo "mkdir -p /mnt/etc"
+                echo "touch /mnt/etc/fstab"
+                echo "echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /mnt/etc/fstab"
                 mkdir -p /mnt/etc
                 touch /mnt/etc/fstab
                 echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /mnt/etc/fstab
@@ -428,6 +435,7 @@ config_partitioning () {
     
                 fi
     
+                echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}"
                 mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}
                 [ $? -ne 0 ] && return 27 || : 
     
@@ -435,6 +443,9 @@ config_partitioning () {
                 part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
                 part_fs=$(lsblk -fp | grep -w /dev/${par_arr[i]} | awk '{print $2}')
                 # write line to fstab 
+                echo "mkdir -p /mnt/etc"
+                echo "touch /mnt/etc/fstab"
+                echo "echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 2"  >> /mnt/etc/fstab"
                 mkdir -p /mnt/etc
                 touch /mnt/etc/fstab
                 echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 2"  >> /mnt/etc/fstab
@@ -768,8 +779,9 @@ inst_part_2 () {
     cp $INSTALLATION_OPTION_PATH /mnt/installation_options
 }
 
+exe question_purpose
+exe determine_config
 exe download_config
-exe update_system
 exe kb_setup_live
 exe time_setup_live
 exe upd_cache
