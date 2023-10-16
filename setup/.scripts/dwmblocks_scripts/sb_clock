@@ -1,8 +1,0 @@
-#!/bin/sh
-
-case $BUTTON in
-    1) firefox -new-window https://calendar.proton.me/u/0/
-esac
-
-date +"    %R  -  %d.%m    "
-

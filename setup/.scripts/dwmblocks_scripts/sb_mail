@@ -1,7 +1,0 @@
-#!/bin/bash
-
-case $BUTTON in
-    1) firefox -new-window https://mail.proton.me/u/0/inbox
-esac
-
-echo "       "

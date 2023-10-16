@@ -1,7 +1,0 @@
-#!/bin/bash
-
-case $BUTTON in 
-    1) menu_options blue;;
-esac
-
-echo "    󰂯    "
