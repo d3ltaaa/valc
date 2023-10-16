@@ -206,6 +206,15 @@ download_config () {
 
 }
 
+update_system () {
+
+    fname="update_system"
+
+    notification "$fname"
+
+    pacman -Syu --noconfirm 
+    [ $? -ne 0 ] && return 22 || : 
+}
 
 kb_setup_live () {
 
