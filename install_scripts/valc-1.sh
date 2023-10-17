@@ -52,7 +52,7 @@ question_purpose () {
 
     done
 
-    touch install
+    touch /install
         
     if [[ $VALUE_PURPOSE == "install" ]]; then
 
@@ -320,6 +320,7 @@ config_partitioning () {
             
     
             VALUE_SKIP="n"
+            echo "if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") -eq 0 ]] && ( [[ "${par_func_arr[$i]}" == "extern" ]] || [[ "${par_func_arr[$i]}" == "home" ]] ); then"
             if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") -eq 0 ]] && ( [[ "${par_func_arr[$i]}" == "extern" ]] || [[ "${par_func_arr[$i]}" == "home" ]] ); then
                 VALUE_SKIP="y"
                 echo "${par_func_arr[@]} -> skip"
