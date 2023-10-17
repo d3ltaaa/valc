@@ -1,5 +1,5 @@
 CONFIG_PATH="/config"
-INSTALLATION_OPTION_PATH="/install"
+INSTALL_OPTION_PATH="/install"
 
 exe () {
     # exe hepls contain a block of code in a repeatable format in case something goes wrong
@@ -212,7 +212,7 @@ kb_setup_live () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         kb_lan=$(grep -i -w KEYBOARD: $CONFIG_PATH | awk '{print $2}') &&
         loadkeys $kb_lan
@@ -256,7 +256,7 @@ ena_parallel_live () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         parallel=$(grep -i -w PARALLEL: $CONFIG_PATH | awk '{print $2}') &&
         sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
@@ -278,7 +278,7 @@ config_partitioning () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         # getting the right values from config
         disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
@@ -693,7 +693,7 @@ cfdisk_partitioning () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         lsblk -f -p
         read -p "What disk do you want to partition? [N]: " disk
@@ -731,7 +731,7 @@ fdisk_partitioning () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         lsblk -f -p
         read -p "What disk do you want to partition? [N]: " disk
@@ -777,7 +777,7 @@ inst_part_2 () {
     [ $? -ne 0 ] && return 21 || : 
 
     cp $CONFIG_PATH /mnt/config
-    cp $INSTALLATION_OPTION_PATH /mnt/installation_options
+    cp $INSTALL_OPTION_PATH /mnt/installation_options
 }
 
 exe question_purpose
