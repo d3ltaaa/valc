@@ -498,6 +498,7 @@ exe user_mod
 exe inst_important_packages
 exe grub_setup
 exe systemd_setup
+exe inst_packages
 exe yay_setup
 exe enable_services_root
 exe inst_part_3

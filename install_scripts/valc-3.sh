@@ -306,7 +306,6 @@ create_remove () {
     [ $? -ne 0 ] && return 53 || :
 }
 
-exe inst_packages
 exe yay_setup
 exe yay_installations
 exe download_setup
