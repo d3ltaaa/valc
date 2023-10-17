@@ -56,7 +56,7 @@ question_purpose () {
         
     if [[ $VALUE_PURPOSE == "install" ]]; then
 
-        echo "1" > install
+        echo "1" > /install
 
     else
 
