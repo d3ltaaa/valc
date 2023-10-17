@@ -1,5 +1,5 @@
 CONFIG_PATH="/config"
-INSTALLTION_OPTION_PATH="/install"
+INSTALL_OPTION_PATH="/install"
 
 exe () {
     # exe hepls contain a block of code in a repeatable format in case something goes wrong

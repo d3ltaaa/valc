@@ -1,5 +1,5 @@
 CONFIG_PATH="~/config"
-INSTALLTION_OPTION_PATH="~/install"
+INSTALL_OPTION_PATH="~/install"
 
 inst_packages () {
 
@@ -7,7 +7,7 @@ inst_packages () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         sudo pacman -Syu
 
@@ -44,7 +44,7 @@ enable_services () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         beg=$(grep -n -i -w SERVICES: $CONFIG_PATH | cut -d':' -f1)
         end=$(grep -n -i -w :SERVICES $CONFIG_PATH | cut -d':' -f1)
@@ -84,7 +84,7 @@ yay_installations () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         beg=$(grep -n -i -w YAY_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
         end=$(grep -n -i -w :YAY_PACKAGES $CONFIG_PATH | cut -d':' -f1)
@@ -119,7 +119,7 @@ inst_var_packages () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
         
         beg=$(grep -n -i -w VAR_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
         end=$(grep -n -i -w :VAR_PACKAGES $CONFIG_PATH | cut -d':' -f1)
@@ -154,7 +154,7 @@ building_software () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         beg=$(grep -n -i -w BUILD: $CONFIG_PATH | cut -d':' -f1)
         end=$(grep -n -i -w :BUILD $CONFIG_PATH | cut -d':' -f1)
@@ -180,7 +180,7 @@ inst_wallpaper () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH && [[ $(awk 'NR==1' install) -eq 1 ]]; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH && [[ $(awk 'NR==1' install) -eq 1 ]]; then
         mkdir -p ~/Pictures/Wallpapers &&
         mkdir -p ~/.config/wall &&
         curl https://raw.githubusercontent.com/d3ltaaa/backgrounds/main/arch_nord_dark_bg.png > ~/Pictures/Wallpapers/arch_nord_dark_bg.png &&
@@ -197,7 +197,7 @@ inst_fonts () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         sudo mkdir -p /usr/share/fonts/TTF &&
         sudo mkdir -p /usr/share/fonts/ICONS &&
@@ -227,7 +227,7 @@ links_setup () {
 
     # notification "$fname"
 
-    # if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    # if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
     
 
     beg=$(grep -n -i -w LINKS: $CONFIG_PATH | cut -d':' -f1)
@@ -255,7 +255,7 @@ create_folder () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         fol_arr=($(grep -i -w FOLDERS $CONFIG_PATH | cut -d ' ' -f2-))
         for folder in ${fol_arr[@]}; do
@@ -285,7 +285,7 @@ dwm_auto () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         mkdir ~/.dwm
         touch ~/.dwm/autostart.sh
