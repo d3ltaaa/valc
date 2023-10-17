@@ -34,6 +34,56 @@ notification () {
 }
 
 
+inst_packages () {
+
+    fname="inst_packages"
+
+    notification "$fname"
+
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+        sudo pacman -Syu
+
+        graphics_driver=$(grep -i -w GRAPHICS_DRIVER: $CONFIG_PATH | awk '{print $2}')
+        sudo pacman --noconfirm -S  $graphics_driver
+        [ $? -ne 0 ] && return 43 || :
+
+
+        beg=$(grep -n -i -w PACKAGES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :PACKAGES $CONFIG_PATH | cut -d':' -f1)
+
+        # grab everything between the two lines
+        packages=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
+
+        sudo pacman --noconfirm -S $packages
+        [ $? -ne 0 ] && return 43 || :
+
+    else
+
+        read -p "Which packages do you want to install?: " packages
+
+        sudo pacman -Syu
+        sudo pacman --noconfirm -S $packages
+        [ $? -ne 0 ] && return 43 || :
+
+    fi
+
+}
+
+yay_setup () {
+
+    fname="yay_setup"
+
+    notification "$fname"
+
+    sudo git clone https://aur.archlinux.org/yay.git /usr/local/src/yay && 
+    sudo chown :build /usr/local/src/yay &&
+    sudo chown g+rwx /usr/local/src/yay &&
+    cd /usr/local/src/yay &&
+    makepkg -si --noconfirm 
+    [ $? -ne 0 ] && return 45 || :
+
+}
 
 
 
@@ -306,6 +356,7 @@ create_remove () {
     [ $? -ne 0 ] && return 53 || :
 }
 
+exe inst_packages
 exe yay_setup
 exe yay_installations
 exe download_setup

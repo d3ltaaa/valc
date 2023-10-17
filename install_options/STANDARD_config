@@ -12,7 +12,8 @@ NAME: ARCH-FH
 
 USER: falk
 
-USER_GROUPS: wheel,audio,video
+USER_GROUPS: wheel audio video
+CUSTOM_GROUPS: build
 
 PARTITION:
 sda           sda       sda   sda

@@ -249,16 +249,26 @@ user_mod () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        groups="$(grep -i -w USER_GROUPS: $CONFIG_PATH | awk '{print $2}')"
+        group_string=""
 
-        usermod -aG $groups $user
+        groups=($(grep -i -w USER_GROUPS: $CONFIG_PATH | cut -d' ' -f2-))
+        custom_groups=($(grep -i -w CUSTOM_GROUPS: $CONFIG_PATH | cut -d' ' -f2-))
+
+        for group in ${groups[@]}; do
+            group_string+="$group,"
+        done
+
+        for group in ${custom_groups[@]}; do
+            groupadd $group
+            group_string+="$group,"
+        done
+
+        # remove last string (,)
+        group_string="${group_string%?}"
+
+        usermod -aG $group_string $user
         [ $? -ne 0 ] && return 32 || :
 
-    else
-
-        read -p "What groups do you want to add $user to?: " groups
-        usermod -aG $groups $user
-        [ $? -ne 0 ] && return 32 || :
 
     fi
 
@@ -401,54 +411,6 @@ systemd_setup () {
 
 }
 
-inst_packages () {
-
-    fname="inst_packages"
-
-    notification "$fname"
-
-    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
-
-        pacman -Syu
-
-        graphics_driver=$(grep -i -w GRAPHICS_DRIVER: $CONFIG_PATH | awk '{print $2}')
-        pacman --noconfirm -S  $graphics_driver
-        [ $? -ne 0 ] && return 43 || :
-
-
-        beg=$(grep -n -i -w PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :PACKAGES $CONFIG_PATH | cut -d':' -f1)
-
-        # grab everything between the two lines
-        packages=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
-
-        pacman --noconfirm -S $packages
-        [ $? -ne 0 ] && return 43 || :
-
-    else
-
-        read -p "Which packages do you want to install?: " packages
-
-        pacman -Syu
-        pacman --noconfirm -S $packages
-        [ $? -ne 0 ] && return 43 || :
-
-    fi
-
-}
-
-yay_setup () {
-
-    fname="yay_setup"
-
-    notification "$fname"
-
-    sudo git clone https://aur.archlinux.org/yay.git /usr/local/src &&
-    cd /usr/local/src &&
-    makepkg -si --noconfirm 
-    [ $? -ne 0 ] && return 45 || :
-
-}
 
 enable_services_root () {
 
@@ -498,8 +460,6 @@ exe user_mod
 exe inst_important_packages
 exe grub_setup
 exe systemd_setup
-exe inst_packages
-exe yay_setup
 exe enable_services_root
 exe inst_part_3
 mv $CONFIG_PATH /home/$user

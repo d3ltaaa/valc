@@ -97,10 +97,10 @@ determine_config () {
         echo "inst_important_packages: j"
         echo "grub_setup:              k"
         echo "systemd_setup:           l"
-        echo "inst_packages:           m"
-        # echo "yay_setup                 "
-        echo "enable_services_root:    n"
+        echo "enable_services_root:    m"
         # echo "inst_part_3               "
+        echo "inst_packages:           n"
+        # echo "yay_setup                 "
         echo "yay_installations:       o"
         # echo "download_setup            "
         echo "inst_var_packages:       p"
@@ -136,8 +136,8 @@ determine_config () {
                 j) echo "inst_important_packages" >> /install;;
                 k) echo "grub_setup" >> /install;;
                 l) echo "systemd_setup" >> /install;;
-                m) echo "inst_packages" >> /install;;
-                n) echo "enable_services_root" >> /install;;
+                m) echo "enable_services_root" >> /install;;
+                n) echo "inst_packages" >> /install;;
                 o) echo "yay_installations" >> /install;;
                 p) echo "inst_var_packages" >> /install;;
                 q) echo "building_software" >> /install;;
