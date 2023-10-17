@@ -304,7 +304,10 @@ grub_setup () {
 
     notification "$fname"
 
+    grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader=GRUB --removable 
+
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
 
         disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
         par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
