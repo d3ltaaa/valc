@@ -1,6 +1,38 @@
 CONFIG_PATH="~/config"
 INSTALL_OPTION_PATH="~/install"
 
+exe () {
+    # exe hepls contain a block of code in a repeatable format in case something goes wrong
+    return_code=1
+
+    while [ $return_code -ne 0 ]; do
+
+        "$@"
+        
+        return_code=$?
+        # check if everything worked
+        if [ $return_code -eq 0 ]; then
+            echo "================>>      Checks out"; sleep 1
+            break
+        fi
+
+        while [ $return_code -ne 0 ]; do
+            echo "Error code: $return_code !"
+            read -p "Something went wrong here :( Do you want to redo the command? [y/n]: " yn
+            case $yn in
+                [Yy]* ) break;;
+                [Nn]* ) return_code=0; break;;
+                * ) echo "Enter 'y' or 'n'!";;
+            esac
+        done
+    done
+}
+
+notification () {
+    clear; echo "================>>      $1"
+    sleep 1
+}
+
 inst_packages () {
 
     fname="inst_packages"
