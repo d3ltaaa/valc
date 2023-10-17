@@ -408,7 +408,7 @@ inst_part_3 () {
 
     notification "$fname"
 
-    curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_scripts/valc-3.sh > /mnt/home/$user/valc-3.sh
+    curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_scripts/valc-3.sh > /home/$user/valc-3.sh
     chmod +x /home/$user/valc-3.sh
     [ $? -ne 0 ] && return 39 || :
 
