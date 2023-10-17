@@ -401,6 +401,31 @@ systemd_setup () {
 
 }
 
+enable_services () {
+
+    fname="enable_services"
+
+    notification "$fname"
+
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+        beg=$(grep -n -i -w SERVICES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :SERVICES $CONFIG_PATH | cut -d':' -f1)
+
+        # grab everything between the two lines
+        services=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
+
+        for service in ${services[@]}; do
+            systemctl enable $service
+            [ $? -ne 0 ] && return 44 || :
+
+        done
+
+    fi
+
+    
+}
+
 
 inst_part_3 () {
 
@@ -430,9 +455,10 @@ exe user_mod
 exe inst_important_packages
 exe grub_setup
 exe systemd_setup
+exe enable_services
 exe inst_part_3
-mv /install ~/
-mv /config ~/
+mv $CONFIG_PATH /home/$user
+mv $INSTALL_OPTION_PATH /home/$user
 clear
 echo "The next commands are: "
 echo "exit; umount -R /mnt; reboot"
