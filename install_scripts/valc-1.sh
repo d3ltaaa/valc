@@ -132,7 +132,7 @@ determine_config () {
                 g) echo "host_name" >> /install;;
                 h) echo "user_name" >> /install;;
                 i) echo "user_mod" >> /install;;
-                j) echo "important packages" >> /install;;
+                j) echo "inst_important_packages" >> /install;;
                 k) echo "grub_setup" >> /install;;
                 l) echo "systemd_setup" >> /install;;
                 m) echo "inst_packages" >> /install;;
