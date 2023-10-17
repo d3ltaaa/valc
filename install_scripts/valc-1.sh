@@ -320,7 +320,7 @@ config_partitioning () {
             
     
             VALUE_SKIP="n"
-            echo "if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") -eq 0 ]] && ( [[ "${par_func_arr[$i]}" == "extern" ]] || [[ "${par_func_arr[$i]}" == "home" ]] ); then"
+
             if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") -eq 0 ]] && ( [[ "${par_func_arr[$i]}" == "extern" ]] || [[ "${par_func_arr[$i]}" == "home" ]] ); then
                 VALUE_SKIP="y"
                 echo "${par_func_arr[@]} -> skip"
@@ -378,7 +378,7 @@ config_partitioning () {
         # go through the partitions and find home-partition than mount it and install kernel
         for (( i=0; i<$amount_partition; i++ )); do
     
-            if [ "${[i]}" == "root" ]; then
+            if [ "${par_func_arr[i]}" == "root" ]; then
     
                 echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&"
                 mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&
@@ -425,7 +425,7 @@ config_partitioning () {
                 echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /mnt/etc/fstab
                 [ $? -ne 0 ] && return 30 || : 
     
-            elif [ "${[i]}" != "root" ]; then               
+            elif [ "$par_func_arr{[i]}" != "root" ]; then               
     
                 if [ ! -e "/mnt${par_mount_arr[i]}" ]; then
     
