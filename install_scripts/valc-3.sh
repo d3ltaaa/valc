@@ -70,6 +70,17 @@ inst_packages () {
 
 }
 
+build_dir_setup () {
+
+    fname="build_dir_setup"
+
+    notification "$fname"
+
+    sudo chown :build /usr/local/src
+    sudo chmod g=rwx /usr/local/src
+}
+
+
 yay_setup () {
 
     fname="yay_setup"
@@ -77,8 +88,6 @@ yay_setup () {
     notification "$fname"
 
     sudo git clone https://aur.archlinux.org/yay.git /usr/local/src/yay && 
-    sudo chown :build /usr/local/src/yay &&
-    sudo chown g+rwx /usr/local/src/yay &&
     cd /usr/local/src/yay &&
     makepkg -si --noconfirm 
     [ $? -ne 0 ] && return 45 || :
@@ -357,6 +366,7 @@ create_remove () {
 }
 
 exe inst_packages
+exe build_dir_setup
 exe yay_setup
 exe yay_installations
 exe download_setup

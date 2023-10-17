@@ -100,6 +100,7 @@ determine_config () {
         echo "enable_services_root:    m"
         # echo "inst_part_3               "
         echo "inst_packages:           n"
+        echo "build_dir_setup           "
         # echo "yay_setup                 "
         echo "yay_installations:       o"
         # echo "download_setup            "
