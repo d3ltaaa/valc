@@ -99,7 +99,7 @@ determine_config () {
         echo "systemd_setup:           l"
         # echo "inst_part_3               "
         echo "inst_packages:           m"
-        echo "enable_services:         n"
+        echo "enable_services_root:    n"
         # echo "yay_setup                 "
         echo "yay_installations:       o"
         # echo "download_setup            "
@@ -109,7 +109,8 @@ determine_config () {
         echo "inst_fonts:              s"
         echo "links_setup:             t"
         echo "create_folder:           u"
-        echo "dwm_auto:                v"
+        echo "enable_services:         v"
+        echo "dwm_auto:                w"
         # echo "create_remove             "
 
         read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuv" VALUE_ans
@@ -136,7 +137,7 @@ determine_config () {
                 k) echo "grub_setup" >> /install;;
                 l) echo "systemd_setup" >> /install;;
                 m) echo "inst_packages" >> /install;;
-                n) echo "enable_services" >> /install;;
+                n) echo "enable_services_root" >> /install;;
                 o) echo "yay_installations" >> /install;;
                 p) echo "inst_var_packages" >> /install;;
                 q) echo "building_software" >> /install;;
@@ -144,7 +145,8 @@ determine_config () {
                 s) echo "inst_fonts" >> /install;;
                 t) echo "links_setup" >> /install;;
                 u) echo "create_folder" >> /install;;
-                v) echo "dwm_auto" >> /install;;
+                v) echo "enable_services" >> /install;;
+                w) echo "dwm_auto" >> /install;;
                 *)
                     invalid_value=1
                     break

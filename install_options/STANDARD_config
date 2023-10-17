@@ -87,8 +87,7 @@ imagemagick
 :PACKAGES
 
 
-SERVICES:
-NetworkManager
+SERVICES: NetworkManager alskdfj asldfkj^
 bluetooth.service
 pulseaudio
 sshd

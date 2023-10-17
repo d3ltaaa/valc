@@ -309,6 +309,31 @@ dwm_auto () {
     fi
 }
 
+enable_services () {
+
+    fname="enable_services"
+
+    notification "$fname"
+
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+        beg=$(grep -n -i -w SERVICES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :SERVICES $CONFIG_PATH | cut -d':' -f1)
+
+        # grab everything between the two lines
+        services=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
+
+        for service in ${services[@]}; do
+            systemctl enable $service
+            [ $? -ne 0 ] && return 44 || :
+
+        done
+
+    fi
+
+    
+}
+
 
 create_remove () {
 
@@ -339,5 +364,6 @@ exe inst_fonts
 exe links_setup
 exe create_folder
 exe dwm_auto
+exe enable_services
 exe create_remove
 
