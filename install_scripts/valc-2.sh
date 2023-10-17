@@ -51,7 +51,7 @@ ena_parallel () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         parallel=$(grep -i -w PARALLEL: $CONFIG_PATH | awk '{print $2}') &&
         sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
@@ -73,7 +73,7 @@ time_setup () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         time_zone=$(grep -i -w TIME: $CONFIG_PATH | awk '{print $2}') &&
         ln -sf /usr/share/zoneinfo${time_zone} /etc/localtime &&
@@ -96,7 +96,7 @@ language_setup () {
 
     notification "$fname"
     
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         lang1=$(grep -i -w -A2 LANGUAGE: $CONFIG_PATH | awk 'NR==2')
         lang2=$(grep -i -w -A2 LANGUAGE: $CONFIG_PATH | awk 'NR==3')
@@ -116,7 +116,7 @@ kb_setup () {
 
     notification "$fname"
    
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         kb=$(grep -i -w KEYBOARD: $CONFIG_PATH | awk '{print $2}')
         echo "KEYMAP=$kb" > /etc/vconsole.conf
@@ -137,7 +137,7 @@ host_name () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         hostname=$(grep -i -w NAME: $CONFIG_PATH | awk '{print $2}') 
 
@@ -195,7 +195,7 @@ user_name () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         user=$(grep -i -w USER: $CONFIG_PATH | awk '{print $2}')
 
@@ -247,7 +247,7 @@ user_mod () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         groups="$(grep -i -w USER_GROUPS: $CONFIG_PATH | awk '{print $2}')"
 
@@ -275,7 +275,7 @@ inst_important_packages () {
     sudo sed -i '/^# %wheel ALL=(ALL:ALL) ALL$/s/^# //' /etc/sudoers | sudo EDITOR='tee -a' visudo
     [ $? -ne 0 ] && return 33 || :
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
         
         beg=$(grep -n -i -w IMPORTANT_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
         end=$(grep -n -i -w :IMPORTANT_PACKAGES $CONFIG_PATH | cut -d':' -f1)
@@ -304,7 +304,7 @@ grub_setup () {
 
     notification "$fname"
 
-    if grep -w -q "$fname" $INSTALLATION_OPTION_PATH; then
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
         par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
