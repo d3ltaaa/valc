@@ -1,5 +1,5 @@
-CONFIG_PATH="~/config"
-INSTALL_OPTION_PATH="~/install"
+CONFIG_PATH="/home/$USER/config"
+INSTALL_OPTION_PATH="/home/$USER/install"
 
 exe () {
     # exe hepls contain a block of code in a repeatable format in case something goes wrong
@@ -71,18 +71,6 @@ inst_packages () {
 
 
 
-yay_setup () {
-
-    fname="yay_setup"
-
-    notification "$fname"
-
-    git clone https://aur.archlinux.org/yay.git /usr/local/src &&
-    cd /usr/local/src &&
-    makepkg -si --noconfirm 
-    [ $? -ne 0 ] && return 45 || :
-
-}
 
 
 yay_installations () {

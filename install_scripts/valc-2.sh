@@ -401,6 +401,19 @@ systemd_setup () {
 
 }
 
+yay_setup () {
+
+    fname="yay_setup"
+
+    notification "$fname"
+
+    sudo git clone https://aur.archlinux.org/yay.git /usr/local/src &&
+    cd /usr/local/src &&
+    makepkg -si --noconfirm 
+    [ $? -ne 0 ] && return 45 || :
+
+}
+
 enable_services_root () {
 
     fname="enable_services_root"
@@ -449,6 +462,7 @@ exe user_mod
 exe inst_important_packages
 exe grub_setup
 exe systemd_setup
+exe yay_setup
 exe enable_services_root
 exe inst_part_3
 mv $CONFIG_PATH /home/$user
