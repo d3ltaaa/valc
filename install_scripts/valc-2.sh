@@ -401,6 +401,42 @@ systemd_setup () {
 
 }
 
+inst_packages () {
+
+    fname="inst_packages"
+
+    notification "$fname"
+
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+        pacman -Syu
+
+        graphics_driver=$(grep -i -w GRAPHICS_DRIVER: $CONFIG_PATH | awk '{print $2}')
+        pacman --noconfirm -S  $graphics_driver
+        [ $? -ne 0 ] && return 43 || :
+
+
+        beg=$(grep -n -i -w PACKAGES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :PACKAGES $CONFIG_PATH | cut -d':' -f1)
+
+        # grab everything between the two lines
+        packages=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
+
+        pacman --noconfirm -S $packages
+        [ $? -ne 0 ] && return 43 || :
+
+    else
+
+        read -p "Which packages do you want to install?: " packages
+
+        pacman -Syu
+        pacman --noconfirm -S $packages
+        [ $? -ne 0 ] && return 43 || :
+
+    fi
+
+}
+
 yay_setup () {
 
     fname="yay_setup"
