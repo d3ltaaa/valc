@@ -271,7 +271,7 @@ inst_important_packages () {
 
     notification "$fname"
 
-    pacman -S --noconfirm -S sudo &&
+    pacman --noconfirm -S sudo &&
     sudo sed -i '/^# %wheel ALL=(ALL:ALL) ALL$/s/^# //' /etc/sudoers | sudo EDITOR='tee -a' visudo
     [ $? -ne 0 ] && return 33 || :
 
