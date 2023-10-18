@@ -1,6 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 
-#include "/home/falk/.config/suckless/themes/arch-dark.h"
+#include "/usr/local/src/suckless/themes/arch-dark.h"
 
 /*
  * appearance

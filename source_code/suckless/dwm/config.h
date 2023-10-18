@@ -1,5 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "/home/falk/.config/suckless/themes/arch-dark.h"
+#include "/usr/local/src/suckless/themes/arch-dark.h"
 
 /* appearance */
 static const unsigned int borderpx  = 7;        /* border pixel of windows */
