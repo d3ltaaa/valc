@@ -364,8 +364,8 @@ config_partitioning () {
                     [ $? -ne 0 ] && return 23 || : 
     
                 elif [ "${par_type_arr[$i]}" == "ext4" ]; then
-                    echo "mkfs.ext4 /dev/${par_arr[i]} "
-                    mkfs.ext4 /dev/${par_arr[i]} 
+                    echo "mkfs.ext4 -F /dev/${par_arr[i]} "
+                    mkfs.ext4 -F /dev/${par_arr[i]} 
                     [ $? -ne 0 ] && return 24 || : 
     
                 elif [ "${par_type_arr[$i]}" == "exfat" ]; then
@@ -494,7 +494,7 @@ set_file_system () {
                             break
 
                         elif [[ "$file_system" == "ext4" ]]; then
-                            mkfs.ext4 $partition_to_set
+                            mkfs.ext4 -F $partition_to_set
                             [ $? -ne 0 ] && return 14 || : 
                             break
 

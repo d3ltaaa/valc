@@ -289,7 +289,7 @@ create_folder () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        fol_arr=($(grep -i -w FOLDERS $CONFIG_PATH | cut -d ' ' -f2-))
+        fol_arr=($(grep -i -w FOLDER: $CONFIG_PATH | cut -d ' ' -f2-))
         for folder in ${fol_arr[@]}; do
             mkdir ~/$folder
         done
@@ -319,9 +319,9 @@ dwm_auto () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        mkdir ~/.dwm
-        touch ~/.dwm/autostart.sh
-        chmod +x ~/.dwm/autostart.sh
+        mkdir -p $HOME/.dwm
+        touch $HOME/.dwm/autostart.sh
+        chmod +x $HOME/.dwm/autostart.sh
 
         beg=$(grep -n -i -w AUTOSTART: $CONFIG_PATH | cut -d':' -f1)
         end=$(grep -n -i -w :AUTOSTART $CONFIG_PATH | cut -d':' -f1)
@@ -329,7 +329,7 @@ dwm_auto () {
         # grab everything between the two lines
         autostart=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
 
-        echo "$autostart" > ~/.dwm/autostart.sh
+        echo "$autostart" > $HOME/.dwm/autostart.sh
 
     fi
 }
@@ -382,9 +382,9 @@ create_remove () {
     echo "sudo rm /valc-2.sh" >> ~/remove.sh &&
     echo "cd" >> ~/remove.sh &&
     echo "sudo rm valc-3.sh" >> ~/remove.sh &&
+    echo "sudo mv ~/config ~/.config.cfg" >> ~/remove.sh
     chmod +x ~/remove.sh
 
-    sudo mv ~/config ~/.config.cfg
 
     [ $? -ne 0 ] && return 53 || :
 }
