@@ -378,7 +378,7 @@ create_remove () {
 
     cd &&
     touch ~/remove.sh &&
-    echo "sudo rm /install" >> ~/remove.sh &&
+    echo "sudo rm ~/install" >> ~/remove.sh &&
     echo "sudo rm /valc-2.sh" >> ~/remove.sh &&
     echo "cd" >> ~/remove.sh &&
     echo "sudo rm valc-3.sh" >> ~/remove.sh &&
