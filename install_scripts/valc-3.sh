@@ -87,11 +87,17 @@ paru_setup () {
 
     notification "$fname"
 
-    sudo git clone https://aur.archlinux.org/paruu.git
-    cd /usr/local/src/paru
-    makepkg -si --noconfirm 
-    [ $? -ne 0 ] && return 45 || :
+    dir="$(command -v paru)"
 
+    if [[ $dir == "" ]]; then
+        sudo git clone https://aur.archlinux.org/paru.git /usr/local/src/paru
+        sudo chown :build /usr/local/src/paru
+        sudo chmod g=rwx /usr/local/src/paru
+        cd /usr/local/src/paru
+        makepkg -si --noconfirm 
+        [ $? -ne 0 ] && return 45 || :
+
+    fi
 }
 
 
@@ -127,7 +133,7 @@ download_setup () {
 
     notification "$fname"
 
-    git clone https://github.com/d3ltaaa/.valc.git /usr/local/share/
+    sudo git clone https://github.com/d3ltaaa/.valc.git /usr/local/share/valc
     [ $? -ne 0 ] && return 48 || :
 }
 
@@ -157,8 +163,8 @@ inst_var_packages () {
                     ;;
 
                 "auto-cpufreq")
-                    git clone https://github.com/AdnanHodzic/auto-cpufreq.git /usr/local/src
-                    cd /usr/local/src/auto-cpufreq && sudo ./auto-cpufreq-installer
+                    git clone https://github.com/AdnanHodzic/auto-cpufreq.git /usr/local/src/auto-cpufreq
+                    cd /usr/local/src/auto-cpufreq && sudo ./auto-cpufreq-installer --install
                     sudo auto-cpufreq --install
                     ;;
             esac
@@ -166,31 +172,6 @@ inst_var_packages () {
     fi
 }
 
-
-building_software () {
-
-    fname="building_software"
-
-    notification "$fname"
-
-    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
-
-        beg=$(grep -n -i -w BUILD: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :BUILD $CONFIG_PATH | cut -d':' -f1)
-
-        # grab everything between the two lines
-        build_dirs=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
-
-
-        for dir in ${build_dirs[@]}; do
-            cd $dir 
-            make && 
-            sudo make install
-            [ $? -ne 0 ] && return 50 || :
-        done
-
-    fi
-}
 
 
 inst_wallpaper () {
@@ -239,7 +220,6 @@ inst_fonts () {
     fi
 }
 
-
 links_setup () {
 
     fname="links_setup"
@@ -259,12 +239,41 @@ links_setup () {
         origin=$(echo $link | cut -d':' -f1)
         destination=$(echo $link | cut -d':' -f2)
 
+        mkdir -p destination
+
         files=($(ls -A $origin))
         for file in ${files[@]}; do
             ln -s -f $origin/$file $destination
         done
     done
         
+}
+
+
+
+building_software () {
+
+    fname="building_software"
+
+    notification "$fname"
+
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+        beg=$(grep -n -i -w BUILD: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :BUILD $CONFIG_PATH | cut -d':' -f1)
+
+        # grab everything between the two lines
+        build_dirs=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
+
+
+        for dir in ${build_dirs[@]}; do
+            cd $dir 
+            make && 
+            sudo make install
+            [ $? -ne 0 ] && return 50 || :
+        done
+
+    fi
 }
 
 
@@ -367,14 +376,14 @@ create_remove () {
 
 exe inst_packages
 exe build_dir_setup
-exe yay_setup
-exe yay_installations
+exe paru_setup
+exe paru_installations
 exe download_setup
 exe inst_var_packages
-exe building_software
 exe inst_wallpaper
 exe inst_fonts
 exe links_setup
+exe building_software
 exe create_folder
 exe dwm_auto
 exe enable_services

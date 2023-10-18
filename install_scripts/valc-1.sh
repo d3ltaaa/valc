@@ -105,10 +105,10 @@ determine_config () {
         echo "paru_installations:      o"
         # echo "download_setup            "
         echo "inst_var_packages:       p"
-        echo "building_software:       q"
-        echo "inst_wallpaper:          r"
-        echo "inst_fonts:              s"
-        echo "links_setup:             t"
+        echo "inst_wallpaper:          q"
+        echo "inst_fonts:              r"
+        echo "links_setup:             s"
+        echo "building_software:       t"
         echo "create_folder:           u"
         echo "enable_services:         v"
         echo "dwm_auto:                w"
@@ -141,10 +141,10 @@ determine_config () {
                 n) echo "inst_packages" >> /install;;
                 o) echo "paru_installations" >> /install;;
                 p) echo "inst_var_packages" >> /install;;
-                q) echo "building_software" >> /install;;
-                r) echo "inst_wallpaper" >> /install;;
-                s) echo "inst_fonts" >> /install;;
-                t) echo "links_setup" >> /install;;
+                q) echo "inst_wallpaper" >> /install;;
+                r) echo "inst_fonts" >> /install;;
+                s) echo "links_setup" >> /install;;
+                t) echo "building_software" >> /install;;
                 u) echo "create_folder" >> /install;;
                 v) echo "enable_services" >> /install;;
                 w) echo "dwm_auto" >> /install;;

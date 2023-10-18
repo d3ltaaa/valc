@@ -96,11 +96,11 @@ thermald
 :SERVICES
 
 
-YAY_PACKAGES:
+PARU_PACKAGES:
 ncspot
 brillo
 xvkbd
-:YAY_PACKAGES
+:PARU_PACKAGES
 
 VAR_PACKAGES:
 remnote
