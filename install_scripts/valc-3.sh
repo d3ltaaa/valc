@@ -81,14 +81,14 @@ build_dir_setup () {
 }
 
 
-yay_setup () {
+paru_setup () {
 
-    fname="yay_setup"
+    fname="paru_setup"
 
     notification "$fname"
 
-    sudo git clone https://aur.archlinux.org/yay.git /usr/local/src/yay && 
-    cd /usr/local/src/yay &&
+    sudo git clone https://aur.archlinux.org/paruu.git
+    cd /usr/local/src/paru
     makepkg -si --noconfirm 
     [ $? -ne 0 ] && return 45 || :
 
@@ -97,22 +97,22 @@ yay_setup () {
 
 
 
-yay_installations () {
+paru_installations () {
 
-    fname="yay_installations"
+    fname="paru_installations"
 
     notification "$fname"
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        beg=$(grep -n -i -w YAY_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :YAY_PACKAGES $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -i -w PARU_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :PARU_PACKAGES $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         packages=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
 
         for package in ${packages[@]}; do
-            yay -S $package --noconfirm 
+            paru -S $package --noconfirm 
             [ $? -ne 0 ] && return 46 || :
         done
 

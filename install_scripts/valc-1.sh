@@ -101,8 +101,8 @@ determine_config () {
         # echo "inst_part_3               "
         echo "inst_packages:           n"
         echo "build_dir_setup           "
-        # echo "yay_setup                 "
-        echo "yay_installations:       o"
+        # echo "paru_setup                "
+        echo "paru_installations:      o"
         # echo "download_setup            "
         echo "inst_var_packages:       p"
         echo "building_software:       q"
@@ -139,7 +139,7 @@ determine_config () {
                 l) echo "systemd_setup" >> /install;;
                 m) echo "enable_services_root" >> /install;;
                 n) echo "inst_packages" >> /install;;
-                o) echo "yay_installations" >> /install;;
+                o) echo "paru_installations" >> /install;;
                 p) echo "inst_var_packages" >> /install;;
                 q) echo "building_software" >> /install;;
                 r) echo "inst_wallpaper" >> /install;;
