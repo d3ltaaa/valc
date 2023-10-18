@@ -772,7 +772,7 @@ inst_part_2 () {
     [ $? -ne 0 ] && return 21 || : 
 
     cp $CONFIG_PATH /mnt/config
-    cp $INSTALL_OPTION_PATH /mnt/installation_options
+    cp $INSTALL_OPTION_PATH /mnt/install
 }
 
 exe question_purpose

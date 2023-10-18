@@ -87,10 +87,12 @@ gimp
 imagemagick
 :PACKAGES
 
+USER_SERVICES:
+pulseaudio
+:USER_SERVICES
 
 SERVICES: NetworkManager 
 bluetooth.service
-pulseaudio
 sshd
 thermald
 :SERVICES
@@ -108,16 +110,16 @@ auto-cpufreq
 :VAR_PACKAGES
 
 BUILD:
-~/.config/suckless/dwm
-~/.config/suckless/st
-~/.config/suckless/dmenu
-~/.config/suckless/dwmblocks
+/usr/local/src/suckless/dwm
+/usr/local/src/suckless/dwmblocks
+/usr/local/src/suckless/st
+/usr/local/src/suckless/dmenu
 :BUILD
 
 LINKS:
-/usr/local/share/valc/home_files:~/
-/usr/local/share/valc/config_files:~/.config
-/usr/local/share/valc/my_scripts:~/.scripts
+/usr/local/share/valc/home_files:./
+/usr/local/share/valc/config_files:./.config
+/usr/local/share/valc/my_scripts:./.scripts
 :LINKS
 
 FOLDER: Documents Downloads Pictures Code Video

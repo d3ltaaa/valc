@@ -134,6 +134,10 @@ download_setup () {
     notification "$fname"
 
     sudo git clone https://github.com/d3ltaaa/.valc.git /usr/local/share/valc
+    files=($(ls -A /usr/local/share/valc/source_code))
+    for file in ${files[@]}; do
+        sudo mv /usr/local/share/valc/source_code/$file /usr/local/src/
+    done
     [ $? -ne 0 ] && return 48 || :
 }
 
@@ -239,7 +243,8 @@ links_setup () {
         origin=$(echo $link | cut -d':' -f1)
         destination=$(echo $link | cut -d':' -f2)
 
-        mkdir -p destination
+        cd ~/
+        mkdir -p "$destination"
 
         files=($(ls -A $origin))
         for file in ${files[@]}; do
@@ -268,7 +273,6 @@ building_software () {
 
         for dir in ${build_dirs[@]}; do
             cd $dir 
-            make && 
             sudo make install
             [ $? -ne 0 ] && return 50 || :
         done
@@ -344,10 +348,20 @@ enable_services () {
         # grab everything between the two lines
         services=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
 
-        for service in ${services[@]}; do
-            systemctl enable $service
-            [ $? -ne 0 ] && return 44 || :
+        beg=$(grep -n -i -w USER_SERVICES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :USER_SERVICES $CONFIG_PATH | cut -d':' -f1)
 
+        # grab everything between the two lines
+        user_services=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
+
+        for service in ${services[@]}; do
+            sudo systemctl enable $service
+            [ $? -ne 0 ] && return 44 || :
+        done
+
+        for service in ${user_services[@]}; do
+            systemctl --user enable $service
+            [ $? -ne 0 ] && return 44 || :
         done
 
     fi
@@ -364,12 +378,13 @@ create_remove () {
 
     cd &&
     touch ~/remove.sh &&
-    echo "sudo rm /valc-install-part-2.sh" >> ~/remove.sh &&
+    echo "sudo rm /install" >> ~/remove.sh &&
+    echo "sudo rm /valc-2.sh" >> ~/remove.sh &&
     echo "cd" >> ~/remove.sh &&
-    echo "sudo rm valc-install-part-3.sh" >> ~/remove.sh &&
+    echo "sudo rm valc-3.sh" >> ~/remove.sh &&
     chmod +x ~/remove.sh
 
-    sudo mv /config ~/.config.cfg
+    sudo mv ~/config ~/.config.cfg
 
     [ $? -ne 0 ] && return 53 || :
 }
