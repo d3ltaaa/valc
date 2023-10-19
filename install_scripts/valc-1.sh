@@ -114,7 +114,7 @@ determine_config () {
         echo "dwm_auto:                w"
         # echo "create_remove             "
 
-        read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuv" VALUE_ans
+        read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuvw" VALUE_ans
 
         VALUE_ans=$(echo "$VALUE_ans" | tr '[:upper:]' '[:lower:]')
 
