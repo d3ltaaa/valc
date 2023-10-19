@@ -62,6 +62,7 @@ copy_configs () {
     if [[ -e /run/media/$USER/INST/config/ip ]]; then
 
         echo "Copying ssh files ..."
+        mkdir -p ~/.ssh
         cp /run/media/$USER/INST/config/ip/* /home/$USER/.ssh/ && echo "Succeeded!"
 
     else
