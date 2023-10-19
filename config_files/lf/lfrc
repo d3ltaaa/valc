@@ -186,16 +186,13 @@ map gt cd ~/.Trash
 map gS cd ~/.scripts
 map gC cd ~/.config
 map gc cd ~/Code
-map gSC cd ~/.config/suckless
-map gva cd ~/.valc
-map gvs cd ~/.valc/setup
-map gvc cd ~/.valc/config
-map gvi cd ~/.valc/iscript
+map gva cd /usr/local/share/valc
+map gvs cd /usr/local/share/valc/source_code
+map gvc cd /usr/local/share/valc/config_files
+map gvi cd /usr/local/share/valc/install_scripts
 map gusb cd /run/media
-
 map gmnt cd /mnt
-map xtr trash_item
+
 map xmv scp_push m
 map xcp scp_push c
-map xee echo_f
 map C clear
