@@ -53,7 +53,17 @@ cmd open ${{
         *.webm|*.mkv|*.mp4)
             dwmswallow $WINDOWID; mpv "$f"
             ;;
-        *) $EDITOR "$f";;
+        *) 
+            if [ "$(stat -c %U "$f")" == "root" ]; then
+                clear
+                echo "Opening a file owned by root..."
+                sleep 0.5
+                sudo -E -s $EDITOR "$f"
+
+            else
+                $EDITOR "$f"
+            fi
+            ;;
     esac
 }}
 

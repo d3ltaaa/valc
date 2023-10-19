@@ -30,7 +30,7 @@ install_synergy () {
         echo "Already installed: Synergy!"
     else
         echo "Installing: Synergy ..."
-        flatpak install $APP_PATH/$synergy_name && \
+        sudo flatpak --assumeyes install $APP_PATH/$synergy_name && \
         flatpak list | grep synergy && \
         run_synergy && \
         echo "Installed: Synergy!" || \
