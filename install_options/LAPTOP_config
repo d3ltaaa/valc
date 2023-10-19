@@ -120,7 +120,7 @@ LINKS:
 /usr/local/share/valc/home_files:./
 /usr/local/share/valc/config_files:./.config
 /usr/local/share/valc/my_scripts:./.scripts
-/usr/local/share/valc/build_files:/usr/local/src
+/usr/local/share/valc/source_code:/usr/local/src
 :LINKS
 
 FOLDER: Documents Downloads Pictures Code Video
