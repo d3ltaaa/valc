@@ -8,17 +8,18 @@ LANGUAGE:
 en_US.UTF-8 UTF-8
 LANG=en_US.UTF-8 
 
-NAME: ARCH-FH
+NAME: VIRTUAL-FH
 
 USER: falk
 
-USER_GROUPS: wheel,audio,video
+USER_GROUPS: wheel audio video
+CUSTOM_GROUPS: build
 
 PARTITION:
 sda           sda       sda   sda
 sda1          sda2      sda3  sda4
-0%            2G        4G    10G
-2g            4G        10G   100%
+0%            2G        8G    16G
+2g            8G        16G   100%
 /boot/EFI     //        /     /home
 fat-32        swap      ext4  ext4
 no            no        root  home
@@ -86,21 +87,22 @@ gimp
 imagemagick
 :PACKAGES
 
-
-SERVICES:
-NetworkManager
-bluetooth.service
+USER_SERVICES:
 pulseaudio
+:USER_SERVICES
+
+SERVICES: NetworkManager 
+bluetooth.service
 sshd
 thermald
 :SERVICES
 
 
-YAY_PACKAGES:
+PARU_PACKAGES:
 ncspot
 brillo
 xvkbd
-:YAY_PACKAGES
+:PARU_PACKAGES
 
 VAR_PACKAGES:
 remnote
@@ -108,16 +110,17 @@ auto-cpufreq
 :VAR_PACKAGES
 
 BUILD:
-~/.config/suckless/dwm
-~/.config/suckless/st
-~/.config/suckless/dmenu
-~/.config/suckless/dwmblocks
+/usr/local/src/suckless/dwm
+/usr/local/src/suckless/dwmblocks
+/usr/local/src/suckless/st
+/usr/local/src/suckless/dmenu
 :BUILD
 
 LINKS:
-/usr/local/share/valc/home_files:~/
-/usr/local/share/valc/config_files:~/.config
-/usr/local/share/valc/my_scripts:~/.scripts
+/usr/local/share/valc/home_files:./
+/usr/local/share/valc/config_files:./.config
+/usr/local/share/valc/my_scripts:./.scripts
+/usr/local/share/valc/build_files:/usr/local/src
 :LINKS
 
 FOLDER: Documents Downloads Pictures Code Video
@@ -125,7 +128,6 @@ FOLDER: Documents Downloads Pictures Code Video
 MONITOR: 
 
 AUTOSTART:
-xrandr --output HDMI-1 --above eDP-1 
 picom &
 dwmblocks &
 xwallpaper --zoom ~/.config/wall/picture

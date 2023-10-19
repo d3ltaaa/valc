@@ -120,6 +120,7 @@ LINKS:
 /usr/local/share/valc/home_files:./
 /usr/local/share/valc/config_files:./.config
 /usr/local/share/valc/my_scripts:./.scripts
+/usr/local/share/valc/build_files:/usr/local/src
 :LINKS
 
 FOLDER: Documents Downloads Pictures Code Video
@@ -127,7 +128,6 @@ FOLDER: Documents Downloads Pictures Code Video
 MONITOR: 
 
 AUTOSTART:
-xrandr --output HDMI-1 --above eDP-1 
 picom &
 dwmblocks &
 xwallpaper --zoom ~/.config/wall/picture

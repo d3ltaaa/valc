@@ -1,36 +1,135 @@
-NAME: THINKPAD-FH
-
-USER: falk
-
 KEYBOARD: de-latin1 de
+
+PARALLEL: 15
 
 TIME: /Europe/Berlin
 
 LANGUAGE: 
 en_US.UTF-8 UTF-8
-LANG=en_US.UTF-8
+LANG=en_US.UTF-8 
+
+NAME: THINKPAD-FH 
+
+USER: falk
+
+USER_GROUPS: wheel audio video
+CUSTOM_GROUPS: build
+
+PARTITION:
+sda           sda       sda   sda    sdb
+sda1          sda2      sda3  sda4   sdb1
+0%            2G        12G   32G    0%
+2g            12G       32G   100%   100%
+/boot/EFI     //        /     /home  /mnt/storage
+fat-32        swap      ext4  ext4   exfat
+no            no        root  home   extern
+
+IMPORTANT_PACKAGES:
+grub
+efibootmgr
+dosfstools
+os-prober
+mtools
+networkmanager
+:IMPORTANT_PACKAGES
 
 GRAPHICS_DRIVER: xf86-video-fbdev
 
-FOLDERS: Documents Downloads Pictures Code Video
+PACKAGES:
+xorg
+xorg-xinit
+webkit2gtk
+base-devel
+tmux
+alsa-utils
+pulseaudio
+pavucontrol
+bluez
+bluez-utils
+pulseaudio-bluetooth
+blueman
+firefox
+thunar
+thermald
+fuse-exfat
+lf
+picom
+udisks2
+feh
+xdotool
+zathura
+zathura-pdf-mupdf
+xournalpp discord
+neofetch
+ranger
+git
+neovim
+telegram-desktop
+virtualbox
+dunst
+xwallpaper
+ffmpeg4.4
+xclip
+mpv
+yt-dlp
+acpi
+upower
+xbindkeys
+flatpak
+xdg-desktop-portal-gtk
+unzip
+fuse2
+ripgrep
+pamixer
+pulsemixer
+sox
+gimp
+imagemagick
+:PACKAGES
 
-IP: 
-WLAN:
-Wlan 12
-GATE: 192.168.2.1
-LAN:  192.168.2.11
-WIFI: 192.168.2.12
+USER_SERVICES:
+pulseaudio
+:USER_SERVICES
 
-MONITOR: eDP-1
-TURN-OFF: 
+SERVICES: NetworkManager 
+bluetooth.service
+sshd
+thermald
+:SERVICES
 
-TABLET: 0
 
-PARTITION:
-sda           sda       sda      sdb
-sda1          sda2      sda3     sdb1
-0%            2G        12G       0%
-2g            12G       100%     100%
-/boot/EFI     //        /        /mnt/CRUCIAL-SSD
-fat-32        swap      ext4     exfat
-no            no        home     extern
+PARU_PACKAGES:
+ncspot
+brillo
+xvkbd
+:PARU_PACKAGES
+
+VAR_PACKAGES:
+remnote
+auto-cpufreq
+:VAR_PACKAGES
+
+BUILD:
+/usr/local/src/suckless/dwm
+/usr/local/src/suckless/dwmblocks
+/usr/local/src/suckless/st
+/usr/local/src/suckless/dmenu
+:BUILD
+
+LINKS:
+/usr/local/share/valc/home_files:./
+/usr/local/share/valc/config_files:./.config
+/usr/local/share/valc/my_scripts:./.scripts
+/usr/local/share/valc/build_files:/usr/local/src
+:LINKS
+
+FOLDER: Documents Downloads Pictures Code Video
+
+MONITOR: 
+
+AUTOSTART:
+picom &
+dwmblocks &
+xwallpaper --zoom ~/.config/wall/picture
+setxkbmap de
+:AUTOSTART

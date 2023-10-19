@@ -1,40 +1,135 @@
-NAME: DESKTOP-FH
-
-USER: falk
-
 KEYBOARD: de-latin1 de
+
+PARALLEL: 15
 
 TIME: /Europe/Berlin
 
 LANGUAGE: 
 en_US.UTF-8 UTF-8
-LANG=en_US.UTF-8
+LANG=en_US.UTF-8 
 
-GRAPHICS_DRIVER: nvidia-open
+NAME: LAPTOP-FH
 
-FOLDERS: Documents Downloads Pictures Code Video
+USER: falk
 
-IP: 
-WLAN:
-Wlan 12
-GATE: 192.168.2.1
-LAN:  192.168.2.21
-WIFI: 192.168.2.22
+USER_GROUPS: wheel audio video
+CUSTOM_GROUPS: build
+
+PARTITION: 
+sda          nvme0n1       nvme0n1   nvme0n1    nvme0n1
+sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3  nvme0n1p4
+0%           0%            2G        20G        50G
+100%         2g            20G       50G        100%
+/mnt/storage /boot/EFI     //        /          /home
+exfat        fat-32        swap      ext4       ext4
+extern       no            no        root       home
+
+IMPORTANT_PACKAGES:
+grub
+efibootmgr
+dosfstools
+os-prober
+mtools
+networkmanager
+:IMPORTANT_PACKAGES
+
+GRAPHICS_DRIVER: xf86-video-fbdev
+
+PACKAGES:
+xorg
+xorg-xinit
+webkit2gtk
+base-devel
+tmux
+alsa-utils
+pulseaudio
+pavucontrol
+bluez
+bluez-utils
+pulseaudio-bluetooth
+blueman
+firefox
+thunar
+thermald
+fuse-exfat
+lf
+picom
+udisks2
+feh
+xdotool
+zathura
+zathura-pdf-mupdf
+xournalpp discord
+neofetch
+ranger
+git
+neovim
+telegram-desktop
+virtualbox
+dunst
+xwallpaper
+ffmpeg4.4
+xclip
+mpv
+yt-dlp
+acpi
+upower
+xbindkeys
+flatpak
+xdg-desktop-portal-gtk
+unzip
+fuse2
+ripgrep
+pamixer
+pulsemixer
+sox
+gimp
+imagemagick
+:PACKAGES
+
+USER_SERVICES:
+pulseaudio
+:USER_SERVICES
+
+SERVICES: NetworkManager 
+bluetooth.service
+sshd
+thermald
+:SERVICES
 
 
+PARU_PACKAGES:
+ncspot
+brillo
+xvkbd
+:PARU_PACKAGES
 
-MONITOR: HDMI-0 DVI-D-0
-TURN-OFF: DVI-D-1
+VAR_PACKAGES:
+remnote
+auto-cpufreq
+:VAR_PACKAGES
 
+BUILD:
+/usr/local/src/suckless/dwm
+/usr/local/src/suckless/dwmblocks
+/usr/local/src/suckless/st
+/usr/local/src/suckless/dmenu
+:BUILD
 
-TABLET: 0
+LINKS:
+/usr/local/share/valc/home_files:./
+/usr/local/share/valc/config_files:./.config
+/usr/local/share/valc/my_scripts:./.scripts
+/usr/local/share/valc/build_files:/usr/local/src
+:LINKS
 
+FOLDER: Documents Downloads Pictures Code Video
 
-PARTITION: dual
-sda          nvme0n1       nvme0n1   nvme0n1
-sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3 
-0%           0%            2G        20G
-100%         2g            20G       256G
-/mnt/HDD     /boot/EFI     //        /
-exfat        fat-32        swap      ext4
-extern       no            no        home
+MONITOR: 
+
+AUTOSTART:
+picom &
+dwmblocks &
+xwallpaper --zoom ~/.config/wall/picture
+setxkbmap de
+:AUTOSTART
