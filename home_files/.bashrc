@@ -5,8 +5,9 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-alias ls='ls -lah --color=auto'
+alias lss='ls -lah --color=auto'
 alias grep='grep --color=auto'
+alias svim='sudo -E -s nvim'
 
 export EDITOR=nvim
 

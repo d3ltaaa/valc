@@ -180,7 +180,7 @@ inst_var_packages () {
 
 inst_wallpaper () {
 
-    fname="download_wallpaper"
+    fname="inst_wallpaper"
 
     notification "$fname"
 
