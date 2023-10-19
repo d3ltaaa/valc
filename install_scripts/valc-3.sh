@@ -135,9 +135,6 @@ download_setup () {
 
     sudo git clone https://github.com/d3ltaaa/.valc.git /usr/local/share/valc
     files=($(ls -A /usr/local/share/valc/source_code))
-    for file in ${files[@]}; do
-        sudo ln -s -f /usr/local/share/valc/source_code/$file /usr/local/src/
-    done
     [ $? -ne 0 ] && return 48 || :
 }
 
