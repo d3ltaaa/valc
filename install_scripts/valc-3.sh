@@ -49,6 +49,7 @@ reown_dirs () {
         for (( i=0; i<${#dir_group[@]}; i=$i+2 )); do
             echo "${dir_group[$i]} ${dir_group[$i+1]}"
             sudo chown :${dir_group[$i+1]} ${dir_group[$i]}
+            sudo chmod g=xrw ${dir_group[$i]}
         done
 
     fi
