@@ -11,6 +11,9 @@ alias svim='sudo -E -s nvim'
 
 export EDITOR=nvim
 
+GREEN="\[$(tput setaf 2)\]"
+RESET="\[$(tput sgr0)\]"
+
 PS1="\e[1;97m[ \u@\h \w ]\n\$ \e[m"
 
 # if [[ ! "$(tty)" = "/dev/tty1" ]]; then

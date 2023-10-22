@@ -394,8 +394,8 @@ create_remove () {
     [ $? -ne 0 ] && return 53 || :
 }
 
+exe reown_dirs
 exe inst_packages
-exe build_dir_setup
 exe paru_setup
 exe paru_installations
 exe download_setup
