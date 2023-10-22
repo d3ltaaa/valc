@@ -182,8 +182,8 @@ inst_wallpaper () {
     notification "$fname"
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH && [[ $(awk 'NR==1' install) -eq 1 ]]; then
-        mkdir -p ~/Pictures/Wallpapers &&
-        mkdir -p ~/.config/wall &&
+        mkdir -p $HOME/Pictures/Wallpapers &&
+        mkdir -p $HOME/.config/wall &&
         curl https://raw.githubusercontent.com/d3ltaaa/backgrounds/main/arch_nord_dark_bg.png > ~/Pictures/Wallpapers/arch_nord_dark_bg.png &&
         cp ~/Pictures/Wallpapers/arch_nord_dark_bg.png ~/.config/wall/picture
         [ $? -ne 0 ] && return 51 || :

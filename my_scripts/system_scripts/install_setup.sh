@@ -119,7 +119,7 @@ add_git_config () {
         git config --global user.email "$email" && 
         git config --global user.name "$git_name" && 
         sudo git config --global user.email "$email" &&
-        sudo git config --global user.name "$name"
+        sudo git config --global user.name "$git_name"
         echo "Succeeded!"
     else
         echo "Git already configured!"
