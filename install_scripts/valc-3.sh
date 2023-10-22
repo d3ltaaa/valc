@@ -46,7 +46,7 @@ reown_dirs () {
 
         # grab everything between the two lines
         dir_group=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
-        for (( i=0; i<${#packages[@]}; i=$i+2 )); do
+        for (( i=0; i<${#dir_group[@]}; i=$i+2 )); do
             echo "${dir_group[$i]} ${dir_group[$i+1]}"
             sudo chown :${dir_group[$i+1]} ${dir_group[$i]}
         done
