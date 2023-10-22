@@ -33,6 +33,27 @@ notification () {
     sleep 1
 }
 
+reown_dirs () {
+
+    fname="reown_dirs"
+
+    notification "$fname"
+
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+        beg=$(grep -n -i -w REOWN_DIR: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :REOWN_DIR $CONFIG_PATH | cut -d':' -f1)
+
+        # grab everything between the two lines
+        dir_group=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
+        for (( i=0; i<${#packages[@]}; i=$i+2 )); do
+            echo "${dir_group[$i]} ${dir_group[$i+1]}"
+            sudo chown :${dir_group[$i+1]} ${dir_group[$i]}
+        done
+
+    fi
+
+}
 
 inst_packages () {
 
@@ -70,16 +91,6 @@ inst_packages () {
 
 }
 
-build_dir_setup () {
-
-    fname="build_dir_setup"
-
-    notification "$fname"
-
-    sudo chown :build /usr/local/src
-    sudo chmod g=rwx /usr/local/src
-}
-
 
 paru_setup () {
 
@@ -90,9 +101,7 @@ paru_setup () {
     dir="$(command -v paru)"
 
     if [[ $dir == "" ]]; then
-        sudo git clone https://aur.archlinux.org/paru.git /usr/local/src/paru
-        sudo chown :build /usr/local/src/paru
-        sudo chmod g=rwx /usr/local/src/paru
+        git clone https://aur.archlinux.org/paru.git /usr/local/src/paru
         cd /usr/local/src/paru
         makepkg -si --noconfirm 
         [ $? -ne 0 ] && return 45 || :
@@ -133,8 +142,7 @@ download_setup () {
 
     notification "$fname"
 
-    sudo git clone https://github.com/d3ltaaa/.valc.git /usr/local/share/valc
-    files=($(ls -A /usr/local/share/valc/source_code))
+    git clone https://github.com/d3ltaaa/.valc.git /usr/local/share/valc
     [ $? -ne 0 ] && return 48 || :
 }
 

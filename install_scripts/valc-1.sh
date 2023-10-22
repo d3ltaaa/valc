@@ -52,15 +52,15 @@ question_purpose () {
 
     done
 
-    touch /install
+    touch $INSTALL_OPTION_PATH
         
     if [[ $VALUE_PURPOSE == "install" ]]; then
 
-        echo "1" > /install
+        echo "1" > $INSTALL_OPTION_PATH
 
     else
 
-        echo "0" > install
+        echo "0" > $INSTALL_OPTION_PATH
 
     fi
 
@@ -99,22 +99,22 @@ determine_config () {
         echo "systemd_setup:           l"
         echo "enable_services_root:    m"
         # echo "inst_part_3               "
-        echo "inst_packages:           n"
-        echo "build_dir_setup           "
+        echo "reown_dirs:              n"
+        echo "inst_packages:           o"
         # echo "paru_setup                "
-        echo "paru_installations:      o"
+        echo "paru_installations:      p"
         # echo "download_setup            "
-        echo "inst_var_packages:       p"
-        echo "inst_wallpaper:          q"
-        echo "inst_fonts:              r"
-        echo "links_setup:             s"
-        echo "building_software:       t"
-        echo "create_folder:           u"
-        echo "enable_services:         v"
-        echo "dwm_auto:                w"
+        echo "inst_var_packages:       q"
+        echo "inst_wallpaper:          r"
+        echo "inst_fonts:              s"
+        echo "links_setup:             t"
+        echo "building_software:       u"
+        echo "create_folder:           v"
+        echo "enable_services:         w"
+        echo "dwm_auto:                x"
         # echo "create_remove             "
 
-        read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuvw" VALUE_ans
+        read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuvwx" VALUE_ans
 
         VALUE_ans=$(echo "$VALUE_ans" | tr '[:upper:]' '[:lower:]')
 
@@ -122,32 +122,33 @@ determine_config () {
 
             case "$char" in
 
-                a) echo "kb_setup_live" >> /install;;
-                b) echo "ena_parallel_live" >> /install;;
-                1) echo "config_partitioning" >> /install;;
-                2) echo "cfdisk_partitioning" >> /install;;
-                3) echo "fdisk_partitioning" >> /install;;
-                c) echo "ena_parallel" >> /install;;
-                d) echo "time_setup" >> /install;;
-                e) echo "language_setup" >> /install;;
-                f) echo "kb_setup" >> /install;;
-                g) echo "host_name" >> /install;;
-                h) echo "user_name" >> /install;;
-                i) echo "user_mod" >> /install;;
-                j) echo "inst_important_packages" >> /install;;
-                k) echo "grub_setup" >> /install;;
-                l) echo "systemd_setup" >> /install;;
-                m) echo "enable_services_root" >> /install;;
-                n) echo "inst_packages" >> /install;;
-                o) echo "paru_installations" >> /install;;
-                p) echo "inst_var_packages" >> /install;;
-                q) echo "inst_wallpaper" >> /install;;
-                r) echo "inst_fonts" >> /install;;
-                s) echo "links_setup" >> /install;;
-                t) echo "building_software" >> /install;;
-                u) echo "create_folder" >> /install;;
-                v) echo "enable_services" >> /install;;
-                w) echo "dwm_auto" >> /install;;
+                a) echo "kb_setup_live" >> $INSTALL_OPTION_PATH;;
+                b) echo "ena_parallel_live" >> $INSTALL_OPTION_PATH;;
+                1) echo "config_partitioning" >> $INSTALL_OPTION_PATH;;
+                2) echo "cfdisk_partitioning" >> $INSTALL_OPTION_PATH;;
+                3) echo "fdisk_partitioning" >> $INSTALL_OPTION_PATH;;
+                c) echo "ena_parallel" >> $INSTALL_OPTION_PATH;;
+                d) echo "time_setup" >> $INSTALL_OPTION_PATH;;
+                e) echo "language_setup" >> $INSTALL_OPTION_PATH;;
+                f) echo "kb_setup" >> $INSTALL_OPTION_PATH;;
+                g) echo "host_name" >> $INSTALL_OPTION_PATH;;
+                h) echo "user_name" >> $INSTALL_OPTION_PATH;;
+                i) echo "user_mod" >> $INSTALL_OPTION_PATH;;
+                j) echo "inst_important_packages" >> $INSTALL_OPTION_PATH;;
+                k) echo "grub_setup" >> $INSTALL_OPTION_PATH;;
+                l) echo "systemd_setup" >> $INSTALL_OPTION_PATH;;
+                m) echo "enable_services_root" >> $INSTALL_OPTION_PATH;;
+                n) echo "reown_dirs" >> $INSTALL_OPTION_PATH;;
+                o) echo "inst_packages" >> $INSTALL_OPTION_PATH;;
+                p) echo "paru_installations" >> $INSTALL_OPTION_PATH;;
+                q) echo "inst_var_packages" >> $INSTALL_OPTION_PATH;;
+                r) echo "inst_wallpaper" >> $INSTALL_OPTION_PATH;;
+                s) echo "inst_fonts" >> $INSTALL_OPTION_PATH;;
+                t) echo "links_setup" >> $INSTALL_OPTION_PATH;;
+                u) echo "building_software" >> $INSTALL_OPTION_PATH;;
+                v) echo "create_folder" >> $INSTALL_OPTION_PATH;;
+                w) echo "enable_services" >> $INSTALL_OPTION_PATH;;
+                x) echo "dwm_auto" >> $INSTALL_OPTION_PATH;;
                 *)
                     invalid_value=1
                     break
