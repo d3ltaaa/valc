@@ -11,7 +11,7 @@ alias svim='sudo -E -s nvim'
 
 export EDITOR=nvim
 
-PS1='[\u@\h \W]\$ '
+PS1='[ \u@\h \w ]\n\$ '
 
 # if [[ ! "$(tty)" = "/dev/tty1" ]]; then
 #     
