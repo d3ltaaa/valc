@@ -85,6 +85,7 @@ pulsemixer
 sox
 gimp
 imagemagick
+tldr
 :PACKAGES
 
 USER_SERVICES:
