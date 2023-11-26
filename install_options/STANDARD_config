@@ -86,6 +86,8 @@ sox
 gimp
 imagemagick
 tldr
+freecad
+ghostscript
 :PACKAGES
 
 USER_SERVICES:
@@ -96,6 +98,7 @@ SERVICES: NetworkManager
 bluetooth.service
 sshd
 thermald
+cups.service
 :SERVICES
 
 
@@ -103,6 +106,7 @@ PARU_PACKAGES:
 ncspot
 brillo
 xvkbd
+simplescreenrecorder
 :PARU_PACKAGES
 
 VAR_PACKAGES:
