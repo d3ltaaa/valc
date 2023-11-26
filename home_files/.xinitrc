@@ -45,6 +45,7 @@ fi
 
 pacman -Sy
 xbindkeys -f ~/.xbindkeysrc &
+echo "" > ~/.config/nerd-dictation/status_file.txt # needed for proper functionality
 # xwallpaper --restore
 exec dwm
 

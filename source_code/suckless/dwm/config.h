@@ -183,6 +183,8 @@ static const Key keys[] = {
     { MODKEY,                       XK_s,       spawn,         SHCMD("menu_options") },
     { MODKEY|ShiftMask,	        	XK_s,	    spawn,	       SHCMD("menu_system") },
     { MODKEY|ControlMask,           XK_s,      spawn,          SHCMD("flatpak run com.symless.synergy") },
+    { MODKEY|ShiftMask,             XK_n,      spawn,          SHCMD("~/.config/nerd-dictation/./process.sh")},
+    { MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD("~/.config/nerd-dictation/./process.sh 0")},
 
     // Miscellaneous
 	// { MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },

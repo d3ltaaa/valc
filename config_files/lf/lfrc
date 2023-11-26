@@ -143,6 +143,28 @@ cmd echo_f ${{
     echo $fx
 }}
 
+cmd print_f ${{
+    while true; do
+        clear
+        echo "$fx"
+        read -p "Do you want to print this file? [y/n]: " ans
+        case $ans in
+            "y")
+                lp "$fx"
+                break
+                ;;
+            "n")
+                echo "Print not queued!"
+                break
+                ;;
+            *)
+                echo "Type 'y' or 'n'!"
+                ;;
+        esac
+    done
+}}
+
+
 # remove defaults
 map m 
 map e
@@ -150,7 +172,7 @@ map o
 map n
 map "'"
 map '"'
-map c
+map c clear
 map f
 map r
 
@@ -195,4 +217,5 @@ map gmnt cd /mnt
 
 map xmv scp_push m
 map xcp scp_push c
+map xp print_f
 map C clear
