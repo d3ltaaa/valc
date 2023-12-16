@@ -491,7 +491,6 @@ config_partitioning () {
         
         # add lvm to mkinitcpio.conf
         output="$(grep "LVM:" $CONFIG_PATH | awk 'NR==2')"
-        if [[ 
         parted_partitioning
         lvm_partitioning
         add_mount_points "${mount_point_par_arr[@]}"
