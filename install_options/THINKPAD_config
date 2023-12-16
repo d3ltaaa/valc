@@ -102,6 +102,7 @@ tldr
 freecad
 ghostscript
 spotify-launcher
+lvm2
 :PACKAGES
 
 USER_SERVICES:
