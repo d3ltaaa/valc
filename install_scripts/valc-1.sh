@@ -278,133 +278,121 @@ ena_parallel_live () {
 
 config_partitioning () {
 
+    fname="config_partitioning"
+
+    notification "$fname"
+
     # create partitions
     parted_partitioning () {
     
-        fname="parted_partitioning"
-    
-        notification "$fname"
-    
-        if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
-    
-            disk_to_par=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==2'))
-            par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==3'))
-            par_start_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==4'))
-            par_end_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==5'))
-            par_type_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==6'))
-            file_system_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==7'))
-            mount_point_par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==8'))
-            par_fstab_arr=($(grep -i -w -A8 PARTITION: $CONFIG_PATH | awk 'NR==9'))
-            par_update_arr=($(grep -i -w -A9 PARTITION: $CONFIG_PATH | awk 'NR==10'))
-    
-    
-            # clear fstab
-            touch /fstab
-            echo "" > /fstab
-            # make partition tables
-            disk=""
-            for (( i = 0; i<${#disk_to_par[@]}; i++ )); do
-                if [[ $disk != ${disk_to_par[$i]} ]]; then
-                    echo "parted -s /dev/${disk_to_par[$i]} mklabel gpt"
-                    if vgs &> /dev/null; then
-                       vgchange -a n
-                    fi
-                    parted -s /dev/${disk_to_par[$i]} mklabel gpt
-                    echo ""
+        disk_to_par=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==2'))
+        par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==3'))
+        par_start_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==4'))
+        par_end_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==5'))
+        par_type_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==6'))
+        file_system_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==7'))
+        mount_point_par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==8'))
+        par_fstab_arr=($(grep -i -w -A8 PARTITION: $CONFIG_PATH | awk 'NR==9'))
+        par_update_arr=($(grep -i -w -A9 PARTITION: $CONFIG_PATH | awk 'NR==10'))
+
+
+        # clear fstab
+        touch /fstab
+        echo "" > /fstab
+        # make partition tables
+        disk=""
+        for (( i = 0; i<${#disk_to_par[@]}; i++ )); do
+            if [[ $disk != ${disk_to_par[$i]} ]]; then
+                echo "parted -s /dev/${disk_to_par[$i]} mklabel gpt"
+                if vgs &> /dev/null; then
+                   vgchange -a n
                 fi
-                disk="${disk_to_par[$i]}"
-            done
-    
-    
-            for (( i = 0; i<${#par_arr[@]}; i++ )); do
-                
-                # make partitions
-                echo "parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}"
-                parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}
+                parted -s /dev/${disk_to_par[$i]} mklabel gpt
                 echo ""
-    
-                if [[ ${par_fstab_arr[$i]} != "//" ]]; then
-                    # if normal partition
-                    # make fs, add fstab entry
-                    make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
-                    add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+            fi
+            disk="${disk_to_par[$i]}"
+        done
+
+
+        for (( i = 0; i<${#par_arr[@]}; i++ )); do
+            
+            # make partitions
+            echo "parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}"
+            parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}
+            echo ""
+
+            if [[ ${par_fstab_arr[$i]} != "//" ]]; then
+                # if normal partition
+                # make fs, add fstab entry
+                make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+                add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+            else
+                # if lvm
+                # create physical volume and add to volume group
+                echo "pvcreate /dev/${par_arr[$i]}"
+                pvcreate /dev/${par_arr[$i]}
+                echo ""
+
+                # if volume group already exists, extend it
+                if vgdisplay | grep -w ${file_system_arr[$i]}; then
+                    echo "vgextend ${file_system_arr[$i]} ${par_arr[$i]}"
+                    vgextend ${file_system_arr[$i]} /dev/${par_arr[$i]}
+                        echo ""
                 else
-                    # if lvm
-                    # create physical volume and add to volume group
-                    echo "pvcreate /dev/${par_arr[$i]}"
-                    pvcreate /dev/${par_arr[$i]}
+                    echo "vgcreate ${file_system_arr[$i]} ${par_arr[$i]}"
+                    vgcreate ${file_system_arr[$i]} /dev/${par_arr[$i]}
                     echo ""
-    
-                    # if volume group already exists, extend it
-                    if vgdisplay | grep -w ${file_system_arr[$i]}; then
-                        echo "vgextend ${file_system_arr[$i]} ${par_arr[$i]}"
-                        vgextend ${file_system_arr[$i]} /dev/${par_arr[$i]}
-                        echo ""
-                    else
-                        echo "vgcreate ${file_system_arr[$i]} ${par_arr[$i]}"
-                        vgcreate ${file_system_arr[$i]} /dev/${par_arr[$i]}
-                        echo ""
-                    fi
                 fi
-            done
-    
-    
-        fi
+            fi
+        done
     
     }
     
     lvm_partitioning () {
     
-        fname="lvm_partitioning"
     
-        # notification "$fname"
-    
-    
-        if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
-    
-            beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
-            end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
-    
-            # grab everything between the two lines
-            output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
-    
-            vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
-    
-            for (( i = 0; i<${#vg_names[@]}; i++ )); do
-    
-                lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
-                lv_sizes=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A2 | awk 'NR==3'))
-                lv_fs=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
-                lv_mount=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
-                lv_fstab=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A5 | awk 'NR==6'))
-                lv_update=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A6 | awk 'NR==7'))
-    
-                for (( j = 0; j<${#lv_names[@]}; j++ )); do
-                    # create logical volumes
-                    string_free="${lv_sizes[$j]}"
-                    if [[ "${string_free: -4}" == "FREE" ]]; then
-                        echo "lvcreate -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
-                        lvcreate -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
-                        echo ""
-                    else
-                        echo "lvcreate -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
-                        lvcreate -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
-                        echo ""
-                    fi
-    
-                    # make filesystem
-                    echo "make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]}"
-                    make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]}
+        beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
+
+        # grab everything between the two lines
+        output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
+
+        vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
+
+        for (( i = 0; i<${#vg_names[@]}; i++ )); do
+
+            lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
+            lv_sizes=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A2 | awk 'NR==3'))
+            lv_fs=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
+            lv_mount=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
+            lv_fstab=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A5 | awk 'NR==6'))
+            lv_update=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A6 | awk 'NR==7'))
+
+            for (( j = 0; j<${#lv_names[@]}; j++ )); do
+                # create logical volumes
+                string_free="${lv_sizes[$j]}"
+                if [[ "${string_free: -4}" == "FREE" ]]; then
+                    echo "lvcreate -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
+                    lvcreate -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
                     echo ""
-    
-    
-                    add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
-                done
-    
+                else
+                    echo "lvcreate -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
+                    lvcreate -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
+                    echo ""
+                fi
+
+                # make filesystem
+                echo "make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]}"
+                make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]}
+                echo ""
+
+
+                add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
             done
+
+        done
+   
     
-    
-        fi
     }
     
     make_fs () {
@@ -485,12 +473,14 @@ config_partitioning () {
         done
     }
     
-    parted_partitioning
-    lvm_partitioning
-    add_mount_points "${mount_point_par_arr[@]}"
-    add_mount_points "${lv_mount[@]}"
-    mkdir -p /mnt/etc
-    cp /fstab /mnt/etc/fstab
+    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+        parted_partitioning
+        lvm_partitioning
+        add_mount_points "${mount_point_par_arr[@]}"
+        add_mount_points "${lv_mount[@]}"
+        mkdir -p /mnt/etc
+        cp /fstab /mnt/etc/fstab
+    fi
 
 }
 
