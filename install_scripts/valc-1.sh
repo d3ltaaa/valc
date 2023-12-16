@@ -452,7 +452,7 @@ config_partitioning () {
             fi
     
             lsblk -fp # needed, dont know why
-            part_fs="$(lsblk -fp | grep -w "$full_path" | awk '{print $2}')"
+            part_fs="$(lsblk -lfp | grep -w "$full_path" | awk '{print $2}')"
             echo "part_fs of $full_path: $part_fs"
             printf "\n"
             echo "$full_path $mount_point $part_fs defaults 0 $fs_num" 
