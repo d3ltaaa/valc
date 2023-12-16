@@ -16,13 +16,27 @@ USER_GROUPS: wheel audio video
 CUSTOM_GROUPS: build
 
 PARTITION: 
-sda          nvme0n1       nvme0n1   nvme0n1    nvme0n1
-sda1         nvme0n1p1     nvme0n1p2 nvme0n1p3  nvme0n1p4
-0%           0%            2G        20G        50G
-100%         2g            20G       50G        100%
-/mnt/storage /boot/EFI     //        /          /home
-exfat        fat-32        swap      ext4       ext4
-extern       no            no        root       home
+nvme1n1     nvme1n1     nvme1n1
+nvme1n1p1   nvme1n1p2   nvme1n1p3
+0%          2G          20G
+2G          20G         100%
+fat32       linux-swap  ext4
+fat-32      swap        vg_arch
+/boot/efi   none        //
+2           0           //
+update      update      //
+:PARTITION
+
+LVM:
+LV | vg_arch
+lv_root     lv_backup   lv_home
+100G        10G         100%FREE
+ext4        ext4        ext4
+/           /mnt/backup /home
+1           2           2
+update      update      leave
+:LVM
+
 
 IMPORTANT_PACKAGES:
 grub

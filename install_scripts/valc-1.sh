@@ -283,19 +283,19 @@ config_partitioning () {
     
         fname="parted_partitioning"
     
-        # notification "$fname"
+        notification "$fname"
     
         if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
     
-            disk_to_par=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==2'))
-            par_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==3'))
-            par_start_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==4'))
-            par_end_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==5'))
-            par_type_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==6'))
-            file_system_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==7'))
-            mount_point_par_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==8'))
-            par_fstab_arr=($(grep -i -w -A8 PARTITIONS: $CONFIG_PATH | awk 'NR==9'))
-            par_update_arr=($(grep -i -w -A9 PARTITIONS: $CONFIG_PATH | awk 'NR==10'))
+            disk_to_par=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==2'))
+            par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==3'))
+            par_start_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==4'))
+            par_end_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==5'))
+            par_type_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==6'))
+            file_system_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==7'))
+            mount_point_par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==8'))
+            par_fstab_arr=($(grep -i -w -A8 PARTITION: $CONFIG_PATH | awk 'NR==9'))
+            par_update_arr=($(grep -i -w -A9 PARTITION: $CONFIG_PATH | awk 'NR==10'))
     
     
             # clear fstab

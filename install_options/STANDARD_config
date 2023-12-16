@@ -15,14 +15,27 @@ USER: falk
 USER_GROUPS: wheel audio video
 CUSTOM_GROUPS: build
 
-PARTITION:
-sda           sda       sda   sda
-sda1          sda2      sda3  sda4
-0%            2G        20G   50G
-2g            20G       50G   100%
-/boot/EFI     //        /     /home
-fat-32        swap      ext4  ext4
-no            no        root  home
+PARTITION: 
+sda         sda         sda
+sda1        sda2        sda3
+0%          2G          20G
+2G          20G         100%
+fat32       linux-swap  ext4
+fat-32      swap        vg_arch
+/boot/efi   none        //
+2           0           //
+update      update      //
+:PARTITION
+
+LVM:
+LV | vg_arch
+lv_root     lv_backup   lv_home
+50G         10G         100%FREE
+ext4        ext4        ext4
+/           /mnt/backup /home
+1           2           2
+update      update      leave
+:LVM
 
 IMPORTANT_PACKAGES:
 grub
