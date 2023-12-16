@@ -277,187 +277,221 @@ ena_parallel_live () {
 
 
 config_partitioning () {
-    
-    fname="config_partitioning"
 
-    notification "$fname"
-
-    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
-
-        # getting the right values from config
-        disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
-        par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
-        par_start_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==4'))
-        par_end_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==5'))
-        par_mount_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==6'))
-        par_type_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
-        par_func_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==8'))
+    # create partitions
+    parted_partitioning () {
+    
+        fname="parted_partitioning"
+    
+        # notification "$fname"
+    
+        if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+    
+            disk_to_par=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==2'))
+            par_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==3'))
+            par_start_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==4'))
+            par_end_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==5'))
+            par_type_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==6'))
+            file_system_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==7'))
+            mount_point_par_arr=($(grep -i -w -A7 PARTITIONS: $CONFIG_PATH | awk 'NR==8'))
+            par_fstab_arr=($(grep -i -w -A8 PARTITIONS: $CONFIG_PATH | awk 'NR==9'))
+            par_update_arr=($(grep -i -w -A9 PARTITIONS: $CONFIG_PATH | awk 'NR==10'))
     
     
-        # calculating the amount of partitions
-        amount_partition="${#disk_to_par[@]}"
-    
-        current_disk="first" #variable to make sure, that disks are recognized correctly
-    
-        for (( i=0; i<$amount_partition; i++ )); do
-    
-            echo "$current_disk -> ${disk_to_par[i]}"
-            
-            # if clause to make sure disks are being passed to $current_disk
-            if [ "$current_disk" == "first" ]; then
-    
-                # creating gpt label 
-                echo "$current_disk: First label created! ${disk_to_par[i]}" &&
-                parted -s /dev/${disk_to_par[i]} mklabel gpt &&
-                current_disk=${disk_to_par[i]}
-                [ $? -ne 0 ] && return 20 || : 
-    
-            elif [ ! "$current_disk" == "${disk_to_par[i]}" ]; then
-    
-                # creating gpt label on second disk
-                echo "$current_disk: New label created! ${disk_to_par[i]}" &&
-                parted -s /dev/${disk_to_par[i]} mklabel gpt && 
-                current_disk=${disk_to_par[i]}
-                [ $? -ne 0 ] && return 21 || : 
-    
-            fi
-            
-    
-            VALUE_SKIP="n"
-
-            if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") -eq 0 ]] && ( [[ "${par_func_arr[$i]}" == "extern" ]] || [[ "${par_func_arr[$i]}" == "home" ]] ); then
-                VALUE_SKIP="y"
-                echo "${par_func_arr[@]} -> skip"
-            fi
-    
-            if [ "${par_type_arr[$i]}" == "fat-32" ]; then
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]}"
-                parted -s /dev/${disk_to_par[i]} mkpart primary fat32 ${par_start_arr[$i]} ${par_end_arr[$i]} 
-                [ $? -ne 0 ] && return 22 || : 
-    
-            elif [ "${par_type_arr[$i]}" == "swap" ]; then
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]}"
-                parted -s /dev/${disk_to_par[i]} mkpart primary linux-swap ${par_start_arr[$i]} ${par_end_arr[$i]} 
-                [ $? -ne 0 ] && return 23 || : 
-    
-            elif [ "${par_type_arr[$i]}" == "ext4" ]; then
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]}" 
-                parted -s /dev/${disk_to_par[i]} mkpart primary ext4 ${par_start_arr[$i]} ${par_end_arr[$i]} 
-                [ $? -ne 0 ] && return 24 || : 
-    
-            elif [ "${par_type_arr[$i]}" == "exfat" ]; then
-                echo "parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}"
-                parted -s /dev/${disk_to_par[i]} mkpart primary ntfs ${par_start_arr[$i]} ${par_end_arr[$i]}
-                [ $? -ne 0 ] && return 25 || : 
-            fi
-    
-            if [[ ! "$VALUE_SKIP" =~ (Y|y) ]]; then
-    
-                # going through partitions and creating the partitions and changing the file system type
-                if [ "${par_type_arr[$i]}" == "fat-32" ]; then
-                    echo "mkfs.fat -F32 /dev/${par_arr[i]} "
-                    mkfs.fat -F32 /dev/${par_arr[i]} 
-                    [ $? -ne 0 ] && return 22 || : 
-    
-                elif [ "${par_type_arr[$i]}" == "swap" ]; then
-                    echo "mkswap /dev/${par_arr[i]}"
-                    mkswap /dev/${par_arr[i]} 
-                    [ $? -ne 0 ] && return 23 || : 
-    
-                elif [ "${par_type_arr[$i]}" == "ext4" ]; then
-                    echo "mkfs.ext4 -F /dev/${par_arr[i]} "
-                    mkfs.ext4 -F /dev/${par_arr[i]} 
-                    [ $? -ne 0 ] && return 24 || : 
-    
-                elif [ "${par_type_arr[$i]}" == "exfat" ]; then
-                    echo "mkfs.exfat /dev/${par_arr[i]} "
-                    mkfs.exfat /dev/${par_arr[i]} 
-                    [ $? -ne 0 ] && return 25 || : 
+            # clear fstab
+            touch /fstab
+            echo "" > /fstab
+            # make partition tables
+            disk=""
+            for (( i = 0; i<${#disk_to_par[@]}; i++ )); do
+                if [[ $disk != ${disk_to_par[$i]} ]]; then
+                    echo "parted -s /dev/${disk_to_par[$i]} mklabel gpt"
+                    if vgs &> /dev/null; then
+                       vgchange -a n
+                    fi
+                    parted -s /dev/${disk_to_par[$i]} mklabel gpt
+                    echo ""
                 fi
-            fi
+                disk="${disk_to_par[$i]}"
+            done
     
     
-        done
+            for (( i = 0; i<${#par_arr[@]}; i++ )); do
+                
+                # make partitions
+                echo "parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}"
+                parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}
+                echo ""
     
-        # go through the partitions and find home-partition than mount it and install kernel
-        for (( i=0; i<$amount_partition; i++ )); do
+                if [[ ${par_fstab_arr[$i]} != "//" ]]; then
+                    # if normal partition
+                    # make fs, add fstab entry
+                    make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+                    add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+                else
+                    # if lvm
+                    # create physical volume and add to volume group
+                    echo "pvcreate /dev/${par_arr[$i]}"
+                    pvcreate /dev/${par_arr[$i]}
+                    echo ""
     
-            if [ "${par_func_arr[i]}" == "root" ]; then
+                    # if volume group already exists, extend it
+                    if vgdisplay | grep -w ${file_system_arr[$i]}; then
+                        echo "vgextend ${file_system_arr[$i]} ${par_arr[$i]}"
+                        vgextend ${file_system_arr[$i]} /dev/${par_arr[$i]}
+                        echo ""
+                    else
+                        echo "vgcreate ${file_system_arr[$i]} ${par_arr[$i]}"
+                        vgcreate ${file_system_arr[$i]} /dev/${par_arr[$i]}
+                        echo ""
+                    fi
+                fi
+            done
     
-                echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&"
-                mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]} &&
-                [ $? -ne 0 ] && return 27 || : 
     
-                # get the uuid
-                part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
-                part_fs=$(lsblk -fp | grep -w /dev/${par_arr[i]} | awk '{print $2}')
+        fi
     
-                # write line to fstab (root specific)
-                echo "mkdir -p /mnt/etc"
-                echo "touch /mnt/etc/fstab"
-                echo "echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 1"  >> /mnt/etc/fstab"
-                mkdir -p /mnt/etc
-                touch /mnt/etc/fstab
-                echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 1"  >> /mnt/etc/fstab
-                [ $? -ne 0 ] && return 28 || : 
+    }
     
-                echo "pacstrap /mnt base linux linux-firmware linux-headers"
-                pacstrap /mnt base linux linux-firmware linux-headers
-                [ $? -ne 0 ] && return 29 || : 
-            fi
+    lvm_partitioning () {
     
-        done
+        fname="lvm_partitioning"
+    
+        # notification "$fname"
+    
+    
+        if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+    
+            beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
+            end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
+    
+            # grab everything between the two lines
+            output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
+    
+            vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
+    
+            for (( i = 0; i<${#vg_names[@]}; i++ )); do
+    
+                lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
+                lv_sizes=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A2 | awk 'NR==3'))
+                lv_fs=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
+                lv_mount=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
+                lv_fstab=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A5 | awk 'NR==6'))
+                lv_update=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A6 | awk 'NR==7'))
+    
+                for (( j = 0; j<${#lv_names[@]}; j++ )); do
+                    # create logical volumes
+                    string_free="${lv_sizes[$j]}"
+                    if [[ "${string_free: -4}" == "FREE" ]]; then
+                        echo "lvcreate -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
+                        lvcreate -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
+                        echo ""
+                    else
+                        echo "lvcreate -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
+                        lvcreate -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
+                        echo ""
+                    fi
+    
+                    # make filesystem
+                    echo "make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]}"
+                    make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]}
+                    echo ""
+    
+    
+                    add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
+                done
+    
+            done
+    
+    
+        fi
+    }
+    
+    make_fs () {
+        # (path to partition/lv) (fs)
+        full_path="$1"
+        file_system="$2"
+        update_var="$3"
+    
+        if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") == "1" ]] || [[ "$update_var" == "update" ]]; then
+    
+            if [ "$file_system" == "fat-32" ]; then
+                echo "mkfs.fat -F32 $full_path"
+                mkfs.fat -F32 $full_path
+                echo ""
         
-        # go through partitions again and mount the rest
-        # write to fstab
-        for (( i=0; i<$amount_partition; i++ )); do
-    
-            if [ "${par_type_arr[i]}" == "swap" ]; then
-    
-                swapon /dev/${par_arr[i]} 
-                [ $? -ne 0 ] && return 28 || : 
-    
-                # get the UUID
-                part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
-                part_fs=$(lsblk -fp | grep -w /dev/${par_arr[i]} | awk '{print $2}')
-                # write line to fstab (swap specific)
-                echo "echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /mnt/etc/fstab"
-                echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /mnt/etc/fstab
-                [ $? -ne 0 ] && return 30 || : 
-    
-            elif [ "${par_func_arr[i]}" != "root" ]; then               
-    
-                if [ ! -e "/mnt${par_mount_arr[i]}" ]; then
-    
-                    echo "Creating /mnt${par_mount_arr[i]}"
-                    mkdir -p /mnt${par_mount_arr[i]}
-                    [ $? -ne 0 ] && return 26 || : 
-    
-    
-                fi
-    
-                echo "mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}"
-                mount /dev/${par_arr[i]} /mnt${par_mount_arr[i]}
-                [ $? -ne 0 ] && return 27 || : 
-    
-                # get the uuid
-                part_UUID=$(sudo blkid /dev/${par_arr[i]} | grep -woP 'UUID="\K[^"]+') &&
-                part_fs=$(lsblk -fp | grep -w /dev/${par_arr[i]} | awk '{print $2}')
-                # write line to fstab 
-                echo "echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 2"  >> /mnt/etc/fstab"
-                echo "UUID=$part_UUID ${par_mount_arr[i]} $part_fs defaults 0 2"  >> /mnt/etc/fstab
-                [ $? -ne 0 ] && return 28 || : 
-    
-            else
-    
-                echo "home partition already managed!"
-    
+            elif [ "$file_system" == "swap" ]; then
+                echo "mkswap $full_path"
+                mkswap $full_path
+                echo ""
+        
+            elif [ "$file_system" == "ext4" ]; then
+                echo "mkfs.ext4 -F $full_path"
+                mkfs.ext4 -F $full_path
+                echo ""
+        
+            elif [ "$file_system" == "exfat" ]; then
+                echo "mkfs.exfat $full_path"
+                mkfs.exfat $full_path
+                echo ""
             fi
     
-        done
-
-    fi
+        fi
     
+    }
+    
+    add_fstab_entry () {
+        # (path to partition/lv) (mount_point) (fs_num)
+        full_path="$1"
+        mount_point="$2"
+        fs_num="$3"
+    
+    
+        if [[ ! -e /fstab ]]; then
+            touch /fstab
+        fi
+
+        lsblk -fp # needed, dont know why
+        part_fs="$(lsblk -fp | grep -w "$full_path" | awk '{print $2}')"
+        echo "part_fs of $full_path: $part_fs"
+        printf "\n"
+        echo "$full_path $mount_point $part_fs defaults 0 $fs_num" 
+        echo "$full_path $mount_point $part_fs defaults 0 $fs_num" >> /fstab
+        echo ""
+    
+        if [[ "$mount_point" == "/" ]]; then
+            mount $full_path /mnt
+            pacstrap -K /mnt base linux linux-firmware linux-headers
+        fi
+        
+    }
+
+    add_mount_points () {
+        mount_arr=("$@")
+        # normal partitions
+        for (( i=0; i<${#mount_arr[@]}; i++ )); do
+            case ${mount_arr[$i]} in
+                "none")
+                    break;;
+                "//")
+                    break;;
+                "")
+                    break;;
+                *)
+                    mkdir -p /mnt${mount_arr[$i]}
+                    echo "mkdir -p /mnt${mount_arr[$i]}"
+                    ;;
+            esac
+        done
+    }
+    
+    parted_partitioning
+    lvm_partitioning
+    add_mount_points "${mount_point_par_arr[@]}"
+    add_mount_points "${lv_mount[@]}"
+    mkdir -p /mnt/etc
+    cp /fstab /mnt/etc/fstab
+
 }
 
 
