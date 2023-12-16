@@ -44,6 +44,7 @@ dosfstools
 os-prober
 mtools
 networkmanager
+lvm2
 :IMPORTANT_PACKAGES
 
 GRAPHICS_DRIVER: xf86-video-fbdev
@@ -102,7 +103,6 @@ tldr
 freecad
 ghostscript
 spotify-launcher
-lvm2
 :PACKAGES
 
 USER_SERVICES:
