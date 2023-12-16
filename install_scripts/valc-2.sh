@@ -445,7 +445,7 @@ inst_part_3 () {
 
 }
 
-
+mount -a
 exe update_system
 exe ena_parallel
 exe time_setup
