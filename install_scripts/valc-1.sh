@@ -345,12 +345,12 @@ config_partitioning () {
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         echo "cryptsetup luksFormat /dev/${par_arr[$i]}"
                         echo "cryptsetup luksFormat /dev/${par_arr[$i]}" >> $HISTORY_PATH
-                        cryptsetup luksFormat /dev/${par_arr[$i]} >> $HISTORY_PATH
+                        cryptsetup luksFormat /dev/${par_arr[$i]}
                         echo "" >> $HISTORY_PATH
 
                         echo "cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}"
                         echo "cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}" >> $HISTORY_PATH
-                        cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]} >> $HISTORY_PATH
+                        cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
                         echo "" >> $HISTORY_PATH
                     fi
                 fi
@@ -565,6 +565,52 @@ config_partitioning () {
                 esac
             done
         }
+
+        mount_all () {
+            
+            for (( i=0; i<${#par_arr[@]}; i++ )); do
+                case ${mount_point_par_arr[$i]} in
+                    "none")
+                        break;;
+                    "//")
+                        break;;
+                    "")
+                        break;;
+                    *)
+                        mount /dev/${par_arr[$i]} /mnt/${mount_point_par_arr[$i]}
+                        ;;
+                esac
+            done
+
+            beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
+            end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
+    
+            # grab everything between the two lines
+            output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
+    
+            vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
+    
+            for (( i = 0; i<${#vg_names[@]}; i++ )); do
+    
+                lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
+                lv_mount=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
+    
+                for (( j = 0; j<${#lv_names[@]}; j++ )); do
+                    case ${lv_mount[$j]} in
+                        "none")
+                            break;;
+                        "//")
+                            break;;
+                        "")
+                            break;;
+                        *)
+                            mount /dev/${vg_names[$i]}/${par_arr[$j]} /mnt/${lv_mount[$j]}
+                            ;;
+                    esac
+                done
+            done
+
+        }
         
         # add lvm to mkinitcpio.conf
         output="$(grep "LVM:" $CONFIG_PATH | awk 'NR==2')"
@@ -572,6 +618,7 @@ config_partitioning () {
         lvm_partitioning
         add_mount_points "${mount_point_par_arr[@]}"
         add_mount_points "${lv_mount[@]}"
+        mount_all
         mkdir -p /mnt/etc
         cp /fstab /mnt/etc/fstab
     
