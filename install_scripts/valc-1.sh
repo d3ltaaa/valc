@@ -387,12 +387,12 @@ config_partitioning () {
                             device_path="/dev/mapper/${par_crypt_arr[$i]}"
                         else
                             device_path="/dev/${par_arr[$i]}"
+                            echo "wipefs -f -a $device_path"
+                            echo "wipefs -a -f $device_path" >> $HISTORY_PATH
+                            wipefs -a -f $device_path >> $HISTORY_PATH
+                            echo "" >> $HISTORY_PATH
                         fi
 
-                        echo "wipefs -f -a $device_path"
-                        echo "wipefs -a -f $device_path" >> $HISTORY_PATH
-                        wipefs -a -f $device_path >> $HISTORY_PATH
-                        echo "" >> $HISTORY_PATH
                         echo "pvcreate $device_path"
                         echo "pvcreate $device_path" >> $HISTORY_PATH
                         pvcreate $device_path >> $HISTORY_PATH
@@ -466,7 +466,6 @@ config_partitioning () {
     
                     echo "add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}"
                     add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
-                    read ""
                 done
             done
         }
