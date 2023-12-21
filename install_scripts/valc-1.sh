@@ -492,7 +492,7 @@ config_partitioning () {
             if [[ "$mount_point" == "/" ]]; then
                 mount $full_path /mnt
                 echo pacstrap /mnt base linux linux-firmware linux-headers
-                pacstrap -K /mnt base linux linux-firmware linux-headers
+                pacstrap /mnt base linux linux-firmware linux-headers lvm2
                 # testing if i can write something to a par and then update, and still read it
                 # might be a problem with lvcreate
             fi
