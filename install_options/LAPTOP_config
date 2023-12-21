@@ -21,6 +21,7 @@ nvme0n1p1   nvme0n1p2   nvme0n1p3
 0%          2G          20G
 2G          20G         100%
 fat32       linux-swap  ext4
+no          no          cryptlvm
 fat-32      swap        vg_arch
 /boot/efi   none        //
 2           0           //

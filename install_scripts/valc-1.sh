@@ -289,15 +289,16 @@ config_partitioning () {
         parted_partitioning () {
         
         
-            disk_to_par=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==2'))
-            par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==3'))
-            par_start_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==4'))
-            par_end_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==5'))
-            par_type_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==6'))
-            file_system_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==7'))
-            mount_point_par_arr=($(grep -i -w -A7 PARTITION: $CONFIG_PATH | awk 'NR==8'))
-            par_fstab_arr=($(grep -i -w -A8 PARTITION: $CONFIG_PATH | awk 'NR==9'))
-            par_update_arr=($(grep -i -w -A9 PARTITION: $CONFIG_PATH | awk 'NR==10'))
+            disk_to_par=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==2'))
+            par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==3'))
+            par_start_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==4'))
+            par_end_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==5'))
+            par_type_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==6'))
+            par_crypt_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR== 7'))
+            file_system_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==8'))
+            mount_point_par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==9'))
+            par_fstab_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==10'))
+            par_update_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==11'))
     
     
             # clear fstab
@@ -327,33 +328,53 @@ config_partitioning () {
                     echo "parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}"
                     parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}
                     echo ""
+                    
+                    # encrypt if it needs to be
+                    if [[ ${par_crpyt_arr[$i]} != "no" ]]; then
+                        cryptsetup luksFormat /dev/${$par_arr[$i]}
+                        cryptsetup open /dev/${par_arr[$i]} ${$par_crypt_arr[$i]}
+                    fi
                 fi
     
+
                 if [[ ${par_fstab_arr[$i]} != "//" ]]; then
                     # if normal partition
                     # make fs, add fstab entry
-                    make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
-                    add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+                    if [[ ${par_crpyt_arr[$i]} != "no" ]]; then
+                        # if it needs to be encrypted, another path needs to be passed
+                        make_fs /dev/mapper/${par_crpyt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+                        add_fstab_entry /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+                    else
+                        make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+                        add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+                    fi
+
                 else
                     # if lvm
                     # create physical volume and add to volume group
     
                     # only mingle with lvm on install
                     if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") == "1" ]]; then 
-                        echo "wipefs -f -a /dev/${par_arr[$i]}"
-                        wipefs -a -f /dev/${par_arr[$i]}
-                        echo "pvcreate /dev/${par_arr[$i]}"
-                        pvcreate /dev/${par_arr[$i]}
+                        if [[ ${par_crypt_arr[$i]} != "no" ]]; then
+                            device_path="/dev/mapper/${par_crypt_arr[$i]}"
+                        else
+                            device_path="/dev/${par_arr[$i]}"
+                        fi
+
+                        echo "wipefs -f -a $device_path"
+                        wipefs -a -f $device_path
+                        echo "pvcreate $device_path"
+                        pvcreate $device_path
                         echo ""
         
                         # if volume group already exists, extend it
                         if vgdisplay | grep -w ${file_system_arr[$i]}; then
-                            echo "vgextend ${file_system_arr[$i]} ${par_arr[$i]}"
-                            vgextend ${file_system_arr[$i]} /dev/${par_arr[$i]}
+                            echo "vgextend ${file_system_arr[$i]} $device_path"
+                            vgextend ${file_system_arr[$i]} $device_path
                             echo ""
                         else
-                            echo "vgcreate ${file_system_arr[$i]} ${par_arr[$i]}"
-                            vgcreate ${file_system_arr[$i]} /dev/${par_arr[$i]}
+                            echo "vgcreate ${file_system_arr[$i]} $device_path"
+                            vgcreate ${file_system_arr[$i]} $device_path
                             echo ""
                          fi
                     fi
