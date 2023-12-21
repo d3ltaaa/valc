@@ -578,13 +578,13 @@ config_partitioning () {
                         echo "swapon /dev/${par_arr[$i]}" >> $HISTORY_PATH
                         swapon /dev/${par_arr[$i]} >> $HISTORY_PATH
                         echo "" >> $HISTORY_PATH
-                        break;;
+                        ;;
                     "//")
-                        break;;
+                        ;;
                     "")
-                        break;;
+                        ;;
                     "/")
-                        break;;
+                        ;;
                     *)
                         echo "mount /dev/${par_arr[$i]} /mnt${mount_point_par_arr[$i]}" >> $HISTORY_PATH
                         mount /dev/${par_arr[$i]} /mnt${mount_point_par_arr[$i]} >> $HISTORY_PATH
@@ -612,13 +612,13 @@ config_partitioning () {
                             echo "swapon /dev/${vg_names[$i]}/${lv_names[$j]}" >> $HISTORY_PATH
                             swapon /dev/${vg_names[$i]}/${lv_names[$j]} >> $HISTORY_PATH
                             echo "" >> $HISTORY_PATH
-                            break;;
+                            ;;
                         "//")
-                            break;;
+                            ;;
                         "")
-                            break;;
+                            ;;
                         "/")
-                            break;;
+                            ;;
                         *)
                             echo "mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt${lv_mount[$j]}" >> $HISTORY_PATH
                             mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt${lv_mount[$j]} >> $HISTORY_PATH
