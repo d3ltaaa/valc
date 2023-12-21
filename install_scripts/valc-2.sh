@@ -404,8 +404,7 @@ systemd_setup () {
 
     sed -i 's/#HandlePowerKey=poweroff/HandlePowerKey=poweroff/' /etc/systemd/logind.conf
     sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=hibernate/' /etc/systemd/logind.conf
-    sed -i 's/^HOOKS=(base udev autodetect modconf/HOOKS=(base udev resume autodetect modconf lvm2/' /etc/mkinitcpio.conf
-
+    sed -i 's/^HOOKS=(base udev autodetect modconf/HOOKS=(base udev resume autodetect modconf encrypt lvm2/' /etc/mkinitcpio.conf
     mkinitcpio -P &&
     grub-mkconfig -o /boot/grub/grub.cfg
     [ $? -ne 0 ] && return 37 || :
