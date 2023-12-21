@@ -1,5 +1,6 @@
 CONFIG_PATH="/config"
 INSTALL_OPTION_PATH="/install"
+HISTORY_PATH="/commands"
 
 exe () {
     # exe hepls contain a block of code in a repeatable format in case something goes wrong
@@ -313,9 +314,11 @@ config_partitioning () {
                         if vgs &> /dev/null; then
                             vgs
                             vgchange -a n
+                            echo "vgs; vgchange -a n" > $HISTORY_PATH
                         fi
                         echo "parted -s /dev/${disk_to_par[$i]} mklabel gpt"
                         parted -s /dev/${disk_to_par[$i]} mklabel gpt
+                        echo "parted -s /dev/${disk_to_par[$i]} mklabel gpt" >> $HISTORY_PATH
                         echo ""
                     fi
                     disk="${disk_to_par[$i]}"
@@ -327,14 +330,18 @@ config_partitioning () {
                 if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") == "1" ]]; then 
                     echo "parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}"
                     parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}
+                    echo "parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}" >> $HISTORY_PATH
                     echo ""
                     
                     # encrypt if it needs to be
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         echo "cryptsetup luksFormat /dev/${par_arr[$i]}"
                         cryptsetup luksFormat /dev/${par_arr[$i]}
+                        echo "cryptsetup luksFormat /dev/${par_arr[$i]}" >> $HISTORY_PATH
+
                         echo "cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}"
                         cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
+                        echo "cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}" >> $HISTORY_PATH
                     fi
                 fi
     
@@ -345,10 +352,14 @@ config_partitioning () {
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         # if it needs to be encrypted, another path needs to be passed
                         make_fs /dev/mapper/${par_crypt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+                        echo "make_fs /dev/mapper/${par_crypt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}" >> $HISTORY_PATH
                         add_fstab_entry /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+                        echo "add_fstab_entry /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} " >> $HISTORY_PATH
                     else
                         make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+                        echo "make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}" >> $HISTORY_PATH
                         add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
+                        echo "add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} " >> $HISTORY_PATH
                     fi
 
                 else
@@ -365,18 +376,22 @@ config_partitioning () {
 
                         echo "wipefs -f -a $device_path"
                         wipefs -a -f $device_path
+                        echo "wipefs -a -f $device_path" >> $HISTORY_PATH
                         echo "pvcreate $device_path"
                         pvcreate $device_path
+                        echo "pvcreate $device_path" >> $HISTORY_PATH
                         echo ""
         
                         # if volume group already exists, extend it
                         if vgdisplay | grep -w ${file_system_arr[$i]}; then
                             echo "vgextend ${file_system_arr[$i]} $device_path"
                             vgextend ${file_system_arr[$i]} $device_path
+                            echo "vgextend ${file_system_arr[$i]} $device_path" >> $HISTORY_PATH
                             echo ""
                         else
                             echo "vgcreate ${file_system_arr[$i]} $device_path"
                             vgcreate ${file_system_arr[$i]} $device_path
+                            echo "vgcreate ${file_system_arr[$i]} $device_path" >> $HISTORY_PATH
                             echo ""
                          fi
                     fi
@@ -411,10 +426,12 @@ config_partitioning () {
                         if [[ "${string_free: -4}" == "FREE" ]]; then
                             echo "lvcreate --yes -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
                             lvcreate --yes -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
+                            echo "lvcreate --yes -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               " >> $HISTORY_PATH
                             echo ""
                         else
                             echo "lvcreate --yes -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
                             lvcreate --yes -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               
+                            echo "lvcreate --yes -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}               " >> $HISTORY_PATH
                             echo ""
                          fi
                     fi
@@ -422,10 +439,12 @@ config_partitioning () {
                     # make filesystem
                     echo "make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]}"
                     make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]}
+                    echo "make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]}" >> $HISTORY_PATH
                     echo ""
     
                     echo "add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}"
                     add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
+                    echo "add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}" >> $HISTORY_PATH
                     read ""
                 done
             done
@@ -442,21 +461,25 @@ config_partitioning () {
                 if [ "$file_system" == "fat-32" ]; then
                     echo "mkfs.fat -F32 $full_path"
                     mkfs.fat -F32 $full_path
+                    echo "mkfs.fat -F32 $full_path" >> $HISTORY_PATH
                     echo ""
             
                 elif [ "$file_system" == "swap" ]; then
                     echo "mkswap $full_path"
                     mkswap $full_path
+                    echo "mkswap $full_path" >> $HISTORY_PATH
                     echo ""
             
                 elif [ "$file_system" == "ext4" ]; then
                     echo "mkfs.ext4 -F $full_path"
                     mkfs.ext4 -F $full_path
+                    echo "mkfs.ext4 -F $full_path" >> $HISTORY_PATH
                     echo ""
             
                 elif [ "$file_system" == "exfat" ]; then
                     echo "mkfs.exfat $full_path"
                     mkfs.exfat $full_path
+                    echo "mkfs.exfat $full_path" >> $HISTORY_PATH
                     echo ""
                 fi
         
@@ -473,6 +496,7 @@ config_partitioning () {
         
             if [[ ! -e /fstab ]]; then
                 touch /fstab
+                echo "touch /fstab" >> $HISTORY_PATH
             fi
     
             lsblk -fp # needed, dont know why
@@ -482,12 +506,14 @@ config_partitioning () {
             echo "$full_path $mount_point $part_fs defaults 0 $fs_num" 
             cat /fstab
             echo "$full_path $mount_point $part_fs defaults 0 $fs_num" >> /fstab
+            echo "echo "$full_path $mount_point $part_fs defaults 0 $fs_num" >> /fstab" >> $HISTORY_PATH
             echo ""
         
             if [[ "$mount_point" == "/" ]]; then
                 mount $full_path /mnt
                 echo pacstrap /mnt base linux linux-firmware linux-headers
                 pacstrap -K /mnt base linux linux-firmware linux-headers
+                echo "pacstrap -K /mnt base linux linux-firmware linux-headers" >> $HISTORY_PATH
                 # testing if i can write something to a par and then update, and still read it
                 # might be a problem with lvcreate
             fi
@@ -507,6 +533,7 @@ config_partitioning () {
                         break;;
                     *)
                         mkdir -p /mnt${mount_arr[$i]}
+                        echo "mkdir -p /mnt${mount_arr[$i]}" >> $HISTORY_PATH
                         echo "mkdir -p /mnt${mount_arr[$i]}"
                         ;;
                 esac
@@ -516,11 +543,17 @@ config_partitioning () {
         # add lvm to mkinitcpio.conf
         output="$(grep "LVM:" $CONFIG_PATH | awk 'NR==2')"
         parted_partitioning
+        echo "parted_partitioning" >> $HISTORY_PATH
         lvm_partitioning
+        echo "lvm_partitioning" >> $HISTORY_PATH
         add_mount_points "${mount_point_par_arr[@]}"
+        echo "add_mount_points "${mount_point_par_arr[@]}"" >> $HISTORY_PATH
         add_mount_points "${lv_mount[@]}"
+        echo "add_mount_points "${lv_mount[@]}"" >> $HISTORY_PATH
         mkdir -p /mnt/etc
+        echo "mkdir -p /mnt/etc" >> $HISTORY_PATH
         cp /fstab /mnt/etc/fstab
+        echo "cp /fstab /mnt/etc/fstab" >> $HISTORY_PATH
     
     fi
 
