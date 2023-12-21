@@ -330,7 +330,7 @@ config_partitioning () {
                     echo ""
                     
                     # encrypt if it needs to be
-                    if [[ ${par_crpyt_arr[$i]} != "no" ]]; then
+                    if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         echo "cryptsetup luksFormat /dev/${par_arr[$i]}"
                         cryptsetup luksFormat /dev/${par_arr[$i]}
                         echo "cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}"
@@ -342,9 +342,9 @@ config_partitioning () {
                 if [[ ${par_fstab_arr[$i]} != "//" ]]; then
                     # if normal partition
                     # make fs, add fstab entry
-                    if [[ ${par_crpyt_arr[$i]} != "no" ]]; then
+                    if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         # if it needs to be encrypted, another path needs to be passed
-                        make_fs /dev/mapper/${par_crpyt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+                        make_fs /dev/mapper/${par_crypt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
                         add_fstab_entry /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} 
                     else
                         make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
