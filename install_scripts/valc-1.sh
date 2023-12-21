@@ -569,6 +569,9 @@ config_partitioning () {
 
         mount_all () {
             
+            par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==3'))
+            mount_point_par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==9'))
+
             for (( i=0; i<${#par_arr[@]}; i++ )); do
                 case ${mount_point_par_arr[$i]} in
                     "none")
