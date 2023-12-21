@@ -96,6 +96,7 @@ determine_config () {
         # echo "user_pw                   "
         echo "user_mod:                i"
         echo "inst_important_packages: j"
+        # echo "mkinitcpio_setup          "
         echo "grub_setup:              k"
         echo "systemd_setup:           l"
         echo "enable_services_root:    m"
@@ -571,6 +572,7 @@ config_partitioning () {
             for (( i=0; i<${#par_arr[@]}; i++ )); do
                 case ${mount_point_par_arr[$i]} in
                     "none")
+                        swapon /dev/${par_arr[$i]}
                         break;;
                     "//")
                         break;;
@@ -598,13 +600,14 @@ config_partitioning () {
                 for (( j = 0; j<${#lv_names[@]}; j++ )); do
                     case ${lv_mount[$j]} in
                         "none")
+                            swapon /dev/${vg_names[$i]}/${lv_names[$j]}
                             break;;
                         "//")
                             break;;
                         "")
                             break;;
                         *)
-                            mount /dev/${vg_names[$i]}/${par_arr[$j]} /mnt/${lv_mount[$j]}
+                            mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt/${lv_mount[$j]}
                             ;;
                     esac
                 done

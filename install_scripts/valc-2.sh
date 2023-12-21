@@ -307,6 +307,15 @@ inst_important_packages () {
 
 }
 
+mkinitcpio_setup () {
+
+    fname="mkinitcpio_setup"
+
+    notification "$fname"
+
+    sed -i 's/^HOOKS=(base udev autodetect modconf/HOOKS=(base udev resume autodetect modconf encrypt lvm2/' /etc/mkinitcpio.conf
+    mkinitcpio -p linux
+}
 
 grub_setup () {
 
@@ -404,8 +413,6 @@ systemd_setup () {
 
     sed -i 's/#HandlePowerKey=poweroff/HandlePowerKey=poweroff/' /etc/systemd/logind.conf
     sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=hibernate/' /etc/systemd/logind.conf
-    sed -i 's/^HOOKS=(base udev autodetect modconf/HOOKS=(base udev resume autodetect modconf encrypt lvm2/' /etc/mkinitcpio.conf
-    mkinitcpio -P &&
     grub-mkconfig -o /boot/grub/grub.cfg
     [ $? -ne 0 ] && return 37 || :
 
@@ -458,6 +465,7 @@ exe user_add
 exe user_pw
 exe user_mod
 exe inst_important_packages
+exe mkinitcpio_setup
 exe grub_setup
 exe systemd_setup
 exe enable_services_root
