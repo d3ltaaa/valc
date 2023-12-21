@@ -579,7 +579,7 @@ config_partitioning () {
                     "")
                         break;;
                     *)
-                        mount /dev/${par_arr[$i]} /mnt/${mount_point_par_arr[$i]}
+                        mount /dev/${par_arr[$i]} /mnt${mount_point_par_arr[$i]}
                         ;;
                 esac
             done
@@ -607,7 +607,7 @@ config_partitioning () {
                         "")
                             break;;
                         *)
-                            mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt/${lv_mount[$j]}
+                            mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt${lv_mount[$j]}
                             ;;
                     esac
                 done
