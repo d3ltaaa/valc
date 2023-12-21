@@ -331,8 +331,10 @@ config_partitioning () {
                     
                     # encrypt if it needs to be
                     if [[ ${par_crpyt_arr[$i]} != "no" ]]; then
-                        cryptsetup luksFormat /dev/${$par_arr[$i]}
-                        cryptsetup open /dev/${par_arr[$i]} ${$par_crypt_arr[$i]}
+                        echo "cryptsetup luksFormat /dev/${par_arr[$i]}"
+                        cryptsetup luksFormat /dev/${par_arr[$i]}
+                        echo "cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}"
+                        cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
                     fi
                 fi
     
