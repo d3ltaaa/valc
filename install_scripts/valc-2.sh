@@ -323,7 +323,7 @@ grub_setup () {
 
     notification "$fname"
 
-    grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader=GRUB --removable 
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB 
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 

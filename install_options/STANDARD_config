@@ -22,7 +22,7 @@ sda1        sda2        sda3
 2G          20G         100%
 fat32       linux-swap  ext4
 fat-32      swap        vg_arch
-/boot/efi   none        //
+/boot       none        //
 2           0           //
 update      update      //
 :PARTITION
