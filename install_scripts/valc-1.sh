@@ -575,14 +575,18 @@ config_partitioning () {
             for (( i=0; i<${#par_arr[@]}; i++ )); do
                 case ${mount_point_par_arr[$i]} in
                     "none")
-                        swapon /dev/${par_arr[$i]}
+                        echo "swapon /dev/${par_arr[$i]}" >> $HISTORY_PATH
+                        swapon /dev/${par_arr[$i]} >> $HISTORY_PATH
+                        echo "" >> $HISTORY_PATH
                         break;;
                     "//")
                         break;;
                     "")
                         break;;
                     *)
-                        mount /dev/${par_arr[$i]} /mnt${mount_point_par_arr[$i]}
+                        echo "mount /dev/${par_arr[$i]} /mnt${mount_point_par_arr[$i]}" >> $HISTORY_PATH
+                        mount /dev/${par_arr[$i]} /mnt${mount_point_par_arr[$i]} >> $HISTORY_PATH
+                        echo "" >> $HISTORY_PATH
                         ;;
                 esac
             done
@@ -603,14 +607,18 @@ config_partitioning () {
                 for (( j = 0; j<${#lv_names[@]}; j++ )); do
                     case ${lv_mount[$j]} in
                         "none")
-                            swapon /dev/${vg_names[$i]}/${lv_names[$j]}
+                            echo "swapon /dev/${vg_names[$i]}/${lv_names[$j]}" >> $HISTORY_PATH
+                            swapon /dev/${vg_names[$i]}/${lv_names[$j]} >> $HISTORY_PATH
+                            echo "" >> $HISTORY_PATH
                             break;;
                         "//")
                             break;;
                         "")
                             break;;
                         *)
-                            mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt${lv_mount[$j]}
+                            echo "mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt${lv_mount[$j]}" >> $HISTORY_PATH
+                            mount /dev/${vg_names[$i]}/${lv_names[$j]} /mnt${lv_mount[$j]} >> $HISTORY_PATH
+                            echo "" >> $HISTORY_PATH
                             ;;
                     esac
                 done
