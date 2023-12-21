@@ -557,6 +557,8 @@ config_partitioning () {
                         break;;
                     "")
                         break;;
+                    "/")
+                        break;;
                     *)
                         echo "mkdir -p /mnt${mount_arr[$i]}" >> $HISTORY_PATH
                         mkdir -p /mnt${mount_arr[$i]} >> $HISTORY_PATH
@@ -582,6 +584,8 @@ config_partitioning () {
                     "//")
                         break;;
                     "")
+                        break;;
+                    "/")
                         break;;
                     *)
                         echo "mount /dev/${par_arr[$i]} /mnt${mount_point_par_arr[$i]}" >> $HISTORY_PATH
