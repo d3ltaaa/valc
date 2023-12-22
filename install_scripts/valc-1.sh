@@ -514,7 +514,7 @@ config_partitioning () {
         }
 
         pacstrap_root () {
-            pacman -Sy archlinux-keyring
+            pacman -Sy --noconfirm archlinux-keyring
             pacstrap -K /mnt base linux linux-firmware linux-headers lvm2
         }
         
