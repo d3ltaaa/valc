@@ -167,8 +167,10 @@ inst_var_packages () {
 
                 "auto-cpufreq")
                     git clone https://github.com/AdnanHodzic/auto-cpufreq.git /usr/local/src/auto-cpufreq
+                    [ $? -ne 0 ] && return 47 || :
                     cd /usr/local/src/auto-cpufreq && sudo ./auto-cpufreq-installer --install
                     sudo auto-cpufreq --install
+                    [ $? -ne 0 ] && return 47 || :
                     ;;
             esac
         done

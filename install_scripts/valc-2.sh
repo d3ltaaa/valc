@@ -260,6 +260,7 @@ mkinitcpio_setup () {
     sed -i '1s/^/KEYMAP='"$keyboard_layout"'\n/' /etc/mkinitcpio.conf
     sed -i 's/^HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block/HOOKS=(base udev resume autodetect modconf kms keyboard keymap consolefont block encrypt lvm2/' /etc/mkinitcpio.conf
     mkinitcpio -p linux
+    [ $? -ne 0 ] && return 34 || :
 }
 
 grub_setup () {
@@ -353,7 +354,6 @@ inst_part_3 () {
 
 }
 
-mount -a
 exe update_system
 exe ena_parallel
 exe time_setup
@@ -376,5 +376,5 @@ mv $CONFIG_PATH /home/$user
 mv $INSTALL_OPTION_PATH /home/$user
 clear
 echo "The next commands are: "
-echo "exit; umount -R /mnt; reboot"
-echo "When it loads, the device has to be shut off again, and the usb-stick is to be taken out!"
+echo "exit; umount -R /mnt; shutdown"
+echo "Remove usb, start device, login, ./valc-3.sh"
