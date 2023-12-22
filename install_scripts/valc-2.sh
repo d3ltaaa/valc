@@ -57,12 +57,6 @@ ena_parallel () {
         sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
         [ $? -ne 0 ] && return 13 || : 
 
-    else
-
-        read -p "How many downloads do you want to do simultaneously?: " parallel
-        sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
-        [ $? -ne 0 ] && return 13 || : 
-
     fi
 }
 
@@ -77,13 +71,6 @@ time_setup () {
 
         time_zone=$(grep -i -w TIME: $CONFIG_PATH | awk '{print $2}') &&
         ln -sf /usr/share/zoneinfo${time_zone} /etc/localtime &&
-        hwclock --systohc
-        [ $? -ne 0 ] && return 23 || :
-
-    else
-
-        read -p "What is your timezone?: " time_zone
-        ln -sf /usr/share/zoneinfo/$time_zone /etc/localtime &&
         hwclock --systohc
         [ $? -ne 0 ] && return 23 || :
     fi
@@ -122,10 +109,6 @@ kb_setup () {
         echo "KEYMAP=$kb" > /etc/vconsole.conf
         [ $? -ne 0 ] && return 25 || :
 
-    else
-        read -p "What keyboard layout do you want to use?: " kb
-        echo "KEYMAP=$kb" > /etc/vconsole.conf
-        [ $? -ne 0 ] && return 25 || :
     fi
 
 }
@@ -141,23 +124,6 @@ host_name () {
 
         hostname=$(grep -i -w NAME: $CONFIG_PATH | awk '{print $2}') 
 
-    else
-
-        read -p "What is the hostname?: " hostname 
-
-        while true; do
-
-            read -p "Is it spelled correctly? [y/n]: " yn
-
-            case $yn in
-
-                [yY]* ) break;; 
-
-                [nN]* ) return 26;;
-
-                * ) echo "Enter 'y' or 'n'!";;
-            esac
-        done
     fi
 }
 
@@ -199,22 +165,6 @@ user_name () {
 
         user=$(grep -i -w USER: $CONFIG_PATH | awk '{print $2}')
 
-    else
-        read -p "What is the Username?: " user
-
-        while true; do
-
-            read -p "Is it spelled correctly? [y/n]: " yn
-
-            case $yn in
-
-                [yY]* ) break;; 
-
-                [nN]* ) return 29;;
-
-                * ) echo "Enter 'y' or 'n'!";;
-            esac
-        done
     fi
 }
 
@@ -296,13 +246,6 @@ inst_important_packages () {
         pacman --noconfirm -S $imp_packages
         [ $? -ne 0 ] && return 34 || :
 
-    else
-
-        read -p "What important packages do you want to install?: " imp_packages
-
-        pacman  --noconfirm -S $imp_packages
-        [ $? -ne 0 ] && return 34 || :
-
     fi
 
 }
@@ -357,58 +300,8 @@ grub_setup () {
             echo "ok"
         fi
 
-    else
-
-        GRUB_PAR="temp"
-
-        until [[ -e /dev/$GRUB_PAR ]]; do
-
-            if [[ ! -z /dev/$GRUB_PAR ]]; then
-
-                echo "Give valid partition name (or 'no')!"
-
-            fi
-
-            lsblk
-            read -p "What is the swap partition (GRUB-SETUP): /dev/" GRUB_PAR
-
-            if [[ $GRUB_PAR == "no" ]]; then
-                break
-            fi
-
-        done
-        
-        if [[ ! "$GRUB_PAR" == "no" ]]; then
-            sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="resume=\/dev\/'"$GRUB_PAR"'"/' /etc/default/grub
-        fi
-
-
-
-        GRUB_DUAL=""
-
-        until [[ $GRUB_DUAL =~ (dual|no) ]]; do
-
-            if [[ ! -z $GRUB_DUAL ]]; then
-
-                echo "Either: dual or no!"
-
-            fi
-
-            read -p "Do you want to dual boot?: " -e -i "no" GRUB_DUAL
-
-        done
-        
-        if [[ "$GRUB_DUAL" == "dual" ]]; then
-            sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=-1/' /etc/default/grub
-            sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
-        else
-            # sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=0/' /etc/default/grub
-            echo ok
-        fi
     fi
 
-    # sed -i 's/quiet/pci=noaer/g' /etc/default/grub
-    # sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub
     grub-mkconfig -o /boot/grub/grub.cfg
     [ $? -ne 0 ] && return 36 || :
 }

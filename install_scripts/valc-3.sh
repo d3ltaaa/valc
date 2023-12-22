@@ -80,13 +80,6 @@ inst_packages () {
         sudo pacman --noconfirm -S $packages
         [ $? -ne 0 ] && return 43 || :
 
-    else
-
-        read -p "Which packages do you want to install?: " packages
-
-        sudo pacman -Syu
-        sudo pacman --noconfirm -S $packages
-        [ $? -ne 0 ] && return 43 || :
 
     fi
 
@@ -298,19 +291,6 @@ create_folder () {
         fol_arr=($(grep -i -w FOLDER: $CONFIG_PATH | cut -d ' ' -f2-))
         for folder in ${fol_arr[@]}; do
             mkdir ~/$folder
-        done
-
-    else
-        while true; do
-            read -p "Which folder do you want to create in the home directory? [N]: " choice
-            case $choice in
-                [Nn] )
-                    break
-                    ;;
-                *)
-                    mkdir ~/$choice
-                    ;;
-            esac
         done
 
     fi
