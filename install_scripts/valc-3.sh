@@ -292,7 +292,7 @@ create_folder () {
 
         fol_arr=($(grep -i -w FOLDER: $CONFIG_PATH | cut -d ' ' -f2-))
         for folder in ${fol_arr[@]}; do
-            mkdir ~/$folder
+            mkdir -p ~/$folder
         done
 
     fi

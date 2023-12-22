@@ -132,8 +132,8 @@ auto-cpufreq
 :VAR_PACKAGES
 
 REOWN_DIR:
-/usr/local/src build
-/usr/local/share build
+/usr/local/src :build
+/usr/local/share :build
 :REOWN_DIR
 
 BUILD:
