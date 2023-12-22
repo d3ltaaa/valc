@@ -282,7 +282,7 @@ grub_setup () {
 
         for (( i=0; i<${#par_type_arr[@]}; i++ )); do
             if [[ "${par_type_arr[$i]}" == "swap" ]]; then
-                sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="resume=\/dev\/'"${par_arr[$i]}"'"/' /etc/default/grub
+                sed -i 's/GRUB_CMDLINE_LINUX="/GRUB_CMDLINE_LINUX="resume=\/dev\/'"${par_arr[$i]}"' /' /etc/default/grub
             elif [[ "${par_crypt_arr[$i]}" != "no" ]]; then
 
                 device_UUID=$(blkid | grep -w crypto_LUKS | awk '{print $2}' | awk -F'"' '{print $2}')
@@ -308,7 +308,7 @@ grub_setup () {
             for (( j = 0; j<${#lv_names[@]}; j++ )); do
     
                 if [[ "${lv_fs[$j]}" == "swap" ]]; then
-                    sed -i 's#GRUB_CMDLINE_LINUX="#GRUB_CMDLINE_LINUX="resume=/dev/mapper/'"${vg_names[$i]}"'-'"${lv_names[$j]}"'#' /etc/default/grub
+                    sed -i 's#GRUB_CMDLINE_LINUX="#GRUB_CMDLINE_LINUX="resume=/dev/mapper/'"${vg_names[$i]}"'-'"${lv_names[$j]}"' #' /etc/default/grub
                 fi
 
             done
