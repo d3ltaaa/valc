@@ -321,6 +321,11 @@ config_partitioning () {
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         exe cryptluks /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
                     fi
+                else
+                    if [[ ${par_crypt_arr[$i]} != "no" ]]; then
+                        cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
+                    fi
+
                 fi
     
 
