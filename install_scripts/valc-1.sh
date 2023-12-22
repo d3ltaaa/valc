@@ -222,7 +222,7 @@ kb_setup_live () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        kb_lan=$(grep -i -w KEYBOARD: $CONFIG_PATH | awk '{print $2}') &&
+        kb_lan=$(grep -w KEYBOARD: $CONFIG_PATH | awk '{print $2}') &&
         loadkeys $kb_lan
         [ $? -ne 0 ] && return 10 || :
 
@@ -260,7 +260,7 @@ ena_parallel_live () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        parallel=$(grep -i -w PARALLEL: $CONFIG_PATH | awk '{print $2}') &&
+        parallel=$(grep -w PARALLEL: $CONFIG_PATH | awk '{print $2}') &&
         sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
         [ $? -ne 0 ] && return 13 || : 
 
@@ -281,16 +281,16 @@ config_partitioning () {
         parted_partitioning () {
         
         
-            disk_to_par=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==2'))
-            par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==3'))
-            par_start_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==4'))
-            par_end_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==5'))
-            par_type_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==6'))
-            par_crypt_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR== 7'))
-            file_system_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==8'))
-            mount_point_par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==9'))
-            par_fstab_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==10'))
-            par_update_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==11'))
+            disk_to_par=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==2'))
+            par_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==3'))
+            par_start_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==4'))
+            par_end_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==5'))
+            par_type_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==6'))
+            par_crypt_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR== 7'))
+            file_system_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==8'))
+            mount_point_par_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==9'))
+            par_fstab_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==10'))
+            par_update_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==11'))
     
     
             # clear fstab
@@ -369,22 +369,22 @@ config_partitioning () {
         }
         
         lvm_partitioning () {
-            beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
-            end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
+            beg=$(grep -n -w LVM: $CONFIG_PATH | cut -d':' -f1)
+            end=$(grep -n -w :LVM $CONFIG_PATH | cut -d':' -f1)
     
             # grab everything between the two lines
             output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
     
-            vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
+            vg_names=($(echo "$output" | grep -w "LV |" | cut -d '|' -f2))
     
             for (( i = 0; i<${#vg_names[@]}; i++ )); do
     
-                lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
-                lv_sizes=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A2 | awk 'NR==3'))
-                lv_fs=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
-                lv_mount=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
-                lv_fstab=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A5 | awk 'NR==6'))
-                lv_update=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A6 | awk 'NR==7'))
+                lv_names=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
+                lv_sizes=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A2 | awk 'NR==3'))
+                lv_fs=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
+                lv_mount=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
+                lv_fstab=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A5 | awk 'NR==6'))
+                lv_update=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A6 | awk 'NR==7'))
     
                 for (( j = 0; j<${#lv_names[@]}; j++ )); do
                     # create logical volumes
@@ -476,8 +476,8 @@ config_partitioning () {
 
         mount_all () {
             
-            par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==3'))
-            mount_point_par_arr=($(grep -i -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==9'))
+            par_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==3'))
+            mount_point_par_arr=($(grep -w -A10 PARTITION: $CONFIG_PATH | awk 'NR==9'))
 
             for (( i=0; i<${#par_arr[@]}; i++ )); do
                 case ${mount_point_par_arr[$i]} in
@@ -496,18 +496,18 @@ config_partitioning () {
                 esac
             done
 
-            beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
-            end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
+            beg=$(grep -n -w LVM: $CONFIG_PATH | cut -d':' -f1)
+            end=$(grep -n -w :LVM $CONFIG_PATH | cut -d':' -f1)
     
             # grab everything between the two lines
             output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
     
-            vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
+            vg_names=($(echo "$output" | grep -w "LV |" | cut -d '|' -f2))
     
             for (( i = 0; i<${#vg_names[@]}; i++ )); do
     
-                lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
-                lv_mount=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
+                lv_names=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
+                lv_mount=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A4 | awk 'NR==5'))
     
                 for (( j = 0; j<${#lv_names[@]}; j++ )); do
                     case ${lv_mount[$j]} in

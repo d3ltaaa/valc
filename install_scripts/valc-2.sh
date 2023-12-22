@@ -53,7 +53,7 @@ ena_parallel () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        parallel=$(grep -i -w PARALLEL: $CONFIG_PATH | awk '{print $2}') &&
+        parallel=$(grep -w PARALLEL: $CONFIG_PATH | awk '{print $2}') &&
         sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
         [ $? -ne 0 ] && return 13 || : 
 
@@ -69,7 +69,7 @@ time_setup () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        time_zone=$(grep -i -w TIME: $CONFIG_PATH | awk '{print $2}') &&
+        time_zone=$(grep -w TIME: $CONFIG_PATH | awk '{print $2}') &&
         ln -sf /usr/share/zoneinfo${time_zone} /etc/localtime &&
         hwclock --systohc
         [ $? -ne 0 ] && return 23 || :
@@ -85,8 +85,8 @@ language_setup () {
     
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        lang1=$(grep -i -w -A2 LANGUAGE: $CONFIG_PATH | awk 'NR==2')
-        lang2=$(grep -i -w -A2 LANGUAGE: $CONFIG_PATH | awk 'NR==3')
+        lang1=$(grep -w -A2 LANGUAGE: $CONFIG_PATH | awk 'NR==2')
+        lang2=$(grep -w -A2 LANGUAGE: $CONFIG_PATH | awk 'NR==3')
 
         echo "$lang1" >> /etc/locale.gen &&
         locale-gen &&
@@ -105,7 +105,7 @@ kb_setup () {
    
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        kb=$(grep -i -w KEYBOARD: $CONFIG_PATH | awk '{print $2}')
+        kb=$(grep -w KEYBOARD: $CONFIG_PATH | awk '{print $2}')
         echo "KEYMAP=$kb" > /etc/vconsole.conf
         [ $? -ne 0 ] && return 25 || :
 
@@ -122,7 +122,7 @@ host_name () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        hostname=$(grep -i -w NAME: $CONFIG_PATH | awk '{print $2}') 
+        hostname=$(grep -w NAME: $CONFIG_PATH | awk '{print $2}') 
 
     fi
 }
@@ -163,7 +163,7 @@ user_name () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        user=$(grep -i -w USER: $CONFIG_PATH | awk '{print $2}')
+        user=$(grep -w USER: $CONFIG_PATH | awk '{print $2}')
 
     fi
 }
@@ -201,8 +201,8 @@ user_mod () {
 
         group_string=""
 
-        groups=($(grep -i -w USER_GROUPS: $CONFIG_PATH | cut -d' ' -f2-))
-        custom_groups=($(grep -i -w CUSTOM_GROUPS: $CONFIG_PATH | cut -d' ' -f2-))
+        groups=($(grep -w USER_GROUPS: $CONFIG_PATH | cut -d' ' -f2-))
+        custom_groups=($(grep -w CUSTOM_GROUPS: $CONFIG_PATH | cut -d' ' -f2-))
 
         for group in ${groups[@]}; do
             group_string+="$group,"
@@ -237,8 +237,8 @@ inst_important_packages () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
         
-        beg=$(grep -n -i -w IMPORTANT_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :IMPORTANT_PACKAGES $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w IMPORTANT_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :IMPORTANT_PACKAGES $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         imp_packages=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
@@ -256,7 +256,7 @@ mkinitcpio_setup () {
 
     notification "$fname"
 
-    keyboard_layout=$(grep -i -w KEYBOARD: $CONFIG_PATH | cut -d' ' -f3)
+    keyboard_layout=$(grep -w KEYBOARD: $CONFIG_PATH | cut -d' ' -f3)
     sed -i '1s/^/KEYMAP='"$keyboard_layout"'\n/' /etc/mkinitcpio.conf
     sed -i 's/^HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume/' /etc/mkinitcpio.conf
     mkinitcpio -p linux
@@ -274,11 +274,11 @@ grub_setup () {
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
 
-        disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
-        par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
-        par_crypt_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
-        par_type_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==8'))
-        dual_boot=$(grep -i -w PARTITION: $CONFIG_PATH | awk '{print $2}')
+        disk_to_par=($(grep -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
+        par_arr=($(grep -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
+        par_crypt_arr=($(grep -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
+        par_type_arr=($(grep -w -A7 PARTITION $CONFIG_PATH | awk 'NR==8'))
+        dual_boot=$(grep -w PARTITION: $CONFIG_PATH | awk '{print $2}')
 
         for (( i=0; i<${#par_type_arr[@]}; i++ )); do
             if [[ "${par_type_arr[$i]}" == "swap" ]]; then
@@ -293,17 +293,17 @@ grub_setup () {
         done
 
         # add swap if lvm to /etc/default/grub
-        beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w LVM: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :LVM $CONFIG_PATH | cut -d':' -f1)
     
         output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
     
-        vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
+        vg_names=($(echo "$output" | grep -w "LV |" | cut -d '|' -f2))
     
         for (( i = 0; i<${#vg_names[@]}; i++ )); do
     
-            lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
-            lv_fs=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
+            lv_names=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
+            lv_fs=($(echo "$output" | grep -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
     
             for (( j = 0; j<${#lv_names[@]}; j++ )); do
     
@@ -353,7 +353,7 @@ enable_services_root () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        services=($(grep -i -w SERVICES: $CONFIG_PATH | cut -d' ' -f2-))
+        services=($(grep -w SERVICES: $CONFIG_PATH | cut -d' ' -f2-))
 
         for service in ${services[@]}; do
             systemctl enable $service

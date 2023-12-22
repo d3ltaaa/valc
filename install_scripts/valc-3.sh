@@ -41,8 +41,8 @@ reown_dirs () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        beg=$(grep -n -i -w REOWN_DIR: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :REOWN_DIR $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w REOWN_DIR: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :REOWN_DIR $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         dir_group=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
@@ -66,13 +66,13 @@ inst_packages () {
 
         sudo pacman -Syu
 
-        graphics_driver=$(grep -i -w GRAPHICS_DRIVER: $CONFIG_PATH | awk '{print $2}')
+        graphics_driver=$(grep -w GRAPHICS_DRIVER: $CONFIG_PATH | awk '{print $2}')
         sudo pacman --noconfirm -S  $graphics_driver
         [ $? -ne 0 ] && return 43 || :
 
 
-        beg=$(grep -n -i -w PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :PACKAGES $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w PACKAGES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :PACKAGES $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         packages=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
@@ -114,8 +114,8 @@ paru_installations () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        beg=$(grep -n -i -w PARU_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :PARU_PACKAGES $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w PARU_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :PARU_PACKAGES $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         packages=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
@@ -149,8 +149,8 @@ inst_var_packages () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
         
-        beg=$(grep -n -i -w VAR_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :VAR_PACKAGES $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w VAR_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :VAR_PACKAGES $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         var_packages=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
@@ -234,8 +234,8 @@ links_setup () {
     # if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
     
 
-    beg=$(grep -n -i -w LINKS: $CONFIG_PATH | cut -d':' -f1)
-    end=$(grep -n -i -w :LINKS $CONFIG_PATH | cut -d':' -f1)
+    beg=$(grep -n -w LINKS: $CONFIG_PATH | cut -d':' -f1)
+    end=$(grep -n -w :LINKS $CONFIG_PATH | cut -d':' -f1)
 
     # grab everything between the two lines
     links=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
@@ -265,8 +265,8 @@ building_software () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        beg=$(grep -n -i -w BUILD: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :BUILD $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w BUILD: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :BUILD $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         build_dirs=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
@@ -290,7 +290,7 @@ create_folder () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        fol_arr=($(grep -i -w FOLDER: $CONFIG_PATH | cut -d ' ' -f2-))
+        fol_arr=($(grep -w FOLDER: $CONFIG_PATH | cut -d ' ' -f2-))
         for folder in ${fol_arr[@]}; do
             mkdir -p ~/$folder
         done
@@ -311,8 +311,8 @@ dwm_auto () {
         touch $HOME/.dwm/autostart.sh
         chmod +x $HOME/.dwm/autostart.sh
 
-        beg=$(grep -n -i -w AUTOSTART: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :AUTOSTART $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w AUTOSTART: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :AUTOSTART $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         autostart=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
@@ -330,14 +330,14 @@ enable_services () {
 
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
-        beg=$(grep -n -i -w SERVICES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :SERVICES $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w SERVICES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :SERVICES $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         services=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
 
-        beg=$(grep -n -i -w USER_SERVICES: $CONFIG_PATH | cut -d':' -f1)
-        end=$(grep -n -i -w :USER_SERVICES $CONFIG_PATH | cut -d':' -f1)
+        beg=$(grep -n -w USER_SERVICES: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -w :USER_SERVICES $CONFIG_PATH | cut -d':' -f1)
 
         # grab everything between the two lines
         user_services=($(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH))
