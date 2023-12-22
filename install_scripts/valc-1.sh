@@ -457,11 +457,11 @@ config_partitioning () {
             for (( i=0; i<${#mount_arr[@]}; i++ )); do
                 case ${mount_arr[$i]} in
                     "none")
-                        break;;
+                        ;;
                     "//")
-                        break;;
+                        ;;
                     "")
-                        break;;
+                        ;;
                     *)
                         mkdir -p /mnt${mount_arr[$i]} 
                         ;;
