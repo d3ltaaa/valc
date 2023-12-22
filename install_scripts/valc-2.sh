@@ -330,12 +330,19 @@ grub_setup () {
 
         disk_to_par=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==2'))
         par_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==3'))
+        par_crypt_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==7'))
         par_type_arr=($(grep -i -w -A7 PARTITION $CONFIG_PATH | awk 'NR==8'))
         dual_boot=$(grep -i -w PARTITION: $CONFIG_PATH | awk '{print $2}')
 
         for (( i=0; i<${#par_type_arr[@]}; i++ )); do
             if [[ "${par_type_arr[$i]}" == "swap" ]]; then
                 sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="resume=\/dev\/'"${par_arr[$i]}"'"/' /etc/default/grub
+            elif [[ "${par_crypt_arr[$i]}" != "no" ]]; then
+
+                device_UUID=$(blkid | grep -w crypto_LUKS | awk '{print $2}' | awk -F'"' '{print $2}')
+                crypt_name="$(lsblk -flo +TYPE | grep -w crypt | awk '{print $1}')"
+                root_path="$(lsblk -fpl | grep -w / | awk '{print $1}')"
+                sed -i 's#GRUB_CMDLINE_LINUX="#GRUB_CMDLINE_LINUX="cryptdevice=UUID='"$device_UUID"':'"$crypt_name"' root='"$root_path"' #' /etc/default/grub
             fi
         done
 

@@ -205,7 +205,7 @@ download_config () {
             ;;
         "c" )
             curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config > /config
-            exit
+            exit 0
             ;;
         "n")
             break;;
@@ -438,7 +438,8 @@ config_partitioning () {
         
             if [[ "$mount_point" == "/" ]]; then
                 mount $full_path /mnt
-                pacstrap /mnt base linux linux-firmware linux-headers lvm2
+                pacman -Sy archlinux-keyring
+                pacstrap -K /mnt base linux linux-firmware linux-headers lvm2
             fi
             
         }
@@ -551,7 +552,6 @@ exe kb_setup_live
 exe time_setup_live
 exe upd_cache
 exe ena_parallel_live
-exe custom_config
 exe config_partitioning
 exe inst_part_2
 
