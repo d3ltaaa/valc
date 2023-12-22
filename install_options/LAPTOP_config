@@ -104,6 +104,7 @@ tldr
 freecad
 ghostscript
 spotify-launcher
+cups
 :PACKAGES
 
 USER_SERVICES:
@@ -114,7 +115,7 @@ SERVICES: NetworkManager
 bluetooth.service
 sshd
 thermald
-cups.service
+cups
 :SERVICES
 
 

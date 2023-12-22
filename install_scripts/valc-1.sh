@@ -224,12 +224,6 @@ kb_setup_live () {
         loadkeys $kb_lan
         [ $? -ne 0 ] && return 10 || :
 
-    else
-
-        read -p "What keyboard?: " kb_lan &&
-        loadkeys $kb_lan
-        [ $? -ne 0 ] && return 10 || :
-
     fi
 }
 
@@ -265,12 +259,6 @@ ena_parallel_live () {
     if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
         parallel=$(grep -i -w PARALLEL: $CONFIG_PATH | awk '{print $2}') &&
-        sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
-        [ $? -ne 0 ] && return 13 || : 
-
-    else
-
-        read -p "How many downloads do you want to do simultaneously?: " parallel
         sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = $parallel/" /etc/pacman.conf
         [ $? -ne 0 ] && return 13 || : 
 
@@ -315,11 +303,8 @@ config_partitioning () {
                         if vgs &> /dev/null; then
                             vgs 
                             vgchange -a n 
-                            echo "vgs; vgchange -a n" > $HISTORY_PATH
                         fi
-                        echo "parted -s /dev/${disk_to_par[$i]} mklabel gpt"
                         parted -s /dev/${disk_to_par[$i]} mklabel gpt 
-                        echo ""
                     fi
                     disk="${disk_to_par[$i]}"
                 done
@@ -328,17 +313,12 @@ config_partitioning () {
             for (( i = 0; i<${#par_arr[@]}; i++ )); do
                 # make partitions
                 if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") == "1" ]]; then 
-                    echo "parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]}"
                     parted -s /dev/${disk_to_par[$i]} mkpart primary ${par_type_arr[$i]} ${par_start_arr[$i]} ${par_end_arr[$i]} 
-                    echo ""
                     
                     # encrypt if it needs to be
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
-                        echo "cryptsetup luksFormat /dev/${par_arr[$i]}"
                         cryptsetup luksFormat /dev/${par_arr[$i]}
-                        echo "" 
 
-                        echo "cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}"
                         cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
                     fi
                 fi
@@ -367,23 +347,16 @@ config_partitioning () {
                             device_path="/dev/mapper/${par_crypt_arr[$i]}"
                         else
                             device_path="/dev/${par_arr[$i]}"
-                            echo "wipefs -f -a $device_path"
-                            wipefs -a -f $device_path 
                         fi
 
-                        echo "pvcreate $device_path"
                         pvcreate $device_path 
-                        echo ""
+                        wipefs -a -f $device_path 
         
                         # if volume group already exists, extend it
                         if vgdisplay | grep -w ${file_system_arr[$i]}; then
-                            echo "vgextend ${file_system_arr[$i]} $device_path"
                             vgextend ${file_system_arr[$i]} $device_path 
-                            echo ""
                         else
-                            echo "vgcreate ${file_system_arr[$i]} $device_path"
                             vgcreate ${file_system_arr[$i]} $device_path 
-                            echo ""
                          fi
                     fi
                 fi
@@ -415,22 +388,15 @@ config_partitioning () {
     
                     if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") == "1" ]]; then 
                         if [[ "${string_free: -4}" == "FREE" ]]; then
-                            echo "lvcreate --yes -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
                             lvcreate --yes -l ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}                
-                            echo ""
                         else
-                            echo "lvcreate --yes -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}"
                             lvcreate --yes -L ${lv_sizes[$j]} -n ${lv_names[$j]} ${vg_names[$i]}                
-                            echo ""
                          fi
                     fi
     
                     # make filesystem
-                    echo "make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]}"
                     make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]} 
-                    echo ""
     
-                    echo "add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}"
                     add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
                 done
             done
@@ -445,56 +411,32 @@ config_partitioning () {
             if [[ $(awk 'NR==1' "$INSTALL_OPTION_PATH") == "1" ]] || [[ "$update_var" == "update" ]]; then
         
                 if [ "$file_system" == "fat-32" ]; then
-                    echo "mkfs.fat -F32 $full_path"
                     mkfs.fat -F32 $full_path 
-                    echo ""
             
                 elif [ "$file_system" == "swap" ]; then
-                    echo "mkswap $full_path"
                     mkswap $full_path 
-                    echo ""
             
                 elif [ "$file_system" == "ext4" ]; then
-                    echo "mkfs.ext4 -F $full_path"
                     mkfs.ext4 -F $full_path 
-                    echo ""
             
                 elif [ "$file_system" == "exfat" ]; then
-                    echo "mkfs.exfat $full_path"
                     mkfs.exfat $full_path 
-                    echo ""
                 fi
         
             fi
         
         }
         
-        add_fstab_entry () {
+        pacstrap_root () {
             # (path to partition/lv) (mount_point) (fs_num)
             full_path="$1"
             mount_point="$2"
             fs_num="$3"
         
         
-            if [[ ! -e /fstab ]]; then
-                touch /fstab
-            fi
-    
-            lsblk -fp # needed, dont know why
-            part_fs="$(lsblk -lfp | grep -w "$full_path" | awk '{print $2}')"
-            echo "part_fs of $full_path: $part_fs"
-            printf "\n"
-            echo "$full_path $mount_point $part_fs defaults 0 $fs_num" 
-            cat /fstab
-            echo "$full_path $mount_point $part_fs defaults 0 $fs_num" >> /fstab 
-            echo ""
-        
             if [[ "$mount_point" == "/" ]]; then
                 mount $full_path /mnt
-                echo pacstrap /mnt base linux linux-firmware linux-headers
                 pacstrap /mnt base linux linux-firmware linux-headers lvm2
-                # testing if i can write something to a par and then update, and still read it
-                # might be a problem with lvcreate
             fi
             
         }
@@ -512,7 +454,6 @@ config_partitioning () {
                         break;;
                     *)
                         mkdir -p /mnt${mount_arr[$i]} 
-                        echo "mkdir -p /mnt${mount_arr[$i]}"
                         ;;
                 esac
             done
@@ -580,8 +521,7 @@ config_partitioning () {
         add_mount_points "${mount_point_par_arr[@]}"
         add_mount_points "${lv_mount[@]}"
         mount_all
-        mkdir -p /mnt/etc
-        cp /fstab /mnt/etc/fstab
+        genfstab -U /mnt >> /mnt/etc/fstab
     
     fi
 
