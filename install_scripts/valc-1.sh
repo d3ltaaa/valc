@@ -332,11 +332,10 @@ config_partitioning () {
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         # if it needs to be encrypted, another path needs to be passed
                         make_fs /dev/mapper/${par_crypt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]} 
-                        pacstrap_root /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]}  
+                        mount_root /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} 
                     else
                         make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]} 
-                        echo "pacstrap_root /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} " 
-                        pacstrap_root /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]}  
+                        mount_root /dev/${par_arr[$i]} ${mount_point_par_arr[$i]}
                     fi
 
                 else
@@ -399,7 +398,7 @@ config_partitioning () {
                     # make filesystem
                     make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]} 
     
-                    pacstrap_root /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
+                    mount_root /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]}
                 done
             done
         }
@@ -429,17 +428,14 @@ config_partitioning () {
         
         }
         
-        pacstrap_root () {
+        mount_root () {
             # (path to partition/lv) (mount_point) (fs_num)
             full_path="$1"
             mount_point="$2"
-            fs_num="$3"
         
         
             if [[ "$mount_point" == "/" ]]; then
                 mount $full_path /mnt
-                pacman -Sy archlinux-keyring
-                pacstrap -K /mnt base linux linux-firmware linux-headers lvm2
             fi
             
         }
@@ -516,6 +512,11 @@ config_partitioning () {
             done
 
         }
+
+        pacstrap_root () {
+            pacman -Sy archlinux-keyring
+            pacstrap -K /mnt base linux linux-firmware linux-headers lvm2
+        }
         
         # add lvm to mkinitcpio.conf
         output="$(grep "LVM:" $CONFIG_PATH | awk 'NR==2')"
@@ -524,6 +525,7 @@ config_partitioning () {
         add_mount_points "${mount_point_par_arr[@]}"
         add_mount_points "${lv_mount[@]}"
         mount_all
+        pacstrap_root
         genfstab -U /mnt >> /mnt/etc/fstab
     
     fi
