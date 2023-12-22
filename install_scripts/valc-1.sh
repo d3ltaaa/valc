@@ -319,9 +319,7 @@ config_partitioning () {
                     
                     # encrypt if it needs to be
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
-                        cryptsetup luksFormat /dev/${par_arr[$i]}
-
-                        cryptsetup open /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
+                        exe cryptluks /dev/${par_arr[$i]} ${par_crypt_arr[$i]}
                     fi
                 fi
     
@@ -401,6 +399,19 @@ config_partitioning () {
                     mount_root /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]}
                 done
             done
+        }
+
+        cryptluks () {
+            # (/dev/${par_arr[i]}) (${par_crypt_arr[$i]})
+            par_to_encrypt="$1"
+            par_crypt="$2"
+
+
+            cryptsetup luksFormat $par_to_encrypt
+            [ $? -ne 0 ] && return 10 || :
+
+            cryptsetup open $par_to_encrypt $par_crypt
+            [ $? -ne 0 ] && return 10 || :
         }
         
         make_fs () {
@@ -514,8 +525,9 @@ config_partitioning () {
         }
 
         pacstrap_root () {
-            pacman -Sy --noconfirm archlinux-keyring
+            pacman -Sy --noconfirm archlinux-keyring && 
             pacstrap -K /mnt base linux linux-firmware linux-headers lvm2
+            [ $? -ne 0 ] && return 10 || :
         }
         
         # add lvm to mkinitcpio.conf
@@ -525,7 +537,7 @@ config_partitioning () {
         add_mount_points "${mount_point_par_arr[@]}"
         add_mount_points "${lv_mount[@]}"
         mount_all
-        pacstrap_root
+        exe pacstrap_root
         genfstab -U /mnt >> /mnt/etc/fstab
     
     fi
