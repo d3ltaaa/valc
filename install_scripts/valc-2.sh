@@ -258,7 +258,7 @@ mkinitcpio_setup () {
 
     keyboard_layout=$(grep -i -w KEYBOARD: $CONFIG_PATH | cut -d' ' -f3)
     sed -i '1s/^/KEYMAP='"$keyboard_layout"'\n/' /etc/mkinitcpio.conf
-    sed -i 's/^HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block/HOOKS=(base udev resume autodetect modconf kms keyboard keymap consolefont block encrypt lvm2/' /etc/mkinitcpio.conf
+    sed -i 's/^HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block/HOOKS=(base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume/' /etc/mkinitcpio.conf
     mkinitcpio -p linux
     [ $? -ne 0 ] && return 34 || :
 }
