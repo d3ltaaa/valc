@@ -8,7 +8,7 @@ LANGUAGE:
 en_US.UTF-8 UTF-8
 LANG=en_US.UTF-8 
 
-NAME: LAPTOP-FH
+NAME: DESKTOP-FH
 
 USER: falk
 
@@ -16,27 +16,27 @@ USER_GROUPS: wheel audio video
 CUSTOM_GROUPS: build
 
 PARTITION: 
-nvme1n1     nvme1n1     nvme1n1
-nvme1n1p1   nvme1n1p2   nvme1n1p3
-0%          2G          20G
-2G          20G         100%
-fat32       linux-swap  ext4
-fat-32      swap        vg_arch
-/boot       none        //
-2           0           //
-update      update      //
+nvme0n1     nvme0n1     
+nvme0n1p1   nvme0n1p2   
+0%          2G          
+2G          100%
+fat32       ext4
+no          cryptlvm
+fat-32      vg_arch
+/boot       //
+2           //
+update      //
 :PARTITION
 
 LVM:
 LV | vg_arch
-lv_root     lv_backup   lv_home
-100G        10G         100%FREE
-ext4        ext4        ext4
-/           /mnt/backup /home
-1           2           2
-update      update      leave
+lv_root     lv_swap     lv_backup   lv_home
+100G        20G         10G         100%FREE
+ext4        swap        ext4        ext4
+/           none        /mnt/backup /home
+1           0           2           2
+update      update      update      leave
 :LVM
-
 
 IMPORTANT_PACKAGES:
 grub
@@ -104,6 +104,7 @@ tldr
 freecad
 ghostscript
 spotify-launcher
+cups
 :PACKAGES
 
 USER_SERVICES:
@@ -114,7 +115,7 @@ SERVICES: NetworkManager
 bluetooth.service
 sshd
 thermald
-cups.service
+cups
 :SERVICES
 
 

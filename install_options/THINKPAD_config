@@ -21,6 +21,7 @@ sda1        sda2        sda3
 0%          2G          20G
 2G          20G         100%
 fat32       linux-swap  ext4
+no          no          no
 fat-32      swap        vg_arch
 /boot       none        //
 2           0           //
@@ -103,6 +104,7 @@ tldr
 freecad
 ghostscript
 spotify-launcher
+cups
 :PACKAGES
 
 USER_SERVICES:
@@ -113,7 +115,7 @@ SERVICES: NetworkManager
 bluetooth.service
 sshd
 thermald
-cups.service
+cups
 :SERVICES
 
 
