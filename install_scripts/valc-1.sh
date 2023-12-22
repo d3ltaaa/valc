@@ -167,15 +167,15 @@ download_config () {
 
     notification "Download config"
 
-    until [[ $VALUE_config =~ (d|t|l|v|s|c) ]]; do
+    until [[ $VALUE_config =~ (d|t|l|v|s|c|n) ]]; do
 
         if [[ ! -z $VALUE_config ]]; then
 
-            echo "Either: d, t, l, v s or c!"
+            echo "Either: d, t, l, v, s, c or n!"
 
         fi
 
-        read -p "Which config file do you want to use? [d/t/l/v/s/c]: " VALUE_config
+        read -p "Which config file do you want to use? [d/t/l/v/s/c/n]: " VALUE_config
 
     done
 
@@ -205,9 +205,10 @@ download_config () {
             ;;
         "c" )
             curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config > /config
-
-            break
+            exit
             ;;
+        "n")
+            break;;
     esac
 
 }
