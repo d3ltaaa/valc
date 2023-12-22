@@ -80,8 +80,6 @@ determine_config () {
         # echo "upd_cache                 "
         echo "ena_parallel_live:       b"
         echo "config_partitioning:     1"
-        echo "cfdisk_partitioning:     2"
-        echo "fdisk_partitioning:      3"
         # echo "inst_part_2               "
         # echo "update_system             "
         echo "ena_parallel             c"
@@ -127,8 +125,6 @@ determine_config () {
                 a) echo "kb_setup_live" >> $INSTALL_OPTION_PATH;;
                 b) echo "ena_parallel_live" >> $INSTALL_OPTION_PATH;;
                 1) echo "config_partitioning" >> $INSTALL_OPTION_PATH;;
-                2) echo "cfdisk_partitioning" >> $INSTALL_OPTION_PATH;;
-                3) echo "fdisk_partitioning" >> $INSTALL_OPTION_PATH;;
                 c) echo "ena_parallel" >> $INSTALL_OPTION_PATH;;
                 d) echo "time_setup" >> $INSTALL_OPTION_PATH;;
                 e) echo "language_setup" >> $INSTALL_OPTION_PATH;;
@@ -171,15 +167,15 @@ download_config () {
 
     notification "Download config"
 
-    until [[ $VALUE_config =~ (d|t|l|v|s) ]]; do
+    until [[ $VALUE_config =~ (d|t|l|v|s|c) ]]; do
 
         if [[ ! -z $VALUE_config ]]; then
 
-            echo "Either: d, t, l, v or s!"
+            echo "Either: d, t, l, v s or c!"
 
         fi
 
-        read -p "Which config file do you want to use? [d/t/l/v/s]: " VALUE_config
+        read -p "Which config file do you want to use? [d/t/l/v/s/c]: " VALUE_config
 
     done
 
@@ -205,6 +201,11 @@ download_config () {
             ;;
         "s" )
             curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config > /config
+            break
+            ;;
+        "c" )
+            curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config > /config
+
             break
             ;;
     esac
@@ -330,11 +331,11 @@ config_partitioning () {
                     if [[ ${par_crypt_arr[$i]} != "no" ]]; then
                         # if it needs to be encrypted, another path needs to be passed
                         make_fs /dev/mapper/${par_crypt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]} 
-                        add_fstab_entry /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]}  
+                        pacstrap_root /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]}  
                     else
                         make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]} 
-                        echo "add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} " 
-                        add_fstab_entry /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]}  
+                        echo "pacstrap_root /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]} " 
+                        pacstrap_root /dev/${par_arr[$i]} ${mount_point_par_arr[$i]} ${par_fstab_arr[$i]}  
                     fi
 
                 else
@@ -397,7 +398,7 @@ config_partitioning () {
                     # make filesystem
                     make_fs /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_fs[$j]} ${lv_update[$j]} 
     
-                    add_fstab_entry /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
+                    pacstrap_root /dev/mapper/${vg_names[$i]}-${lv_names[$j]} ${lv_mount[$j]} ${lv_fstab[$j]}
                 done
             done
         }
@@ -528,307 +529,6 @@ config_partitioning () {
 }
 
 
-set_file_system () {
-
-    while true; do
-        notification "Set file system"       
-
-        lsblk -f -p
-        read -p "What partition would you like set a file system for? [N]: " partition_to_set
-        case "$partition_to_set" in
-            [Nn] ) break;;
-            * )
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$partition_to_set")
-
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$partition_to_set" && [[ $partition_count -eq 1 ]]; then
-                    while true; do
-
-                        read -p "What file system for $partition_to_set? [NTFS/FAT32/exFAT/ext4/EFI/SWAP]: " file_system
-                        if [[ "$file_system" == "NTFS" ]]; then
-                            mkfs.ntfs $partition_to_set
-                            [ $? -ne 0 ] && return 14 || : 
-                            break
-
-                        elif [[ "$file_system" == "FAT32" ]]; then
-                            mkfs.fat -F32 $partition_to_set
-                            [ $? -ne 0 ] && return 14 || : 
-                            break
-
-                        elif [[ "$file_system" == "exFAT" ]]; then
-                            mkfs.exfat $partition_to_set
-                            [ $? -ne 0 ] && return 14 || : 
-                            break
-
-                        elif [[ "$file_system" == "ext4" ]]; then
-                            mkfs.ext4 -F $partition_to_set
-                            [ $? -ne 0 ] && return 14 || : 
-                            break
-
-                        elif [[ "$file_system" == "EFI" ]]; then
-                            mkfs.fat -F32 $partition_to_set
-                            [ $? -ne 0 ] && return 14 || : 
-                            break
-
-                        elif [[ "$file_system" == "SWAP" ]]; then
-                            mkswap $partition_to_set
-                            [ $? -ne 0 ] && return 14 || : 
-                            break
-
-                        else 
-                            echo "You typed the file system wrong!"
-                            sleep 1
-                        fi
-                    done
-                else
-                    echo "No partition with that name!"
-                    sleep 1
-                fi
-                ;;
-        esac
-    done
-}
-
-mount_partitions () {
-
-    while true; do
-        
-        notification "Mount Home"
-        lsblk -f -n
-        read -p "What is your home partition? [N]: " home_par
-        case $home_par in
-            [Nn] ) break;;
-            *)
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$home_par")
-
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$home_par"; then
-                    mount $home_par /mnt
-                    [ $? -ne 0 ] && return 18 || : 
-
-
-                    # get the uuid
-                    part_UUID=$(sudo blkid $home_par | grep -woP 'UUID="\K[^"]+') &&
-                    # get file system
-                    part_fs=$(lsblk -fp | grep -w $home_par | awk '{print $2}')
-                    # write line to fstab (home specific)
-                    echo "echo UUID=$part_UUID / $part_fs defaults 0 1  >> /mnt/etc/fstab" &&
-                    mkdir -p /mnt/etc
-                    touch /mnt/etc/fstab
-                    echo "UUID=$part_UUID / $part_fs defaults 0 1"  >> /mnt/etc/fstab
-                    [ $? -ne 0 ] && return 28 || : 
-
-                    break
-                else
-                    echo "No partition with that name!"
-                fi
-                ;;
-        esac
-    done
-
-    
-
-    while true; do
-        
-        notification "Mount efi"
-        lsblk -f -n
-        read -p "What is your EFI partition? [N]: " efi_par 
-        case $efi_par in
-            [Nn] ) break;;
-            *)
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$efi_par")
-
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$efi_par"; then
-                    mkdir -p /mnt/boot/EFI && 
-                    mount $efi_par /mnt/boot/EFI
-                    [ $? -ne 0 ] && return 18 || : 
-
-                    # get the uuid
-                    part_UUID=$(sudo blkid $efi_par | grep -woP 'UUID="\K[^"]+') &&
-                    # get file system
-                    part_fs=$(lsblk -fp | grep -w $efi_par | awk '{print $2}')
-                    # write line to fstab (efi specific)
-                    echo "echo UUID=$part_UUID /boot/EFI $part_fs defaults 0 2  >> /mnt/etc/fstab" &&
-                    mkdir -p /mnt/etc
-                    touch /mnt/etc/fstab
-                    echo "UUID=$part_UUID /boot/EFI $part_fs defaults 0 2"  >> /mnt/etc/fstab
-                    [ $? -ne 0 ] && return 28 || : 
-
-                    break
-                else
-                    echo "No partition with that name!"
-                fi
-                ;;
-        esac
-    done
-
-    
-
-    while true; do
-        
-        notification "Mount swap"
-        lsblk -f -n
-
-        read -p "What is your swap partition? [N]: " swap_par
-        case $swap_par in
-            [Nn] ) break;;
-            *)
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$swap_par")
-
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$swap_par"; then
-                    swapon $swap_partition 
-                    [ $? -ne 0 ] && return 18 || : 
-
-                    # get the uuid
-                    part_UUID=$(sudo blkid $swap_par | grep -woP 'UUID="\K[^"]+') &&
-                    # get file system
-                    part_fs=$(lsblk -fp | grep -w $swap_par | awk '{print $2}')
-                    # write line to fstab (swap specific)
-                    echo "echo UUID=$part_UUID none $part_fs defaults 0 0  >> /mnt/etc/fstab" &&
-                    mkdir -p /mnt/etc
-                    touch /mnt/etc/fstab
-                    echo "UUID=$part_UUID none $part_fs defaults 0 0"  >> /mnt/etc/fstab
-                    [ $? -ne 0 ] && return 28 || : 
-
-                    break
-                else
-                    echo "No partition with that name!"
-                fi
-                ;;
-        esac
-    done
-
-
-    while true; do
-        
-        notification "Mounting other Partitions"
-
-        lsblk -f -n
-        read -p "What partition do you want to mount? [N]: " par
-        case $par in
-            [Nn] ) break;;
-            *)
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$par")
-
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$par"; then
-                    read -p "Where do you want to mount the partition?: " mount_path
-
-                    mkdir -p /mnt$mount_path
-                    mount $par /mnt$mount_path
-                    [ $? -ne 0 ] && return 18 || : 
-
-                    # get the uuid
-                    part_UUID=$(sudo blkid $par | grep -woP 'UUID="\K[^"]+') &&
-                    # get file system
-                    part_fs=$(lsblk -fp | grep -w $par | awk '{print $2}')
-                    # write line to fstab (efi specific)
-                    echo "echo UUID=$part_UUID $mount_path $part_fs defaults 0 2  >> /mnt/etc/fstab" &&
-                    mkdir -p /mnt/etc
-                    touch /mnt/etc/fstab
-                    echo "UUID=$part_UUID $mount_path $part_fs defaults 0 2"  >> /mnt/etc/fstab
-                    [ $? -ne 0 ] && return 28 || : 
-
-                else
-                    echo "No partition with that name!"
-                fi
-                ;;
-        esac
-    done
-}
-
-install_kernel () {
-    pacstrap -K /mnt base linux linux-firmware linux-headers
-    [ $? -ne 0 ] && return 19 || : 
-}
-
-
-cfdisk_partitioning () {
-
-    fname="cfdisk_partitioning"
-
-    notification "$fname"
-
-    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
-
-        lsblk -f -p
-        read -p "What disk do you want to partition? [N]: " disk
-        case $disk in
-            [Nn] ) 
-                echo ok
-                ;;
-            *)
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$disk")
-    
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$disk"; then
-    
-                    cfdisk $disk
-                    [ $? -ne 0 ] && return 18 || : 
-    
-                else
-                    echo "No partition with that name!"
-                    sleep 1
-                fi
-            ;;
-        esac
-    
-        exe set_file_system && 
-        exe mount_partitions && 
-        exe install_kernel 
-        [ $? -ne 0 ] && return 14 || : 
-    fi
-}
-
-fdisk_partitioning () {
-
-    fname="fdisk_partitioning"
-
-    notification "$fname"
-
-    if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
-
-        lsblk -f -p
-        read -p "What disk do you want to partition? [N]: " disk
-    
-        case $disk in
-            [Nn] ) 
-                echo ok
-                ;;
-            *)
-                partitions=$(lsblk -p -n -o NAME)
-                partition_count=$(echo "$partitions" | grep -c "$disk")
-    
-                # wont work with more than 10 partitions since sda1 is in sda10
-                if echo "$partitions" | grep "$disk"; then
-                    
-                    fdisk $disk
-                    [ $? -ne 0 ] && return 18 || : 
-    
-                else
-                    echo "No partition with that name!"
-                    sleep 1
-                fi
-                ;;
-        esac
-    
-        exe set_file_system && 
-        exe mount_partitions && 
-        exe install_kernel 
-        [ $? -ne 0 ] && return 14 || : 
-
-    fi
-}
-
-
 inst_part_2 () {
 
     fname="inst_part_2"
@@ -850,9 +550,8 @@ exe kb_setup_live
 exe time_setup_live
 exe upd_cache
 exe ena_parallel_live
+exe custom_config
 exe config_partitioning
-exe cfdisk_partitioning
-exe fdisk_partitioning
 exe inst_part_2
 
 notification "Changing root"
