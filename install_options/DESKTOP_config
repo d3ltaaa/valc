@@ -15,7 +15,7 @@ USER: falk
 USER_GROUPS: wheel audio video
 CUSTOM_GROUPS: build
 
-PARTITION: 
+PARTITION: dual
 nvme0n1     nvme0n1     
 nvme0n1p1   nvme0n1p2   
 0%          2G          
