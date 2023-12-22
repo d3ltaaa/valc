@@ -34,7 +34,7 @@ lv_root     lv_swap     lv_backup   lv_home
 50G         20G         10G         100%FREE
 ext4        swap        ext4        ext4
 /           none        /mnt/backup /home
-1           1           2           2
+1           0           2           2
 update      update      update      leave
 :LVM
 

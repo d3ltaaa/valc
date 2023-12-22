@@ -292,6 +292,29 @@ grub_setup () {
             fi
         done
 
+        # add swap if lvm to /etc/default/grub
+        beg=$(grep -n -i -w LVM: $CONFIG_PATH | cut -d':' -f1)
+        end=$(grep -n -i -w :LVM $CONFIG_PATH | cut -d':' -f1)
+    
+        output=$(sed -n "$((${beg}+1)),$((${end}-1))p" $CONFIG_PATH)
+    
+        vg_names=($(echo "$output" | grep -i -w "LV |" | cut -d '|' -f2))
+    
+        for (( i = 0; i<${#vg_names[@]}; i++ )); do
+    
+            lv_names=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A1 | awk 'NR==2'))
+            lv_fs=($(echo "$output" | grep -i -w "LV | ${vg_names[$i]}" -A3 | awk 'NR==4'))
+    
+            for (( j = 0; j<${#lv_names[@]}; j++ )); do
+    
+                if [[ "${lv_fs[$j]}" == "swap" ]]; then
+                    sed -i 's#GRUB_CMDLINE_LINUX="#GRUB_CMDLINE_LINUX="resume=/dev/mapper/'"${vg_names[$i]}"'-'"${lv_names[$j]}"'#' /etc/default/grub
+                fi
+
+            done
+        done
+
+        # dual boot
         if [[ "$dual_boot" == "dual" ]]; then
             sed -i 's/GRUB_TIMEOUT=0/GRUB_TIMEOUT=-1/' /etc/default/grub
             sed -i 's/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
