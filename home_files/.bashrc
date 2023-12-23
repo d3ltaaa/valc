@@ -22,7 +22,6 @@ set_ps1_color() {
 
 PROMPT_COMMAND=set_ps1_color
 
-# PS1="\e[1;97m[ \u@\h \w ]\n\$ \e[m"
-# if [[ ! "$(tty)" = "/dev/tty1" ]]; then
-#
-# fi
+if command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
+	tmux
+fi
