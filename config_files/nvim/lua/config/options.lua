@@ -5,3 +5,4 @@
 local opt = vim.opt
 -- enables spelling for german and english (asks me to install de on its own)
 opt.spelllang = { "de", "en" }
+opt.spell = false

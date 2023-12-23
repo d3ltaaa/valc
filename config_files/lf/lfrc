@@ -164,6 +164,10 @@ cmd print_f ${{
     done
 }}
 
+cmd show_pdf ${{
+  ~/.scripts/system_scripts/quick_pdf.sh $f &
+}}
+
 
 # remove defaults
 map m 
@@ -217,5 +221,6 @@ map gmnt cd /mnt
 
 map xmv scp_push m
 map xcp scp_push c
-map xp print_f
+map xpr print_f
+map xpdf show_pdf
 map C clear
