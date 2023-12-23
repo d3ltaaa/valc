@@ -9,6 +9,8 @@ alias lss='ls -lA --color=auto'
 alias grep='grep --color=auto'
 alias sv='sudo -E -s nvim'
 alias v='nvim'
+alias gv='cd /usr/local/share/valc/'
+alias fgc='~/.scripts/system_scripts/./fast_git_commit.sh'
 
 export EDITOR=nvim
 

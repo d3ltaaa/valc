@@ -9,11 +9,10 @@ export PATH="$PATH:$HOME/.scripts/theme_scripts/"
 export PATH="$PATH:$HOME/.scripts/dwmblocks_scripts/"
 export PATH="$PATH:$HOME/.scripts/test_scripts/"
 
-
-[[ -f ~/.bashrc ]] && . ~/.bashrc
-
-
 if [[ "$(tty)" = "/dev/tty1" ]]; then
-    startx
+	startx
+elif command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
+	tmux
 fi
 
+[[ -f ~/.bashrc ]] && . ~/.bashrc
