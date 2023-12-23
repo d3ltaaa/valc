@@ -7,21 +7,22 @@
 
 alias lss='ls -lA --color=auto'
 alias grep='grep --color=auto'
-alias svim='sudo -E -s nvim'
+alias sv='sudo -E -s nvim'
+alias v='nvim'
 
 export EDITOR=nvim
 
 set_ps1_color() {
-    if [ $? -ne 0 ]; then
-        PS1="\[\e[1;91m\][ \u@\h \w ]\n\$ \[\e[0m\]"
-    else
-        PS1="\[\e[1;97m\][ \u@\h \w ]\n\$ \[\e[0m\]"
-    fi
+	if [ $? -ne 0 ]; then
+		PS1="\[\e[1;91m\][ \u@\h \w ]\n\$ \[\e[0m\]"
+	else
+		PS1="\[\e[1;97m\][ \u@\h \w ]\n\$ \[\e[0m\]"
+	fi
 }
 
 PROMPT_COMMAND=set_ps1_color
 
 # PS1="\e[1;97m[ \u@\h \w ]\n\$ \e[m"
 # if [[ ! "$(tty)" = "/dev/tty1" ]]; then
-#     
+#
 # fi
