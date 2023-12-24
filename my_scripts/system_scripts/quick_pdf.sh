@@ -12,4 +12,13 @@ elif [[ "$1" == *.md ]]; then
 	fi
 
 	zathura ${1%.*}.pdf
+elif [[ "$1" == *.tex ]]; then
+	pdflatex "$1"
+
+	if pgrep -x "zathura" >/dev/null; then
+		pkill zathura
+	fi
+
+	zathura ${1%.*}.pdf
+
 fi

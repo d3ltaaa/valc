@@ -1,6 +1,6 @@
 # Basic Settings
 # set nopreview
-set hidden true
+set hidden false
 set ignorecase true
 set drawbox
 # set icons true
@@ -168,7 +168,13 @@ cmd show_pdf ${{
   ~/.scripts/system_scripts/quick_pdf.sh $f &
 }}
 
+cmd delete ${{
+  rm $fx
+}}
 
+cmd sudo_delete ${{
+  sudo rm $fx
+}}
 # remove defaults
 map m 
 map e
@@ -189,6 +195,8 @@ map R reload
 
 map rr rename
 
+map rm delete
+map rsm sudo_delete
 map re remove
 
 map mf mkfile
