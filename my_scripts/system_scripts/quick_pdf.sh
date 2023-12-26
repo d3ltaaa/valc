@@ -5,8 +5,8 @@ if [[ "$1" == "0" ]]; then
 		pkill zathura
 	fi
 elif [[ "$1" == *.md ]]; then
-	pandoc $1 -o ${1%.*}.pdf
-
+	# pandoc $1 -o ${1%.*}.pdf
+	pandoc $1 -o ${1%.*}.pdf --variable geometry:margin=1in
 	if pgrep -x "zathura" >/dev/null; then
 		pkill zathura
 	fi

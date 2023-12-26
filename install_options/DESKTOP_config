@@ -48,7 +48,7 @@ networkmanager
 lvm2
 :IMPORTANT_PACKAGES
 
-GRAPHICS_DRIVER: xf86-video-fbdev
+GRAPHICS_DRIVER: nvidia
 
 PACKAGES:
 xorg
@@ -155,6 +155,8 @@ FOLDER: Documents Downloads Pictures Code Video
 MONITOR: 
 
 AUTOSTART:
+xrandr --output HDMI-0 --mode 1920x1080 --rate 144
+xrandr --output DVI-D-0 --mode 1920x1080 --rate 144
 picom &
 dwmblocks &
 xwallpaper --zoom ~/.config/wall/picture
