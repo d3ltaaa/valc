@@ -105,6 +105,8 @@ freecad
 ghostscript
 spotify-launcher
 cups
+w3m
+redshift
 :PACKAGES
 
 USER_SERVICES:
@@ -124,6 +126,7 @@ ncspot
 brillo
 xvkbd
 simplescreenrecorder
+ueberzugpp
 :PARU_PACKAGES
 
 VAR_PACKAGES:
@@ -152,7 +155,12 @@ LINKS:
 
 FOLDER: Documents Downloads Pictures Code Videos
 
-MONITOR: 
+MONITOR: brillo
+Virtual-1
+1920x1080 
+60
+//
+:MONITOR
 
 AUTOSTART:
 picom &
