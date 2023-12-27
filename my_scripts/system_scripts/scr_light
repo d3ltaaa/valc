@@ -11,7 +11,7 @@ light_down() {
 
 	case $mon_bright_type in
 	"ddcutil")
-		case $1 in
+		case "$1" in
 		"max")
 			for index in ${mon_index[@]}; do
 				ddcutil -d $index setvcp 10 0
@@ -28,7 +28,7 @@ light_down() {
 		esac
 		;;
 	"brillo")
-		case $1 in
+		case "$1" in
 		"max")
 			brillo -S 0
 			;;
@@ -96,9 +96,13 @@ red_up() {
 
 case "$1" in
 
-"up") light_up ;;
+"up")
+	light_up
+	;;
 
-"down") light_down ;;
+"down")
+	light_down
+	;;
 
 "blue")
 	red_up

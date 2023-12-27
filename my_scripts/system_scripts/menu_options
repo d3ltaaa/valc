@@ -808,7 +808,7 @@ menu_light() {
 	case "$selected" in
 	"  Brightness")
 		while true; do
-			options=("  +10%" "  -10%" "  Max Brightness" "  Lowest Brightness" "  Go back")
+			options=("  +10%" "  -10%" "  Max Brightness" "  Lowest Brightness" "  Go back")
 			further_selected=$(printf '%s\n' "${options[@]}" | dmenu -i -p "Brightness:")
 			case "$further_selected" in
 			"  +10%")
