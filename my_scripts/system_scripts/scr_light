@@ -28,7 +28,14 @@ light_down() {
 		esac
 		;;
 	"brillo")
-		brillo -U 10
+		case $1 in
+		"max")
+			brillo -S 0
+			;;
+		*)
+			brillo -U 10
+			;;
+		esac
 		;;
 	esac
 }
@@ -54,7 +61,14 @@ light_up() {
 		esac
 		;;
 	"brillo")
-		brillo -A 10
+		case $1 in
+		"max")
+			brillo -S 100
+			;;
+		*)
+			brillo -A 10
+			;;
+		esac
 		;;
 	esac
 
