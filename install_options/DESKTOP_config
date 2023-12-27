@@ -155,6 +155,14 @@ LINKS:
 
 FOLDER: Documents Downloads Pictures Code Video
 
+HOOKS: 
+base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume filesystems fsck
+:HOOKS
+
+MODULES:
+i2c-dev
+:MODULES
+
 MONITOR: ddcutil
 HDMI-0 DVI-D-0
 1920x1080 1920x1080
@@ -163,8 +171,6 @@ HDMI-0 DVI-D-0
 :MONITOR
 
 AUTOSTART:
-xrandr --output HDMI-0 --mode 1920x1080 --rate 144
-xrandr --output DVI-D-0 --mode 1920x1080 --rate 144
 picom &
 dwmblocks &
 xwallpaper --zoom ~/.config/wall/picture

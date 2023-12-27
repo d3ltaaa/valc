@@ -155,6 +155,14 @@ LINKS:
 
 FOLDER: Documents Downloads Pictures Code Videos
 
+HOOKS: 
+base udev autodetect modconf kms keyboard keymap consolefont block resume filesystems fsck
+:HOOKS
+
+MODULES:
+:MODULES
+
+
 MONITOR: brillo
 eDP-1
 1920x1080 
