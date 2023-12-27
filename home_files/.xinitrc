@@ -9,43 +9,41 @@ sysmodmap=/etc/X11/xinit/.Xmodmap
 
 if [ -f $sysresources ]; then
 
-    xrdb -merge $sysresources
+	xrdb -merge $sysresources
 
 fi
 
 if [ -f $sysmodmap ]; then
-    xmodmap $sysmodmap
+	xmodmap $sysmodmap
 fi
 
 if [ -f "$userresources" ]; then
 
-    xrdb -merge "$userresources"
+	xrdb -merge "$userresources"
 
 fi
 
 if [ -f "$usermodmap" ]; then
 
-    xmodmap "$usermodmap"
+	xmodmap "$usermodmap"
 
 fi
 
 # start some nice programs
 
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+if [ -d /etc/X11/xinit/xinitrc.d ]; then
 
- for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+	for f in /etc/X11/xinit/xinitrc.d/?*.sh; do
 
-  [ -x "$f" ] && . "$f"
+		[ -x "$f" ] && . "$f"
 
- done
+	done
 
- unset f
+	unset f
 
 fi
 
 pacman -Sy
 xbindkeys -f ~/.xbindkeysrc &
-echo "" > ~/.config/nerd-dictation/status_file.txt # needed for proper functionality
-# xwallpaper --restore
+xrandr --output HDMI-0 --mode 1920x1080 --rate 144 --output DVI-D-0 --right-of HDMI-0 --mode 1920x1080 --rate 144
 exec dwm
-
