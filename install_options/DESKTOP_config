@@ -105,6 +105,7 @@ freecad
 ghostscript
 spotify-launcher
 cups
+w3m
 :PACKAGES
 
 USER_SERVICES:

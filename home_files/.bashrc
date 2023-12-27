@@ -11,7 +11,7 @@ alias sv='sudo -E -s nvim'
 alias v='nvim'
 alias gv='cd /usr/local/share/valc/'
 alias fgc='~/.scripts/system_scripts/./fast_git_commit.sh'
-alias f='lf_with_preview'
+alias lf='lf_with_preview'
 
 export EDITOR=nvim
 

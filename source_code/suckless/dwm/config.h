@@ -180,11 +180,13 @@ static const Key keys[] = {
     { 0,                            0x1008ff12, spawn,         SHCMD("scr_volume mute") }, 
     { 0,                            0x1008ff03, spawn,         SHCMD("scr_light down") }, 
     { 0,                            0x1008ff02, spawn,         SHCMD("scr_light up") }, 
+    { 0,                            0xffbf,     spawn,         SHCMD("scr_light down") }, 
+    { 0,                            0xffbe,     spawn,         SHCMD("scr_light up") }, 
     { MODKEY,                       XK_s,       spawn,         SHCMD("menu_options") },
-    { MODKEY|ShiftMask,	        	XK_s,	    spawn,	       SHCMD("menu_system") },
-    { MODKEY|ControlMask,           XK_s,      spawn,          SHCMD("flatpak run com.symless.synergy") },
-    { MODKEY|ShiftMask,             XK_n,      spawn,          SHCMD("~/.config/nerd-dictation/./process.sh")},
-    { MODKEY|ShiftMask,             XK_m,      spawn,          SHCMD("~/.config/nerd-dictation/./process.sh 0")},
+    { MODKEY|ShiftMask,	        	  XK_s,	      spawn,	       SHCMD("menu_system") },
+    { MODKEY|ControlMask,           XK_s,       spawn,         SHCMD("flatpak run com.symless.synergy") },
+    { MODKEY|ShiftMask,             XK_n,       spawn,         SHCMD("~/.config/nerd-dictation/./process.sh")},
+    { MODKEY|ShiftMask,             XK_m,       spawn,         SHCMD("~/.config/nerd-dictation/./process.sh 0")},
 
     // Miscellaneous
 	// { MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
