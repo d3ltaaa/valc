@@ -156,7 +156,7 @@ LINKS:
 FOLDER: Documents Downloads Pictures Code Videos
 
 HOOKS: 
-base udev autodetect modconf kms keyboard keymap consolefont block resume filesystems fsck
+base udev autodetect modconf kms keyboard keymap consolefont block lvm2 resume filesystems fsck
 :HOOKS
 
 MODULES:
