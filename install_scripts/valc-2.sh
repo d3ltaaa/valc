@@ -228,7 +228,7 @@ inst_important_packages() {
 	if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
 		beg=$(grep -n -w IMPORTANT_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-		end=$(grep -n -w :InMPORTANT_PACKAGES $CONFIG_PATH | cut -d':' -f1)
+		end=$(grep -n -w :IMPORTANT_PACKAGES $CONFIG_PATH | cut -d':' -f1)
 
 		# grab everything between the two lines
 		imp_packages=$(sed -n "$((${beg} + 1)),$((${end} - 1))p" $CONFIG_PATH)
