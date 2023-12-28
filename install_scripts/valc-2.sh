@@ -228,7 +228,7 @@ inst_important_packages() {
 	if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
 		beg=$(grep -n -w IMPORTANT_PACKAGES: $CONFIG_PATH | cut -d':' -f1)
-		end=$(grep -n -w :IMPORTANT_PACKAGES $CONFIG_PATH | cut -d':' -f1)
+		end=$(grep -n -w :InMPORTANT_PACKAGES $CONFIG_PATH | cut -d':' -f1)
 
 		# grab everything between the two lines
 		imp_packages=$(sed -n "$((${beg} + 1)),$((${end} - 1))p" $CONFIG_PATH)
@@ -252,11 +252,15 @@ mkinitcpio_setup() {
 
 	# set HOOKS
 	hooks="$(grep -A1 -w HOOKS: $CONFIG_PATH | awk 'NR==2')"
-	sed -i "/^HOOKS=/c\\HOOKS=($hooks)" /etc/mkinitcpio.conf
+	if [[ "$hooks" != ":HOOKS" ]]; then
+		sed -i "/^HOOKS=/c\\HOOKS=($hooks)" /etc/mkinitcpio.conf
+	fi
 
 	# set MODULES
 	modules="$(grep -A1 -w MODULES: $CONFIG_PATH | awk 'NR==2')"
-	sed -i "/^MODULES=/c\\MODULES=($modules)" /etc/mkinitcpio.conf
+	if [[ "$modules" != ":MODULES" ]]; then
+		sed -i "/^MODULES=/c\\MODULES=($modules)" /etc/mkinitcpio.conf
+	fi
 
 	mkinitcpio -p linux
 	[ $? -ne 0 ] && return 34 || :
