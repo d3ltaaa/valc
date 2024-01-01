@@ -1,0 +1,19 @@
+My android device is not rooted.
+Thats why I cannot access its data to sync it.
+I need to save my files manually into a directory, which I have assigned.
+
+I have written a script that:
+  checks every file in the directory and its sub-directories
+  if the file has been recently modified, it sends it via scp and ssh to my server.
+  it also updates the variable that stores the time of the latest change to any file currently on the server
+
+I have installed termux:widget
+I have put the script into the .shortcut folder.
+I have created a widget on the home screen.
+I can use it to sync it without opening termux manually.
+
+The workflow looks like this:
+I create a file in Samsung Notes. 
+I save it to disk on my tablet (into the assigned directory).
+I go to my home screen and tab on the widget. 
+--> It gets synced to my server.
