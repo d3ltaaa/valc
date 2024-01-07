@@ -10,16 +10,14 @@ set cleaner ~/.config/lf/clear_img.sh
 # Custom Functions
 cmd mkdir ${{
     clear
-    printf "Directory Name: "
-    read ans
-    mkdir $ans
+    read -p "Directory Name: " ans
+    mkdir "$ans"
 }}
 
 cmd mkfile ${{
     clear
-    printf "File Name: "
-    read ans
-    $EDITOR $ans
+    read -p "File Name: " ans
+    "$EDITOR" "$ans"
 }}
 
 cmd setwallpaper ${{
@@ -92,14 +90,11 @@ cmd unarchive ${{
 cmd rename ${{
     clear
     printf "Old Name: $f\n"
-    read -p "New Name:" -e -i $(basename "$f") ans
-    mv "$f" $ans
+    read -p "New Name: " -e -i "$(basename "$f")" ans
+    # Rename the file
+    mv "$f" "$ans"
 }}
 
-
-cmd remove ${{
-    trash t $fx
-}}
 
 cmd make ${{
     make && sudo make install
@@ -126,22 +121,27 @@ cmd scp_push ${{
 
     read -p "Directory: " -e -i "/home/$USER/" directory
 
-    scp $fx ${client}:${directory}
+    scp "$fx" "${client}":"${directory}"
 
     if [[ "$1" == "m" ]]; then
-        trash t $fx
+        trash t "$fx"
     fi
 
 }}
 
 
 
-cmd trash_item ${{
-    trash t $fx
+cmd remove ${{
+  IFS=$'\n'
+  mapfile -t list <<< "$fx"
+  for element in "${list[@]}"; do 
+    trash t "$element"
+    echo "Trashed: $element"
+  done
 }}
 
 cmd echo_f ${{
-    echo $fx
+  echo "$fx"
 }}
 
 cmd print_f ${{
@@ -166,15 +166,61 @@ cmd print_f ${{
 }}
 
 cmd show_pdf ${{
-  ~/.scripts/system_scripts/quick_pdf.sh $f &
+  ~/.scripts/system_scripts/quick_pdf.sh "$f" &
 }}
 
 cmd delete ${{
-  rm $fx
+  while true; do 
+    read -p "You are about to permanently delete file(s)! Do you want to continue? [y/n]: " ans
+    case "$ans" in 
+      "y")
+        IFS=$'\n'
+        mapfile -t list <<< "$fx"
+        for element in "${list[@]}"; do 
+          if [ -d "$element" ]; then 
+            rm -r "$element"
+          else 
+            rm "$element"
+          fi
+          echo "Removed: $element"
+        done
+        break
+        ;;
+      "n")
+        break
+        ;;
+      *)
+        echo "Type 'y' or 'n'!"
+        ;;
+    esac
+  done
 }}
 
 cmd sudo_delete ${{
-  sudo rm $fx
+  while true; do 
+    read -p "You are about to permanently delete file(s)! Do you want to continue? [y/n]: " ans
+    case "$ans" in 
+      "y")
+        IFS=$'\n'
+        mapfile -t list <<< "$fx"
+        for element in "${list[@]}"; do 
+          if [ -d "$element" ]; then 
+            sudo rm -r "$element"
+          else 
+            sudo rm "$element"
+          fi
+          echo "Removed: $element"
+        done
+        break
+        ;;
+      "n")
+        break
+        ;;
+      *)
+        echo "Type 'y' or 'n'!"
+        ;;
+    esac
+  done
 }}
 
 # remove defaults
@@ -222,6 +268,7 @@ map gt cd ~/.Trash
 map gS cd ~/.scripts
 map gC cd ~/.config
 map gc cd ~/Code
+map gn cd ~/Samsung_Notes
 map gva cd /usr/local/share/valc
 map gvs cd /usr/local/share/valc/source_code
 map gvc cd /usr/local/share/valc/config_files

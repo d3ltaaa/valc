@@ -107,6 +107,8 @@ spotify-launcher
 cups
 redshift
 w3m
+pandoc-cli
+texlive-latex
 :PACKAGES
 
 USER_SERVICES:
