@@ -3,6 +3,11 @@
 -- Add any additional options here
 
 local opt = vim.opt
+
+vim.g.maplocalleader = ","
+
+opt.swapfile = false
+
 -- enables spelling for german and english (asks me to install de on its own)
 opt.spelllang = { "de", "en" }
 opt.spell = false

@@ -171,6 +171,8 @@ cmd show_pdf ${{
 
 cmd delete ${{
   while true; do 
+    clear
+    echo "$fx"
     read -p "You are about to permanently delete file(s)! Do you want to continue? [y/n]: " ans
     case "$ans" in 
       "y")
@@ -198,6 +200,8 @@ cmd delete ${{
 
 cmd sudo_delete ${{
   while true; do 
+    clear
+    echo "$fx"
     read -p "You are about to permanently delete file(s)! Do you want to continue? [y/n]: " ans
     case "$ans" in 
       "y")
