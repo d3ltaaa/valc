@@ -5,14 +5,16 @@ FILE_LOG_PATH="/home/$USER/.file_log.txt"
 >$FILE_LOG_PATH
 
 cd $DIR_TO_SEARCH
-file_arr=($(find . -type f))
+
+input_string=$(find . -type f)
+IFS=$'\n'
+mapfile -t file_arr <<<"$input_string"
 
 for file in ${file_arr[@]}; do
 	file="${file:1}"
-	dir=$(echo $file | rev | cut -d'/' -f2- | rev)
-	name=$(echo $file | rev | cut -d'/' -f1 | rev | cut -d'.' -f1 | cut -d'_' -f1)
-	time=$(echo $file | rev | cut -d'/' -f1 | rev | cut -d'.' -f1 | cut -d'_' -f2-)
-	ext=$(echo $file | cut -d'.' -f2)
-	touch ~/.file_log.txt
-	echo "$dir/[$name]_${time}.${ext}" >>$FILE_LOG_PATH
+	echo "$file"
+	file="$(echo "$file" | sed 's|\(.*\)\/|\1\/[|; s/_/]_/')"
+
+	echo "$file" >>"$FILE_LOG_PATH"
+	echo Done
 done
