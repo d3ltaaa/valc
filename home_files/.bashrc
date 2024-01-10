@@ -6,6 +6,7 @@
 [[ $- != *i* ]] && return
 
 alias lss='ls -lA --color=auto'
+alias lss='ls -1 --color=auto'
 alias grep='grep --color=auto'
 alias sv='sudo -E -s nvim'
 alias v='nvim'
