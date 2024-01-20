@@ -1,4 +1,4 @@
-// dwm
+// DWM
 MODKEY|ShiftMask|q              quit {0}                        --> idk
 MODKEY|ControlMask|ShiftMask|q  quit {1}                        --> restart dwm
 

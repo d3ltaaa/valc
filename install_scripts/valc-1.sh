@@ -116,9 +116,11 @@ determine_config() {
 		echo "create_folder:           v"
 		echo "enable_services:         w"
 		echo "dwm_auto:                x"
+		echo "ufw_setup:               y"
+		echo "fail2ban_setup:          z"
 		# echo "create_remove             "
 
-		read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuvwx" VALUE_ans
+		read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuvwxyz" VALUE_ans
 
 		VALUE_ans=$(echo "$VALUE_ans" | tr '[:upper:]' '[:lower:]')
 
@@ -151,6 +153,8 @@ determine_config() {
 			v) echo "create_folder" >>$INSTALL_OPTION_PATH ;;
 			w) echo "enable_services" >>$INSTALL_OPTION_PATH ;;
 			x) echo "dwm_auto" >>$INSTALL_OPTION_PATH ;;
+			y) echo "ufw_setup" >>$INSTALL_OPTION_PATH ;;
+			z) echo "fail2ban_setup" >>$INSTALL_OPTION_PATH ;;
 			*)
 				invalid_value=1
 				break

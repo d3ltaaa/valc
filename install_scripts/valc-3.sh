@@ -334,6 +334,45 @@ dwm_auto() {
 	fi
 }
 
+ufw_setup() {
+
+	fname="ufw_setup"
+
+	notification "$fname"
+
+	if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+		beg=$(grep -n -w UFW: $CONFIG_PATH | cut -d':' -f1)
+		end=$(grep -n -w :UFW $CONFIG_PATH | cut -d':' -f1)
+
+		(
+			IFS=$'\n'
+			ufw_commands=($(sed -n "$((${beg} + 1)),$((${end} - 1))p" $CONFIG_PATH))
+			for ((i = 0; i < ${#ufw_commands[@]}; i++)); do
+				sudo ufw "${ufw_commands[$i]}"
+			done
+		)
+
+	fi
+}
+
+fail2ban_setup() {
+
+	fname="fail2ban_setup"
+
+	notification "$fname"
+
+	if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+		beg=$(grep -n -w FAIL2BAN: $CONFIG_PATH | cut -d':' -f1)
+		end=$(grep -n -w :FAIL2BAN $CONFIG_PATH | cut -d':' -f1)
+
+		f2b_commands="$(sed -n "$((${beg} + 1)),$((${end} - 1))p" $CONFIG_PATH)"
+
+		echo "$f2b_commands" | sudo tee /etc/fail2ban/jail.local
+	fi
+}
+
 enable_services() {
 
 	fname="enable_services"
@@ -398,5 +437,7 @@ exe links_setup
 exe building_software
 exe create_folder
 exe dwm_auto
+exe ufw_setup
+exe fail2ban_setup
 exe enable_services
 exe create_remove

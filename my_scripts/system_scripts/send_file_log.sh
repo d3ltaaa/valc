@@ -1,10 +1,10 @@
 #!/bin/bash
 
-DIR_TO_SEARCH="/home/$USER/Samsung_Notes"
+DIR_TO_SEARCH="/home/$USER/Samsung Notes"
 FILE_LOG_PATH="/home/$USER/.file_log.txt"
 >$FILE_LOG_PATH
 
-cd $DIR_TO_SEARCH
+cd "$DIR_TO_SEARCH"
 
 input_string=$(find . -type f)
 IFS=$'\n'

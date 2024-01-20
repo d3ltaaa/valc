@@ -1,0 +1,4 @@
+#!/bin/bash 
+
+KEYBINDS_PATH="/usr/local/share/valc/keybinds_information/"
+cat "$KEYBINDS_PATH"* | less

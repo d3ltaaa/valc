@@ -109,6 +109,8 @@ w3m
 redshift
 pandoc-cli
 texlive-latex
+ufw
+fail2ban
 :PACKAGES
 
 USER_SERVICES:
@@ -120,6 +122,8 @@ bluetooth.service
 sshd
 thermald
 cups
+ufw 
+fail2ban
 :SERVICES
 
 
@@ -163,6 +167,27 @@ base udev autodetect modconf kms keyboard keymap consolefont block lvm2 resume f
 
 MODULES:
 :MODULES
+
+UFW:
+limit 22/tcp
+allow 80/tcp
+allow 443/tcp
+default deny incoming
+default allow outgoing
+enable
+:UFW
+
+FAIL2BAN:
+[DEFAULT]
+ignoreip = 192.0.0.1/8 ::1
+bantime = 3600
+findtime = 600
+maxretry = 5
+
+[sshd]
+enabled = true
+:FAIL2BAN
+
 
 
 MONITOR: brillo

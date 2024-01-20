@@ -1,4 +1,4 @@
-## vim
+# VIM 
 "space"nh --> no highlights
 
 # Window manipulation

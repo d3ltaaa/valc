@@ -272,7 +272,7 @@ map gt cd ~/.Trash
 map gS cd ~/.scripts
 map gC cd ~/.config
 map gc cd ~/Code
-map gn cd ~/Samsung_Notes
+map gn cd ~/Samsung\ Notes
 map gva cd /usr/local/share/valc
 map gvs cd /usr/local/share/valc/source_code
 map gvc cd /usr/local/share/valc/config_files
