@@ -111,6 +111,7 @@ pandoc-cli
 texlive-latex
 ufw
 fail2ban
+syncthing
 :PACKAGES
 
 USER_SERVICES:
@@ -124,6 +125,7 @@ thermald
 cups
 ufw 
 fail2ban
+syncthing@falk
 :SERVICES
 
 
@@ -170,7 +172,7 @@ i2c-dev
 :MODULES
 
 UFW:
-limit 22/tcp
+allow 22/tcp
 allow 80/tcp
 allow 443/tcp
 default deny incoming
