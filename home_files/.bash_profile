@@ -16,3 +16,4 @@ elif command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
 fi
 
 [[ -f ~/.bashrc ]] && . ~/.bashrc
+. "$HOME/.cargo/env"

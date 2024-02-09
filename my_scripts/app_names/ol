@@ -1,0 +1,12 @@
+#!/bin/bash
+
+command=""
+default_model="dolphin"
+
+if [[ "$1" == "" ]]; then
+	command="ollama run $default_model"
+else
+	command="ollama run $1"
+fi
+
+$command

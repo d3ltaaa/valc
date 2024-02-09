@@ -192,10 +192,12 @@ enabled = true
 :FAIL2BAN
 
 MONITOR: ddcutil
-HDMI-0 DVI-D-0
+HDMI-0    DVI-D-0
 1920x1080 1920x1080
-144   144
-2 1
+144       144
+2         1
+/         --left-of
+/         HDMI-0
 :MONITOR
 
 AUTOSTART:
