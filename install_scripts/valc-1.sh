@@ -520,7 +520,7 @@ config_partitioning() {
 
 		pacstrap_root() {
 			pacman -Sy --noconfirm archlinux-keyring &&
-				pacstrap -K /mnt base linux linug-firmware linux-headers lvm2
+				pacstrap -K /mnt base linux linux-firmware linux-headers lvm2
 			[ $? -ne 0 ] && return 10 || :
 		}
 
