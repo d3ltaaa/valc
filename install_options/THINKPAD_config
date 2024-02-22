@@ -171,9 +171,10 @@ MODULES:
 :MODULES
 
 UFW:
-allow 22/tcp
+allow 22/tcp # ssh
 allow 80/tcp
 allow 443/tcp
+allow 22000/tcp # syncthing
 default deny incoming
 default allow outgoing
 enable
