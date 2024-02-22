@@ -112,6 +112,7 @@ texlive-latex
 ufw
 fail2ban
 syncthing
+maim
 :PACKAGES
 
 USER_SERVICES:
