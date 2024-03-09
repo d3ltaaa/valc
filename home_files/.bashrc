@@ -29,4 +29,3 @@ PROMPT_COMMAND=set_ps1_color
 if command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
 	tmux
 fi
-. "$HOME/.cargo/env"
