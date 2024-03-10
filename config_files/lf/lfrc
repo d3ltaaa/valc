@@ -36,21 +36,21 @@ cmd viewimg ${{
 cmd open ${{
     case "$f" in 
         *.jpg|*.jpeg|*.png) 
-            dwmswallow $WINDOWID; feh --scale-down --auto-zoom "$f"
+            feh --scale-down --auto-zoom "$f"
             # pkill -SIGINT feh
             # feh --scale-down --auto-zoom "$f" &
             # sleep 0.4
             # xdotool key Alt+k
             ;;
         *.pdf) 
-            dwmswallow $WINDOWID; zathura "$f"
+            zathura "$f"
             ;;
         *.xopp) 
-            dwmswallow $WINDOWID; xournalpp "$f"
+            xournalpp "$f"
             ;;
 
         *.webm|*.mkv|*.mp4)
-            dwmswallow $WINDOWID; mpv "$f"
+            mpv "$f"
             ;;
         *) 
             if [ "$(stat -c %U "$f")" == "root" ]; then
