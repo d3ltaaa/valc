@@ -1,0 +1,170 @@
+configuration {
+  kb-row-up: "Up,Alt+k,Shift+Tab,Shift+ISO_Left_Tab";
+  kb-row-down: "Down,Alt+j";
+  kb-accept-entry: "Return";
+  terminal: "kitty";
+  kb-remove-to-eol: "Alt+Shift+e";
+  kb-mode-next: "Shift+Right,Alt+Tab,Alt+o";
+  kb-mode-complete: "";
+  kb-mode-previous: "Shift+Left,Alt+Shift+Tab,Alt+i";
+  kb-remove-char-back: "BackSpace";
+  kb-clear-line: "";
+  kb-remove-word-back: "Alt+w";
+
+  background-color: @base;
+  display-run: "";
+  display-drun: "";
+  display-window: "";
+  drun-display-format: "{icon} {name}";
+  modi: "window,run,drun";
+  show-icons: true;
+  // font: "Meslo Nerd Font 12";
+}
+
+* {
+  base: #1e1e2e;
+  base-alt: #303446;
+  fg: #ffffff;
+  tertiary: @base-alt;
+  background-color: @base;
+  rborder: 10px;
+  sborder: 4px;
+  cborder: white;
+  dpadding: 10px;
+  dspacing: 10px;
+}
+
+window {
+  transparency: "real";
+  width: 600;
+  height: 600;
+  border-radius: @rborder;
+  border: @sborder;
+  padding: 0;
+  background-color: @base;
+  children: [mainbox];
+  border-color: white;
+}
+
+mainbox {
+    background-color: @base;
+    padding: @dpadding;
+    spacing: @dspacing;
+    orientation: vertical;
+    children: [inputbar, listview];
+}
+
+message {
+    background-color: @tertiary;
+    text-color: @fg;
+}
+
+textbox {
+    background-color: @tertiary;
+    text-color: @fg;
+    font: "InconsolataGo Nerd Font Bold 11";
+    horizontal-align: 0.50;
+}
+
+inputbar {
+  background-color: transparent;
+  border: @sborder;
+  border-color: @cborder;
+  border-radius: @rborder;
+  children: [prompt, entry];
+}
+
+prompt {
+  enabled: true;
+  padding: 15 5 15 15;
+  text-color: @fg;
+  background-color: @base-alt;
+  horizontal-align: 0.50;
+  vertical-align: 0.50;
+}
+
+entry {
+  background-color: @base-alt;
+  padding: 15 0 15 0;
+  text-color: @fg;
+  horizontal-align: 0.45; // center entry with 0.5
+  vertical-align: 0.50;
+  placeholder-color: @fg;
+  blink: false;
+  placeholder: "";
+}
+
+
+listview {
+  background-color: @base;
+  columns: 1;
+  scrollbar: false;
+  lines: 8;
+  /*border-radius: 0 0 24 24;*/
+  border-color: transparent;
+  spacing: @dspacing;
+}
+
+element {
+  padding: @dpadding;
+  orientation: horizontal;
+  text-color: @fg;
+  position: east;
+  vertical-align: 0;
+  horizontal-align: 0;
+  background-color: @base;
+}
+
+element-icon {
+  size: 3ch;
+  align: center;
+  vertical-align: 0;
+  yoffset: 50;
+}
+
+element-text {
+  vertical-align: 0.5;
+}
+
+
+#element normal.normal {
+    text-color: @fg;
+    background-color: @base;
+}
+#element normal.urgent {
+    background-color: @base;
+}
+#element normal.active {
+    background-color: @base;
+}
+
+#element selected.normal {
+    text-color: @fg;
+    background-color: @tertiary;
+    border: @sborder;
+    border-color: @cborder;
+    border-radius: @rborder;
+}
+#element selected.urgent {
+    background-color: @base;
+    border: @sborder;
+    border-color: @cborder;
+    border-radius: @rborder;
+}
+#element selected.active {
+    background-color: @base;
+    border: @sborder;
+    border-color: @cborder;
+    border-radius: @rborder;
+}
+
+#element alternate.normal {
+    text-color: @fg;
+    background-color: @base;
+}
+#element alternate.urgent {
+    background-color: @base;
+}
+#element alternate.active {
+    background-color: @base;
+}
