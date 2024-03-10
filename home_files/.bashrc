@@ -29,3 +29,5 @@ PROMPT_COMMAND=set_ps1_color
 if command -v tmux &>/dev/null && [ -z "$TMUX" ]; then
 	tmux
 fi
+eval "$(starship init bash)"
+

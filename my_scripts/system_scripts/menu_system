@@ -1,10 +1,11 @@
 #!/bin/bash
-
+# menu="dmenu -i"
+menu="rofi -dmenu"
 # Define the options for the system actions menu
 options=("󰐥  Shutdown" "󰤁  Hibernate" "  Restart" "󰤄  Sleep")
 
 # Use dmenu to display the options and prompt the user to select one
-selected=$(printf '%s\n' "${options[@]}" | dmenu -i)
+selected=$(printf '%s\n' "${options[@]}" | ${menu})
 
 # Depending on which option was selected, perform the corresponding system action
 case $selected in
