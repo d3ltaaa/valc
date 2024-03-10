@@ -72,10 +72,18 @@ bindkey '^e' edit-command-line
 eval "$(starship init zsh)"
 
 # start tmux on startup
-if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
-  exec tmux
-fi
+# if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
+#   exec tmux
+# fi
 
+export PATH="$PATH:$HOME/.scripts/"
+export PATH="$PATH:$HOME/.scripts/app_names/"
+export PATH="$PATH:$HOME/.scripts/system_scripts/"
+export PATH="$PATH:$HOME/.scripts/theme_scripts/"
+export PATH="$PATH:$HOME/.scripts/dwmblocks_scripts/"
+export PATH="$PATH:$HOME/.scripts/test_scripts/"
+
+export EDITOR="nvim"
 
 # Load zsh-syntax-highlighting; should be last.
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
