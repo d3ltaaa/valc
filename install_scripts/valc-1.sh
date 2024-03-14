@@ -1,6 +1,7 @@
 CONFIG_PATH="/config"
 INSTALL_OPTION_PATH="/install"
 HISTORY_PATH="/commands"
+SUGGESTION=""
 
 exe() {
 	# exe hepls contain a block of code in a repeatable format in case something goes wrong
@@ -71,6 +72,94 @@ question_purpose() {
 
 }
 
+
+download_config() {
+
+	notification "Download config"
+
+	until [[ $VALUE_config =~ (d|t|l|v|s|c|dw|tw|lw|vw|sw|cw|n) ]]; do
+
+		if [[ ! -z $VALUE_config ]]; then
+
+			echo "Either: d, t, l, v, s, c or n!"
+
+		fi
+
+		read -p "Which config file do you want to use? [d/t/l/v/s/c dw/tw/lw/vw/sw/cw n]: " VALUE_config
+
+	done
+
+	USE_CONFIG_FILE=1
+
+	case $VALUE_config in
+
+	"d")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+		break
+		;;
+	"t")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+		break
+		;;
+	"l")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+		break
+		;;
+	"v")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+		break
+		;;
+	"s")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+		break
+		;;
+	"c")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+		exit 0
+		;;
+	"dw")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_WAYLAND_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+		break
+		;;
+	"tw")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_WAYLAND_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+		break
+		;;
+	"lw")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_WAYLAND_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+		break
+		;;
+	"vw")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_WAYLAND_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+		break
+		;;
+	"sw")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_WAYLAND_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+		break
+		;;
+	"cw")
+		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_WAYLAND_config >/config
+    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+		exit 0
+		;;
+	"n")
+		break
+		;;
+	esac
+
+}
+
 determine_config() {
 
 	while true; do
@@ -120,7 +209,8 @@ determine_config() {
 		echo "fail2ban_setup:          z"
 		# echo "create_remove             "
 
-		read -p "What do you want to use the config file for?: " -e -i "ab1cdefghijklmnopqrstuvwxyz" VALUE_ans
+		read -p "What do you want to use the config file for?: " -e -i  $SUGGESTION VALUE_ans
+    
 
 		VALUE_ans=$(echo "$VALUE_ans" | tr '[:upper:]' '[:lower:]')
 
@@ -170,58 +260,6 @@ determine_config() {
 	done
 
 }
-
-download_config() {
-
-	notification "Download config"
-
-	until [[ $VALUE_config =~ (d|t|l|v|s|c|n) ]]; do
-
-		if [[ ! -z $VALUE_config ]]; then
-
-			echo "Either: d, t, l, v, s, c or n!"
-
-		fi
-
-		read -p "Which config file do you want to use? [d/t/l/v/s/c/n]: " VALUE_config
-
-	done
-
-	USE_CONFIG_FILE=1
-
-	case $VALUE_config in
-
-	"d")
-		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_config >/config
-		break
-		;;
-	"t")
-		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_config >/config
-		break
-		;;
-	"l")
-		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_config >/config
-		break
-		;;
-	"v")
-		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_config >/config
-		break
-		;;
-	"s")
-		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config >/config
-		break
-		;;
-	"c")
-		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config >/config
-		exit 0
-		;;
-	"n")
-		break
-		;;
-	esac
-
-}
-
 kb_setup_live() {
 
 	fname="kb_setup"
@@ -553,8 +591,8 @@ inst_part_2() {
 }
 
 exe question_purpose
-exe determine_config
 exe download_config
+exe determine_config
 exe kb_setup_live
 exe time_setup_live
 exe upd_cache

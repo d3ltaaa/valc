@@ -1,8 +1,8 @@
 # Luke's config for the Zoomer Shell
 
 # Enable colors and change prompt:
-autoload -U colors && colors
-PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
+# autoload -U colors && colors
+# PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
 
 # History in cache directory:
 HISTSIZE=10000
@@ -71,11 +71,6 @@ bindkey '^e' edit-command-line
 # starship
 eval "$(starship init zsh)"
 
-# start tmux on startup
-# if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
-#   exec tmux
-# fi
-
 export PATH="$PATH:$HOME/.scripts/"
 export PATH="$PATH:$HOME/.scripts/app_names/"
 export PATH="$PATH:$HOME/.scripts/system_scripts/"
@@ -84,6 +79,18 @@ export PATH="$PATH:$HOME/.scripts/dwmblocks_scripts/"
 export PATH="$PATH:$HOME/.scripts/test_scripts/"
 
 export EDITOR="nvim"
+
+if [[ "$(who am i | awk '{print $2}')" = "pts/0" ]]; then
+  (cd ~
+
+  export _JAVA_AWT_WM_NONREPARENTING=1
+  export XCURSOR_SIZE=24
+
+  exec Hyprland) &
+
+elif command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
+	tmux
+fi
 
 # Load zsh-syntax-highlighting; should be last.
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null

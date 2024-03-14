@@ -109,25 +109,12 @@ fail2ban
 syncthing
 maim
 zsh
-:PACKAGES
-
-XORG_PACKAGES:
-xbindkeys
-xclip
-xwallpaper
-xdotool
-xorg
-xorg-xinit
-picom
-:XORG_PACKAGES
-
-WAYLAND_PACKAGES:
 hyprland
 swww
 waybar
 kitty
 rofi
-:WAYLAND_PACKAGES
+:PACKAGES
 
 USER_SERVICES:
 pulseaudio
@@ -151,11 +138,6 @@ ueberzugpp
 zsh-syntax-highlighting
 :PARU_PACKAGES
 
-XORG_PARU:
-xvkbd
-simplescreenrecorder
-:XORG_PARU
-
 VAR_PACKAGES:
 remnote
 auto-cpufreq
@@ -167,10 +149,6 @@ REOWN_DIR:
 :REOWN_DIR
 
 BUILD:
-/usr/local/src/suckless/dwm
-/usr/local/src/suckless/dwmblocks
-/usr/local/src/suckless/st
-/usr/local/src/suckless/dmenu
 :BUILD
 
 LINKS:
@@ -180,7 +158,7 @@ LINKS:
 /usr/local/share/valc/source_code:/usr/local/src
 :LINKS
 
-FOLDER: Documents Downloads Pictures Code Videos
+FOLDER: Documents Downloads Pictures Code Videos Sync
 
 HOOKS: 
 base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume filesystems fsck
@@ -220,8 +198,4 @@ eDP-1
 :MONITOR
 
 AUTOSTART:
-picom &
-dwmblocks &
-xwallpaper --zoom ~/.config/wall/picture
-setxkbmap de
 :AUTOSTART
