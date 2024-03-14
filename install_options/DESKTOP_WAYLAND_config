@@ -1,0 +1,210 @@
+KEYBOARD: de-latin1 de
+
+PARALLEL: 15
+
+TIME: /Europe/Berlin
+
+LANGUAGE: 
+en_US.UTF-8 UTF-8
+LANG=en_US.UTF-8 
+
+NAME: DESKTOP-FH
+
+USER: falk
+
+USER_GROUPS: wheel audio video
+CUSTOM_GROUPS: build
+
+PARTITION: dual
+nvme0n1     nvme0n1     
+nvme0n1p1   nvme0n1p2   
+0%          2G          
+2G          100%
+fat32       ext4
+no          cryptlvm
+fat-32      vg_arch
+/boot       //
+2           //
+update      //
+:PARTITION
+
+LVM:
+LV | vg_arch
+lv_root     lv_swap     lv_backup   lv_home
+100G        20G         10G         100%FREE
+ext4        swap        ext4        ext4
+/           none        /mnt/backup /home
+1           0           2           2
+update      update      update      leave
+:LVM
+
+IMPORTANT_PACKAGES:
+grub
+efibootmgr
+dosfstools
+os-prober
+mtools
+networkmanager
+lvm2
+:IMPORTANT_PACKAGES
+
+GRAPHICS_DRIVER: nvidia
+
+PACKAGES:
+webkit2gtk
+base-devel
+tmux
+alsa-utils
+pulseaudio
+pavucontrol
+bluez
+bluez-utils
+pulseaudio-bluetooth
+blueman
+firefox
+thunar
+thermald
+fuse-exfat
+lf
+picom
+udisks2
+feh
+zathura
+zathura-pdf-mupdf
+xournalpp 
+discord
+neofetch
+ranger
+git
+neovim
+telegram-desktop
+virtualbox
+dunst
+ffmpeg4.4
+mpv
+yt-dlp
+acpi
+upower
+flatpak
+xdg-desktop-portal-gtk
+unzip
+fuse2
+ripgrep
+pamixer
+pulsemixer
+sox
+gimp
+imagemagick
+tldr
+freecad
+ghostscript
+spotify-launcher
+cups
+redshift
+w3m
+pandoc-cli
+texlive-latex
+ufw
+fail2ban
+syncthing
+maim
+zsh
+hyprland
+swww
+waybar
+kitty
+rofi
+:PACKAGES
+
+USER_SERVICES:
+pulseaudio
+:USER_SERVICES
+
+SERVICES: NetworkManager 
+bluetooth.service
+sshd
+thermald
+cups
+ufw 
+fail2ban
+syncthing@falk
+:SERVICES
+
+
+PARU_PACKAGES:
+ncspot
+brillo
+ueberzugpp
+zsh-syntax-highlighting
+:PARU_PACKAGES
+
+VAR_PACKAGES:
+remnote
+auto-cpufreq
+:VAR_PACKAGES
+
+REOWN_DIR:
+/usr/local/src :build
+/usr/local/share :build
+:REOWN_DIR
+
+BUILD:
+/usr/local/src/suckless/dwm
+/usr/local/src/suckless/dwmblocks
+/usr/local/src/suckless/st
+/usr/local/src/suckless/dmenu
+:BUILD
+
+LINKS:
+/usr/local/share/valc/home_files:./
+/usr/local/share/valc/config_files:./.config
+/usr/local/share/valc/my_scripts:./.scripts
+/usr/local/share/valc/source_code:/usr/local/src
+:LINKS
+
+FOLDER: Documents Downloads Pictures Code Video
+
+HOOKS: 
+base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume filesystems fsck
+:HOOKS
+
+MODULES:
+i2c-dev
+:MODULES
+
+UFW:
+allow 22/tcp # ssh
+allow 80/tcp
+allow 443/tcp
+allow 22000/tcp # syncthing
+default deny incoming
+default allow outgoing
+enable
+:UFW
+
+FAIL2BAN:
+[DEFAULT]
+ignoreip = 192.0.0.1/8 ::1
+bantime = 3600
+findtime = 600
+maxretry = 5
+
+[sshd]
+enabled = true
+:FAIL2BAN
+
+MONITOR: ddcutil
+HDMI-0    DVI-D-0
+1920x1080 1920x1080
+144       144
+2         1
+/         --left-of
+/         HDMI-0
+:MONITOR
+
+AUTOSTART:
+picom &
+dwmblocks &
+xwallpaper --zoom ~/.config/wall/picture
+setxkbmap de
+:AUTOSTART
