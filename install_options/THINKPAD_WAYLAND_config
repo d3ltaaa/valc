@@ -15,6 +15,8 @@ USER: falk
 USER_GROUPS: wheel audio video
 CUSTOM_GROUPS: build
 
+SHELL: /usr/bin/zsh
+
 PARTITION: 
 sda         sda         sda
 sda1        sda2        sda3
