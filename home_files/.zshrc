@@ -94,4 +94,4 @@ fi
 
 # Load zsh-syntax-highlighting; should be last.
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
-source ~/.config/zsh/zsh-syntax-highlighting/themes/catppuccin_frappe-zsh-syntax-highlighting.zsh
+source ~/.config/zsh/catppuccin_frappe-zsh-syntax-highlighting.zsh
