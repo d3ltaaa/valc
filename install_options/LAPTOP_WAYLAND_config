@@ -110,6 +110,7 @@ ufw
 fail2ban
 syncthing
 maim
+openssh
 zsh
 hyprland
 waybar

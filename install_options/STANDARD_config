@@ -115,6 +115,7 @@ ufw
 fail2ban
 syncthing
 maim
+openssh
 :PACKAGES
 
 USER_SERVICES:
