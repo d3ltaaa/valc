@@ -407,6 +407,19 @@ enable_services() {
 
 }
 
+default_shell() {
+
+	fname="default_shell"
+
+	notification "$fname"
+
+	if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+		shell="$(grep -w SHELL: $CONFIG_PATH | cut -d ' ' -f2-)"
+    sudo chsh -s "$shell"
+	fi
+}
+
 create_remove() {
 
 	fname="create_remove"
