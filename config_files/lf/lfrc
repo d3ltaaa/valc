@@ -21,8 +21,7 @@ cmd mkfile ${{
 }}
 
 cmd setwallpaper ${{
-    xwallpaper --zoom "$f"
-    cp "$f" ~/.config/wall/picture
+    swww img "$f"
 }}
 
 # Image view
