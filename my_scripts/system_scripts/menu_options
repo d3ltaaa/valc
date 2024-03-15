@@ -2,7 +2,7 @@
 # menu="dmenu -i -p"
 # menu_alt="dmenu -i -p"
 # notification="dunstify"
-menu="rofi -dmenu"
+menu="rofi -dmenu -i"
 menu_alt=$menu
 notification=""
 

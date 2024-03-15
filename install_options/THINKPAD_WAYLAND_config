@@ -110,7 +110,6 @@ syncthing
 maim
 zsh
 hyprland
-swww
 waybar
 kitty
 rofi
@@ -134,6 +133,7 @@ syncthing@falk
 PARU_PACKAGES:
 ncspot
 brillo
+swww
 ueberzugpp
 zsh-syntax-highlighting
 :PARU_PACKAGES

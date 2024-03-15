@@ -1,6 +1,6 @@
 #!/bin/bash
 # menu="dmenu -i"
-menu="rofi -dmenu"
+menu="rofi -dmenu -i"
 # Define the options for the system actions menu
 options=("󰐥  Shutdown" "󰤁  Hibernate" "  Restart" "󰤄  Sleep")
 
