@@ -416,7 +416,7 @@ default_shell() {
 	if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
 
 		shell="$(grep -w SHELL: $CONFIG_PATH | cut -d ' ' -f2-)"
-    sudo chsh -s "$shell"
+    		chsh -s "$shell"
 	fi
 }
 
