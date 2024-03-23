@@ -115,7 +115,6 @@ zsh
 hyprland
 waybar
 kitty
-rofi
 :PACKAGES
 
 USER_SERVICES:
@@ -134,6 +133,7 @@ syncthing@falk
 
 
 PARU_PACKAGES:
+rofi-lbonn-wayland-git
 ncspot
 brillo
 ueberzugpp
