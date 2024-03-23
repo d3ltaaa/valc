@@ -1,10 +1,11 @@
 #!/bin/bash
 # menu="dmenu -i -p"
 # menu_alt="dmenu -i -p"
-# notification="dunstify"
+# notification_normal="dunstify"
 menu="rofi -dmenu -i"
 menu_alt=$menu
-notification=""
+notification_normal="dunstify -u normal"
+notification_urgent="dunstify -u critical"
 
 menu_main() {
 	# Define first layer
@@ -81,7 +82,7 @@ menu_wifi() {
 			;;
 		*)
 			echo "Improper use of arguments!"
-			${notification} "Improper use of arguments"
+			${notification_normal} "Improper use of arguments"
 			;;
 		esac
 	}
@@ -119,7 +120,7 @@ menu_wifi() {
 			;;
 		*)
 			echo "Wrong use of arguments"
-			${notification} "Wrong use of arguments"
+			${notification_normal} "Wrong use of arguments"
 			;;
 		esac
 	}
@@ -322,14 +323,14 @@ menu_blue() {
 				case $further_select in
 				"󰂲  Disconnect")
 					echo "Disconnecting $select ($MAC_select) ..."
-					bluetoothctl disconnect $MAC_select && ${notification} "Disconnected $select!" ||
-						${notification} "Disconnecting failed!"
+					bluetoothctl disconnect $MAC_select && ${notification_normal} "Disconnected $select!" ||
+						${notification_normal} "Disconnecting failed!"
 					menu_blue
 					;;
 				"󰂲  Untrust")
 					echo "Untrusting $select ($MAC_select) ..."
-					bluetoothctl untrust $MAC_select && ${notification} "Untrust $select succeeded!" ||
-						${notification} "Untrust failed!"
+					bluetoothctl untrust $MAC_select && ${notification_normal} "Untrust $select succeeded!" ||
+						${notification_normal} "Untrust failed!"
 					menu_blue
 					;;
 				"  Go back")
@@ -352,14 +353,14 @@ menu_blue() {
 				case $further_select in
 				"󰂲  Disconnect")
 					echo "Disconnecting $select ($MAC_select) ..."
-					bluetoothctl disconnect $MAC_select && ${notification} "Disconnected $select!" ||
-						${notification} "Disconnecting failed!"
+					bluetoothctl disconnect $MAC_select && ${notification_normal} "Disconnected $select!" ||
+						${notification_normal} "Disconnecting failed!"
 					menu_blue
 					;;
 				"󰂱  Trust")
 					echo "Trusting $select ($MAC_select) ..."
-					bluetoothctl trust $MAC_select && ${notification} "Trusting $select succeeded!" ||
-						${notification} "Trusting failed!"
+					bluetoothctl trust $MAC_select && ${notification_normal} "Trusting $select succeeded!" ||
+						${notification_normal} "Trusting failed!"
 					menu_blue
 					;;
 				"  Go back")
@@ -382,14 +383,14 @@ menu_blue() {
 				case $further_select in
 				"󰂰  Connect")
 					echo "Connecting $select ($MAC_select) ..."
-					bluetoothctl connect $MAC_select && ${notification} "Connected to $select" ||
-						${notification} "Connection failed!"
+					bluetoothctl connect $MAC_select && ${notification_normal} "Connected to $select" ||
+						${notification_normal} "Connection failed!"
 					menu_blue
 					;;
 				"󰂲  Untrust")
 					echo "Untrusting $select ($MAC_select) ..."
-					bluetoothctl untrust $MAC_select && ${notification} "Untrust successful!" ||
-						${notification} "Untrust failed!"
+					bluetoothctl untrust $MAC_select && ${notification_normal} "Untrust successful!" ||
+						${notification_normal} "Untrust failed!"
 					menu_blue
 					;;
 				"  Go back")
@@ -456,8 +457,8 @@ menu_blue() {
 
       if [ ! -z "$MAC_select" ]; then
   			echo "Trying to connect to: $MAC_select"
-  			bluetoothctl connect $MAC_select && ${notification} "Connected to $select!" ||
-  				${notification} "Connection failed!"
+  			bluetoothctl connect $MAC_select && ${notification_normal} "Connected to $select!" ||
+  				${notification_normal} "Connection failed!"
       fi
 			menu_blue
 			;;
@@ -1057,7 +1058,7 @@ menu_usb() {
 			menu_options usb
 			;;
 		*)
-			udisksctl mount -b /dev/${new_selected} && ${notification} "$new_selected mounted" || udisksctl mount -b /dev/${new_selected}1 && ${notification} "${new_selected}1 mounted" || ${notification} "Disk probably in use!"
+			udisksctl mount -b /dev/${new_selected} && ${notification_normal} "$new_selected mounted" || udisksctl mount -b /dev/${new_selected}1 && ${notification_normal} "${new_selected}1 mounted" || ${notification_normal} "Disk probably in use!"
 			;;
 		esac
 		;;
@@ -1068,7 +1069,7 @@ menu_usb() {
 			menu_options usb
 			;;
 		*)
-			udisksctl unmount -b /dev/${new_selected} && ${notification} "$new_selected unmounted" || udisksctl unmount -b /dev/${new_selected}1 && ${notification} "${new_selected}1 unmounted" || ${notification} "Disk probably in use!"
+			udisksctl unmount -b /dev/${new_selected} && ${notification_normal} "$new_selected unmounted" || udisksctl unmount -b /dev/${new_selected}1 && ${notification_normal} "${new_selected}1 unmounted" || ${notification_normal} "Disk probably in use!"
 			;;
 		esac
 		;;
@@ -1089,7 +1090,7 @@ menu_updates() {
 	case $selected in
 	"Update $updates packages")
 		st -e bash -c "
-            sudo pacman --noconfirm -Syu && ${notification} System 'Up to date!'"
+            sudo pacman --noconfirm -Syu && ${notification_normal} System 'Up to date!'"
 		;;
 	"  Go back")
 		menu_main
