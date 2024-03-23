@@ -203,6 +203,7 @@ HDMI-0    DVI-D-0
 2         1
 /         --left-of
 /         HDMI-0
+0x0       1920x0
 :MONITOR
 
 AUTOSTART:

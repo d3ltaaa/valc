@@ -334,6 +334,36 @@ dwm_auto() {
 	fi
 }
 
+hyprland_setup() {
+
+	fname="hyprland_setup"
+
+	notification "$fname"
+
+	if grep -w -q "$fname" $INSTALL_OPTION_PATH; then
+
+		mon_bright_type=$(grep -w MONITOR: $CONFIG_PATH | awk '{print $2}')
+		mon_connect=($(grep -w -A1 MONITOR: $CONFIG_PATH | awk 'NR==2'))
+		mon_mode=($(grep -w -A2 MONITOR: $CONFIG_PATH | awk 'NR==3'))
+		mon_rate=($(grep -w -A3 MONITOR: $CONFIG_PATH | awk 'NR==4'))
+		mon_index=($(grep -w -A4 MONITOR: $CONFIG_PATH | awk 'NR==5'))
+		mon_pos=($(grep -w -A5 MONITOR: $CONFIG_PATH | awk 'NR==6'))
+		mon_pos_out=($(grep -w -A6 MONITOR: $CONFIG_PATH | awk 'NR==7'))
+    mon_pos_wayland=($(grep -w -A7 MONITOR: $CONFIG_PATH | awk 'NR==8'))
+
+    user=$(grep -w USER: $CONFIG_PATH | awk '{print $2}')
+    monitor_conf_path="/home/$user/.config/hypr/monitor.conf"
+    if test -f $monitor_conf_path; then 
+      rm $monitor_conf_path
+    fi
+
+    for ((i = 0; i < ${#mon_connect[@]}; i++)); do
+      echo "monitor=${mon_connect[$i]}, ${mon_mode[$i]}@${mon_rate[$i]}, ${mon_pos_wayland[$i]}, 1" 
+      echo "monitor=${mon_connect[$i]}, ${mon_mode[$i]}@${mon_rate[$i]}, ${mon_pos_wayland[$i]}, 1" >> "$monitor_conf_path"
+    done
+  fi
+}
+
 ufw_setup() {
 
 	fname="ufw_setup"
@@ -450,7 +480,9 @@ exe links_setup
 exe building_software
 exe create_folder
 exe dwm_auto
+exe hyprland_setup
 exe ufw_setup
 exe fail2ban_setup
 exe enable_services
+exe default_shell
 exe create_remove

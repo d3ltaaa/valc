@@ -172,41 +172,43 @@ determine_config() {
 		# echo "time_setup_live           "
 		# echo "upd_cache                 "
 		echo "ena_parallel_live:       b"
-		echo "config_partitioning:     1"
+		echo "config_partitioning:     c"
 		# echo "inst_part_2               "
 		# echo "update_system             "
-		echo "ena_parallel             c"
-		echo "time_setup:              d"
-		echo "language_setup:          e"
-		echo "kb_setup:                f"
-		echo "host_name:               g"
+		echo "ena_parallel             d"
+		echo "time_setup:              e"
+		echo "language_setup:          f"
+		echo "kb_setup:                g"
+		echo "host_name:               h"
 		# echo "host_setup                "
 		# echo "host_pw                   "
-		echo "user_name:               h"
+		echo "user_name:               i"
 		# echo "user_add                  "
 		# echo "user_pw                   "
-		echo "user_mod:                i"
-		echo "inst_important_packages: j"
+		echo "user_mod:                j"
+		echo "inst_important_packages: k"
 		# echo "mkinitcpio_setup          "
-		echo "grub_setup:              k"
-		echo "systemd_setup:           l"
-		echo "enable_services_root:    m"
+		echo "grub_setup:              l"
+		echo "systemd_setup:           m"
+		echo "enable_services_root:    n"
 		# echo "inst_part_3               "
-		echo "reown_dirs:              n"
-		echo "inst_packages:           o"
+		echo "reown_dirs:              o"
+		echo "inst_packages:           p"
 		# echo "paru_setup                "
-		echo "paru_installations:      p"
+		echo "paru_installations:      q"
 		# echo "download_setup            "
-		echo "inst_var_packages:       q"
-		echo "inst_wallpaper:          r"
-		echo "inst_fonts:              s"
-		echo "links_setup:             t"
-		echo "building_software:       u"
-		echo "create_folder:           v"
-		echo "enable_services:         w"
-		echo "dwm_auto:                x"
-		echo "ufw_setup:               y"
-		echo "fail2ban_setup:          z"
+		echo "inst_var_packages:       r"
+		echo "inst_wallpaper:          s"
+		echo "inst_fonts:              t"
+		echo "links_setup:             u"
+		echo "building_software:       v"
+		echo "create_folder:           w"
+		echo "enable_services:         x"
+		echo "dwm_auto:                y"
+		echo "hyprland_setup:          z"
+		echo "ufw_setup:               1"
+		echo "fail2ban_setup:          2"
+		echo "default_shell:           3"
 		# echo "create_remove             "
 
 		read -p "What do you want to use the config file for?: " -e -i  $SUGGESTION VALUE_ans
@@ -220,31 +222,33 @@ determine_config() {
 
 			a) echo "kb_setup_live" >>$INSTALL_OPTION_PATH ;;
 			b) echo "ena_parallel_live" >>$INSTALL_OPTION_PATH ;;
-			1) echo "config_partitioning" >>$INSTALL_OPTION_PATH ;;
-			c) echo "ena_parallel" >>$INSTALL_OPTION_PATH ;;
-			d) echo "time_setup" >>$INSTALL_OPTION_PATH ;;
-			e) echo "language_setup" >>$INSTALL_OPTION_PATH ;;
-			f) echo "kb_setup" >>$INSTALL_OPTION_PATH ;;
-			g) echo "host_name" >>$INSTALL_OPTION_PATH ;;
-			h) echo "user_name" >>$INSTALL_OPTION_PATH ;;
-			i) echo "user_mod" >>$INSTALL_OPTION_PATH ;;
-			j) echo "inst_important_packages" >>$INSTALL_OPTION_PATH ;;
-			k) echo "grub_setup" >>$INSTALL_OPTION_PATH ;;
-			l) echo "systemd_setup" >>$INSTALL_OPTION_PATH ;;
-			m) echo "enable_services_root" >>$INSTALL_OPTION_PATH ;;
-			n) echo "reown_dirs" >>$INSTALL_OPTION_PATH ;;
-			o) echo "inst_packages" >>$INSTALL_OPTION_PATH ;;
-			p) echo "paru_installations" >>$INSTALL_OPTION_PATH ;;
-			q) echo "inst_var_packages" >>$INSTALL_OPTION_PATH ;;
-			r) echo "inst_wallpaper" >>$INSTALL_OPTION_PATH ;;
-			s) echo "inst_fonts" >>$INSTALL_OPTION_PATH ;;
-			t) echo "links_setup" >>$INSTALL_OPTION_PATH ;;
-			u) echo "building_software" >>$INSTALL_OPTION_PATH ;;
-			v) echo "create_folder" >>$INSTALL_OPTION_PATH ;;
-			w) echo "enable_services" >>$INSTALL_OPTION_PATH ;;
-			x) echo "dwm_auto" >>$INSTALL_OPTION_PATH ;;
-			y) echo "ufw_setup" >>$INSTALL_OPTION_PATH ;;
-			z) echo "fail2ban_setup" >>$INSTALL_OPTION_PATH ;;
+			c) echo "config_partitioning" >>$INSTALL_OPTION_PATH ;;
+			d) echo "ena_parallel" >>$INSTALL_OPTION_PATH ;;
+			e) echo "time_setup" >>$INSTALL_OPTION_PATH ;;
+			f) echo "language_setup" >>$INSTALL_OPTION_PATH ;;
+			g) echo "kb_setup" >>$INSTALL_OPTION_PATH ;;
+			h) echo "host_name" >>$INSTALL_OPTION_PATH ;;
+			i) echo "user_name" >>$INSTALL_OPTION_PATH ;;
+			j) echo "user_mod" >>$INSTALL_OPTION_PATH ;;
+			k) echo "inst_important_packages" >>$INSTALL_OPTION_PATH ;;
+			l) echo "grub_setup" >>$INSTALL_OPTION_PATH ;;
+			m) echo "systemd_setup" >>$INSTALL_OPTION_PATH ;;
+			n) echo "enable_services_root" >>$INSTALL_OPTION_PATH ;;
+			o) echo "reown_dirs" >>$INSTALL_OPTION_PATH ;;
+			p) echo "inst_packages" >>$INSTALL_OPTION_PATH ;;
+			q) echo "paru_installations" >>$INSTALL_OPTION_PATH ;;
+			r) echo "inst_var_packages" >>$INSTALL_OPTION_PATH ;;
+			s) echo "inst_wallpaper" >>$INSTALL_OPTION_PATH ;;
+			t) echo "inst_fonts" >>$INSTALL_OPTION_PATH ;;
+			u) echo "links_setup" >>$INSTALL_OPTION_PATH ;;
+			v) echo "building_software" >>$INSTALL_OPTION_PATH ;;
+			w) echo "create_folder" >>$INSTALL_OPTION_PATH ;;
+			x) echo "enable_services" >>$INSTALL_OPTION_PATH ;;
+			y) echo "dwm_auto" >>$INSTALL_OPTION_PATH ;;
+			z) echo "hyprland_setup" >>$INSTALL_OPTION_PATH ;;
+			1) echo "ufw_setup" >>$INSTALL_OPTION_PATH ;;
+			2) echo "fail2ban_setup" >>$INSTALL_OPTION_PATH ;;
+			3) echo "default_shell" >>$INSTALL_OPTION_PATH ;;
 			*)
 				invalid_value=1
 				break
