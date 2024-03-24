@@ -50,7 +50,7 @@ networkmanager
 lvm2
 :IMPORTANT_PACKAGES
 
-GRAPHICS_DRIVER: nvidia
+GRAPHICS_DRIVER: nvidia-dkms
 
 PACKAGES:
 webkit2gtk
@@ -172,8 +172,14 @@ HOOKS:
 base udev autodetect modconf kms keyboard keymap consolefont block encrypt lvm2 resume filesystems fsck
 :HOOKS
 
+GRUB_CMDLINE_LINUX_DEFULAT:
+loglevel=3 quiet nvidia_drm.modeset=1
+:GRUB_CMDLINE_LINUX_DEFULAT
+
+# echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia.conf
+
 MODULES:
-i2c-dev
+i2c-dev nvidia nvidia_modeset nvidia_uvm nvidia_drm
 :MODULES
 
 UFW:

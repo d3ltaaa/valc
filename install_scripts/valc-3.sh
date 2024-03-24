@@ -359,8 +359,16 @@ hyprland_setup() {
 
     for ((i = 0; i < ${#mon_connect[@]}; i++)); do
       echo "monitor=${mon_connect[$i]}, ${mon_mode[$i]}@${mon_rate[$i]}, ${mon_pos_wayland[$i]}, 1" 
-      echo "monitor=${mon_connect[$i]}, ${mon_mode[$i]}@${mon_rate[$i]}, ${mon_pos_wayland[$i]}, 1" >> "$monitor_conf_path"
+      echo "monitor=${mon_connect[$i]}, ${mon_mode[$i]}@${mon_rate[$i]}, ${mon_pos_wayland[$i]}, 1" >> $monitor_conf_path
+
+      for (( j = 1 + 5 * $i; j <= 5 + 5 * $i; j++ ));do 
+        echo "workspace=${mon_connect[$i]},$j"
+        echo "workspace=${mon_connect[$i]},$j" >> $monitor_conf_path
+      done
+
+      echo ""
     done
+
   fi
 }
 
