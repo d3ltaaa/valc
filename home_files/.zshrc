@@ -81,12 +81,9 @@ export PATH="$PATH:$HOME/.scripts/test_scripts/"
 export EDITOR="nvim"
 
 if [[ "$(who am i | awk '{print $2}')" = "pts/0" ]]; then
-  (cd ~
 
-  export _JAVA_AWT_WM_NONREPARENTING=1
-  export XCURSOR_SIZE=24
 
-  exec Hyprland) &
+  exec Hyprland
 
 elif command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
 	tmux
