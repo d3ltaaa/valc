@@ -115,6 +115,7 @@ zsh
 hyprland
 waybar
 kitty
+starship
 :PACKAGES
 
 USER_SERVICES:
