@@ -95,62 +95,62 @@ download_config() {
 
 	"d")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxy123"
 		break
 		;;
 	"t")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxy123"
 		break
 		;;
 	"l")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxy123"
 		break
 		;;
 	"v")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxy123"
 		break
 		;;
 	"s")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxy123"
 		break
 		;;
 	"c")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwxyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxy123"
 		exit 0
 		;;
 	"dw")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/DESKTOP_WAYLAND_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxz123"
 		break
 		;;
 	"tw")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/THINKPAD_WAYLAND_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxz123"
 		break
 		;;
 	"lw")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/LAPTOP_WAYLAND_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxz123"
 		break
 		;;
 	"vw")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/VIRTUAL_WAYLAND_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxz123"
 		break
 		;;
 	"sw")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_WAYLAND_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxz123"
 		break
 		;;
 	"cw")
 		curl https://raw.githubusercontent.com/d3ltaaa/valc/main/install_options/STANDARD_WAYLAND_config >/config
-    SUGGESTION="ab1cdefghijklmnopqrstuvwyz"
+    SUGGESTION="abcdefghijklmnopqrstuvwxz123"
 		exit 0
 		;;
 	"n")
@@ -204,8 +204,8 @@ determine_config() {
 		echo "building_software:       v"
 		echo "create_folder:           w"
 		echo "enable_services:         x"
-		echo "dwm_auto:                y"
-		echo "hyprland_setup:          z"
+		echo "dwm_auto:                y" # xorg
+		echo "hyprland_setup:          z" # wayland
 		echo "ufw_setup:               1"
 		echo "fail2ban_setup:          2"
 		echo "default_shell:           3"
