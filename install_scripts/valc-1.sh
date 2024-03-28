@@ -374,11 +374,11 @@ config_partitioning() {
 				if [[ ${par_fstab_arr[$i]} != "//" ]]; then
 					# if normal partition
 					# make fs, add fstab entry
-					if [[ ${par_crypt_arr[$i]} != "no" ]]; then
-						# if it needs to be encrypted, another path needs to be passed
-						make_fs /dev/mapper/${par_crypt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
-						mount_root /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]}
-					else
+					# if [[ ${par_crypt_arr[$i]} != "no" ]]; then
+					# 	# if it needs to be encrypted, another path needs to be passed
+					# 	make_fs /dev/mapper/${par_crypt_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
+					# 	mount_root /dev/mapper/${par_crypt_arr[$i]} ${mount_point_par_arr[$i]}
+					if [[ ${par_crypt_arr[$i]} == "no" ]]; then
 						make_fs /dev/${par_arr[$i]} ${file_system_arr[$i]} ${par_update_arr[$i]}
 						mount_root /dev/${par_arr[$i]} ${mount_point_par_arr[$i]}
 					fi
