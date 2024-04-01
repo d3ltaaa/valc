@@ -79,6 +79,7 @@ export PATH="$PATH:$HOME/.scripts/dwmblocks_scripts/"
 export PATH="$PATH:$HOME/.scripts/test_scripts/"
 
 export EDITOR="nvim"
+export ELECTRON_OZONE_PLATFORM_HINT="auto"
 
 if [[ "$(who am i | awk '{print $2}')" = "pts/0" ]]; then
 
