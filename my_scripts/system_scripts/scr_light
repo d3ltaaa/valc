@@ -7,6 +7,9 @@ mon_index=($(grep -w -A4 MONITOR: $CONFIG_PATH | awk 'NR==5'))
 redshift_state=$(grep -w REDSHIFT: $CONFIG_PATH | awk '{print $2}')
 redshift=(1000, 1100, 1200, 1400, 1800, 2300, 3500, 6000, 10000, 15000, 25000)
 
+redshift_command="gammastep" # wayland
+# redshift_command="redshift" # xorg 
+
 light_down() {
 
 	case $mon_bright_type in
@@ -106,12 +109,12 @@ case "$1" in
 
 "blue")
 	red_up
-	redshift -P -O ${redshift[$redshift_state]}
+	$redshift_command -P -O ${redshift[$redshift_state]}
 	;;
 
 "red")
 	red_down
-	redshift -P -O ${redshift[$redshift_state]}
+	$redshift_command -P -O ${redshift[$redshift_state]}
 	;;
 
 "day")
@@ -122,11 +125,11 @@ case "$1" in
 	;;
 "sea")
 	red_down max
-	redshift -P -O ${redshift[$redshift_state]}
+	$redshift_command -P -O ${redshift[$redshift_state]}
 	;;
 "ocean")
 	red_up max
-	redshift -P -O ${redshift[$redshift_state]}
+	$redshift_command -P -O ${redshift[$redshift_state]}
 	;;
 *) echo "unknown command" && exit 1 ;;
 

@@ -80,6 +80,7 @@ export PATH="$PATH:$HOME/.scripts/test_scripts/"
 
 export EDITOR="nvim"
 export ELECTRON_OZONE_PLATFORM_HINT="auto"
+export WD="/home/falk/Code/Projects/flask/" # working directory
 
 if [[ "$(who am i | awk '{print $2}')" = "pts/0" ]]; then
 
