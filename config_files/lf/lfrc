@@ -35,17 +35,17 @@ cmd viewimg ${{
 cmd open ${{
     case "$f" in 
         *.jpg|*.jpeg|*.png) 
-            feh --scale-down --auto-zoom "$f"
+            feh --scale-down --auto-zoom "$f" &
             # pkill -SIGINT feh
             # feh --scale-down --auto-zoom "$f" &
             # sleep 0.4
             # xdotool key Alt+k
             ;;
-        *.pdf) 
-            zathura "$f"
+        *.pdf)  
+            zathura "$f" &
             ;;
         *.xopp) 
-            xournalpp "$f"
+            xournalpp "$f" &
             ;;
 
         *.webm|*.mkv|*.mp4)
