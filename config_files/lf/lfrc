@@ -34,7 +34,7 @@ cmd viewimg ${{
 
 cmd open ${{
     case "$f" in 
-        *.jpg|*.jpeg|*.png) 
+        *.jpg|*.jpeg|*.png|*.JPG) 
             feh --scale-down --auto-zoom "$f" &
             # pkill -SIGINT feh
             # feh --scale-down --auto-zoom "$f" &
