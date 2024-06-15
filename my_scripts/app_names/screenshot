@@ -1,3 +1,0 @@
-#!/bin/bash
-
-maim --hidecursor --select | tee ~/Pictures/Screenshots/$(date +"%d_%m-%H_%M_%S").png | xclip -selection clipboard -t image/png

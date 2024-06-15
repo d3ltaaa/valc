@@ -1,4 +1,6 @@
 # Basic Settings
+set sortby time
+set reverse
 # set nopreview
 set hidden false
 set ignorecase true

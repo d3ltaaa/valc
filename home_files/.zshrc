@@ -78,6 +78,8 @@ export PATH="$PATH:$HOME/.scripts/theme_scripts/"
 export PATH="$PATH:$HOME/.scripts/dwmblocks_scripts/"
 export PATH="$PATH:$HOME/.scripts/test_scripts/"
 
+export WAYLAND_DISPLAY="wayland-1"
+
 export EDITOR="nvim"
 export ELECTRON_OZONE_PLATFORM_HINT="auto"
 export WD="/home/falk/Code/Projects/flask/" # working directory
