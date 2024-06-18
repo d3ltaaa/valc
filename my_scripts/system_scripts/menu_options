@@ -416,7 +416,6 @@ menu_blue() {
 
 		available_devices=("$(bluetoothctl devices | cut -d' ' -f 3-)")
 
-
 		# add go back option
 		devices_options=()
 
@@ -452,14 +451,13 @@ menu_blue() {
 			;;
 		*)
 
+			MAC_select="$(bluetoothctl devices | grep -w "$select" | cut -d ' ' -f2)"
 
-      MAC_select="$(bluetoothctl devices | grep -w "$select" | cut -d ' ' -f2)"
-
-      if [ ! -z "$MAC_select" ]; then
-  			echo "Trying to connect to: $MAC_select"
-  			bluetoothctl connect "$MAC_select" && ${notification_normal} "Connected to $select!" ||
-  				${notification_normal} "Connection failed!"
-      fi
+			if [ ! -z "$MAC_select" ]; then
+				echo "Trying to connect to: $MAC_select"
+				bluetoothctl connect "$MAC_select" && ${notification_normal} "Connected to $select!" ||
+					${notification_normal} "Connection failed!"
+			fi
 			menu_blue
 			;;
 
@@ -506,7 +504,7 @@ menu_vol() {
 		*)
 			#get corresponding index
 			index=$(pulsemixer --list-sinks | grep "$further_further_selected" | grep Sink: | awk '{print $3}' | cut -d'-' -f2 | sed 's/,//')
-			pacmd set-default-sink $index
+			pactl set-default-sink $index
 			menu_vol
 			;;
 		esac

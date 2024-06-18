@@ -77,8 +77,7 @@ export PATH="$PATH:$HOME/.scripts/system_scripts/"
 export PATH="$PATH:$HOME/.scripts/theme_scripts/"
 export PATH="$PATH:$HOME/.scripts/dwmblocks_scripts/"
 export PATH="$PATH:$HOME/.scripts/test_scripts/"
-
-export WAYLAND_DISPLAY="wayland-1"
+export PATH="$PATH:$HOME/.cargo/bin"
 
 export EDITOR="nvim"
 export ELECTRON_OZONE_PLATFORM_HINT="auto"

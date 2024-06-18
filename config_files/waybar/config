@@ -92,7 +92,7 @@
             "headphone": "",
             "default": ["󰖀","󰕾",""]
         },
-        "on-click": "pamixer -t",
+        "on-click": "pulsemixer --toggle-mute",
         "scroll-step": 5
     },
 
