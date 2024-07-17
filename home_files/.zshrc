@@ -84,10 +84,17 @@ export ELECTRON_OZONE_PLATFORM_HINT="auto"
 export WLR_RENDERER_ALLOW_SOFTWARE=1
 export WD="/home/falk/Code/Projects/flask/" # working directory
 
-if [[ "$(who am i | awk '{print $2}')" = "pts/0" ]]; then
-  exec Hyprland
-elif command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
+# if [[ "$(who am i | awk '{print $2}')" = "pts/0" ]]; then
+#     exec Hyprland
+#if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
+# 	tmux
+# fi
+if pgrep -f Hyprland > /dev/null; then
+  if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]]; then
 	tmux
+  fi
+else
+  Hyprland
 fi
 
 # Load zsh-syntax-highlighting; should be last.

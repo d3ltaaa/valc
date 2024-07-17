@@ -1,35 +1,34 @@
 #!/bin/bash
 
-vol_inc () {
+vol_inc() {
 
-    pamixer --increase 5
-    pkill -RTMIN+1 dwmblocks
-
-}
-
-vol_dec () {
-
-    pamixer --decrease 5
-    pkill -RTMIN+1 dwmblocks
+	pulsemixer --change-volume +5
+	pkill -RTMIN+1 dwmblocks
 
 }
 
-vol_mute () {
+vol_dec() {
 
-    pamixer -t
-    pkill -RTMIN+1 dwmblocks
+	pulsemixer --change-volume -5
+	pkill -RTMIN+1 dwmblocks
 
 }
 
+vol_mute() {
+
+	pulsemixer --toggle-mute
+	pkill -RTMIN+1 dwmblocks
+
+}
 
 case "$1" in
 
-	"inc") vol_inc;;
+"inc") vol_inc ;;
 
-	"dec") vol_dec;;
+"dec") vol_dec ;;
 
-	"mute") vol_mute;;
+"mute") vol_mute ;;
 
-	*) echo "unknown command" && exit 1;;
+*) echo "unknown command" && exit 1 ;;
 
 esac
