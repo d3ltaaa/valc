@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Remnote
+Comment=Learning
+Exec=remnote
+Icon=remnote
+Terminal=false
+Type=Application
+Categories=Learning;

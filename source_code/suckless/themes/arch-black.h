@@ -22,4 +22,3 @@
 #define ST_BLACK_COLOR "#2e3440"
 #define ST_WHITE_COLOR "#eff3fa"
 #define ST_ACCENT_COLOR "#8fbcbb"
-

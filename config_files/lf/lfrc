@@ -265,8 +265,8 @@ map br rm_fave
 
 map gr cd /
 map gh cd ~/
-map gd cd ~/Downloads
-map gD cd ~/Documents
+map gdw cd ~/Downloads
+map gdo cd ~/Documents
 map gp cd ~/Pictures
 map gV cd ~/Videos
 map gt cd ~/.Trash
@@ -278,6 +278,7 @@ map gva cd /usr/local/share/valc
 map gvs cd /usr/local/share/valc/source_code
 map gvc cd /usr/local/share/valc/config_files
 map gvi cd /usr/local/share/valc/install_scripts
+map guls cd /usr/local/share/
 map gusb cd /run/media
 map gmnt cd /mnt
 
