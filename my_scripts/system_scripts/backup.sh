@@ -4,7 +4,7 @@
 exclude=("/home/falk/.cache" "/home/falk/.local")
 
 # origin
-origins=("/home/falk/one two" "/home/falk/VirtualBox VMs/")
+origins=("/home/falk/")
 #########################################################
 
 function get_excludes() {
