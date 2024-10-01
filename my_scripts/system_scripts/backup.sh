@@ -5,6 +5,7 @@ exclude=("/home/falk/.cache" "/home/falk/.local")
 
 # origin
 origins=("/home/falk/")
+
 #########################################################
 
 function get_excludes() {
@@ -26,7 +27,9 @@ function get_origins() {
     origin_string+="${origins[$i]}\n"
   done
 
-  origin=$(printf "$origin_string" | rofi -dmenu -p "Origin:")
+  pre_origin=$(printf "$origin_string" | rofi -dmenu -p "Origin:")
+
+  origin="$(rofi -dmenu -p "Origin:" -filter $pre_origin)"
 
   if [ ! -f "${origin}" ] && [ ! -d "${origin}" ]; then
     echo "${origin} is not a file or directory!"
@@ -39,9 +42,14 @@ function get_origins() {
 }
 
 function get_destinations() {
-  lsblk="$(lsblk -o NAME,MOUNTPOINTS -ln | awk '{print $2}')"
+  pre_destination="Reload"
 
-  destination="$(printf "%s\n" ${lsblk[@]} | rofi -dmenu -p "Destination:")"
+  while [[ "$pre_destination" == "Reload" ]]; do
+    lsblk="Reload$(lsblk -o NAME,MOUNTPOINTS -ln | awk '{print $2}')"
+    pre_destination="$(printf "%s\n" ${lsblk[@]} | rofi -dmenu -p "Destination:")"
+  done
+
+  destination="$(rofi -dmenu -p "Destination:" -filter $pre_destination)"
 
   if [ ! -f "${destination}" ] && [ ! -d "${destination}" ]; then
     echo "${destination} is not a file or directory!"
@@ -61,11 +69,12 @@ function execute_rsync() {
   retval=$?
   [ $retval -ne 0 ] && exit 1 # if get_destinations returns 1, then exit
 
+  echo DEBUG
   if [[ $1 == 1 ]]; then
     # if execute
     echo rsync -s -aAXvh --delete --info=progress2 --exclude={${exclude}} \"${origin}\" ${destination}
     # open new terminal and execute rsync command
-    foot -H rsync -s -aAXvh --delete --info=progress2 --exclude={${exclude}} "${origin}" "${destination}"
+    foot -H sudo rsync -s -aAXvh --delete --info=progress2 --exclude={${exclude}} "${origin}" "${destination}"
     if [ $? -eq 0 ]; then
       dunstify "Execute returns successfully"
     else
@@ -76,7 +85,7 @@ function execute_rsync() {
     # if dry-run
     echo rsync -s --dry-run -aAXvh --delete --info=progress2 --exclude={${exclude}} \"${origin}\" ${destination}
     # open new terminal and execute dry-run command
-    foot rsync -s --dry-run -aAXvh --delete --info=progress2 --exclude={${exclude}} "${origin}" "${destination}"
+    foot sudo rsync -s --dry-run -aAXvh --delete --info=progress2 --exclude={${exclude}} "${origin}" "${destination}"
     if [ $? -eq 0 ]; then
       # if it succeeds
       dunstify "Dry-Run returns successfully"
@@ -89,7 +98,7 @@ function execute_rsync() {
         # if start backup
         echo rsync -s -aAXvh --delete --info=progress2 --exclude={${exclude}} \"${origin}\" ${destination}
         # open new terminal and execute rsync command
-        foot -H rsync -s -aAXvh --delete --info=progress2 --exclude={${exclude}} "${origin}" "${destination}"
+        foot -H sudo rsync -s -aAXvh --delete --info=progress2 --exclude={${exclude}} "${origin}" "${destination}"
 
         if [ $? -eq 0 ]; then
           dunstify "Execute returns successfully"
