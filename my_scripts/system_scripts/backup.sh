@@ -6,6 +6,14 @@ exclude=("/home/falk/.cache" "/home/falk/.local")
 # origin
 origins=("/home/falk/")
 
+# destination
+destinations=("/home/falk/Test/" "/home/falk/")
+
+# phone origin
+phone_origins=("/storage/emulated/0/")
+
+# phone destination
+
 #########################################################
 
 function get_excludes() {
@@ -45,7 +53,7 @@ function get_destinations() {
   pre_destination="Reload"
 
   while [[ "$pre_destination" == "Reload" ]]; do
-    lsblk="Reload$(lsblk -o NAME,MOUNTPOINTS -ln | awk '{print $2}')"
+    lsblk="Reload ${destinations[@]} $(lsblk -o NAME,MOUNTPOINTS -ln | awk '{print $2}')"
     pre_destination="$(printf "%s\n" ${lsblk[@]} | rofi -dmenu -p "Destination:")"
   done
 
@@ -112,22 +120,138 @@ function execute_rsync() {
   fi
 }
 
-function menu() {
-  options=("Start" "Close")
-  selected=$(printf "$options" | rofi -dmenu -p "Backup:")
-  if [[ "$selected" == "Start" ]]; then
-    options2=("Dry-Run" "Execute")
-    selected2=$(printf "%s\n" ${options2[@]} | rofi -dmenu -p "Backup:")
-    if [[ "$selected2" == "Dry-Run" ]]; then
-      execute_rsync 0
-    elif [[ "$selected2" == "Execute" ]]; then
-      execute_rsync 1
-    else
-      exit 1
+function get_phone_string() {
+
+  selected2="Reload"
+  while [[ "$selected2" == "Reload" ]]; do
+    output="$(adb devices -l | tail -n +2)"
+    line=""
+    options2=$'Reload\n'
+    for ((i = 0; i < ${#output}; i++)); do
+      if [[ "${output[$i]}" == $'\n' ]]; then
+        device_string=$(echo "$line" | cut -d ' ' -f 1)
+        device_model=$(echo "$line" | grep -o "model:[^ ]*" | cut -d ':' -f 2)
+
+        # Append device_string=device_model to options
+        options2+="${device_string}=${device_model} "
+        line=""
+      else
+        line+="${output[$i]}"
+      fi
+    done
+
+    # last character is not \n therefore we need one more
+    if [[ "$line" != "" ]]; then
+      device_string=$(echo "$line" | cut -d ' ' -f 1)
+      device_model=$(echo "$line" | grep -o "model:[^ ]*" | cut -d ':' -f 2)
+
+      # Append device_string=device_model to options
+      options2+="${device_string}=${device_model} "
+      line=""
+    # else
+    #   dunstify "No phone connected"
+    #   exit 1
     fi
+
+    selected2="$(printf "%s\n" "${options2[@]}" | rofi -dmenu -p "Backup:")"
+  done
+
+  if [[ "$selected2" == "Close" ]]; then
+    exit 0
   else
-    exit 1
+    device_string=$(echo $selected2 | cut -d '=' -f 1)
   fi
 }
 
-menu
+function get_origins_phone() {
+  origin_string=""
+  for ((i = 0; i < ${#phone_origins[@]}; i++)); do
+    origin_string+="${phone_origins[$i]}\n"
+  done
+
+  pre_origin=$(printf "$origin_string" | rofi -dmenu -p "Origin:")
+
+  origin="$(rofi -dmenu -p "Origin:" -filter $pre_origin)"
+
+  echo "$origin"
+  # echo ${origin// /'\ '}
+}
+
+function get_destinations_phone() {
+  pre_destination="Reload"
+
+  while [[ "$pre_destination" == "Reload" ]]; do
+    lsblk="Reload ${destinations[@]} $(lsblk -o NAME,MOUNTPOINTS -ln | awk '{print $2}')"
+    pre_destination="$(printf "%s\n" ${lsblk[@]} | rofi -dmenu -p "Destination:")"
+  done
+
+  destination="$(rofi -dmenu -p "Destination:" -filter $pre_destination)"
+
+  if [ ! -f "${destination}" ] && [ ! -d "${destination}" ]; then
+    echo "${destination} is not a file or directory!"
+    dunstify "${destination} is not a file or directory!"
+    return 1
+  fi
+
+  echo $destination
+
+}
+
+function execute_adb() {
+  origin=$(get_origins_phone) # get origin
+  retval=$?
+  [ $retval -ne 0 ] && exit 1           # if get_origins returns 1, then exit
+  destination=$(get_destinations_phone) #get destination
+  retval=$?
+  [ $retval -ne 0 ] && exit 1 # if get_destinations returns 1, then exit
+
+  if [[ $1 == 1 ]]; then
+    # if execute
+    echo adb pull -a "${origin}" "${destination}"
+    foot -H adb pull -a "${origin}" "${destination}"
+    if [ $? -eq 0 ]; then
+      dunstify "Execute returns successfully"
+    else
+      dunstify "Error: Execute failed"
+    fi
+  fi
+}
+
+function menu() {
+  options2=("Close" "Dry-Run" "Execute")
+  selected2=$(printf "%s\n" ${options2[@]} | rofi -dmenu -p "Backup:")
+  if [[ "$selected2" == "Dry-Run" ]]; then
+    execute_rsync 0
+  elif [[ "$selected2" == "Execute" ]]; then
+    execute_rsync 1
+  else
+    exit 0
+  fi
+}
+
+function menu_phone() {
+  device_string=""
+  get_phone_string
+
+  options2=("Close" "Execute")
+  selected=$(printf "%s\n" ${options2[@]} | rofi -dmenu -p "Backup:")
+
+  if [[ "$selected" == "Execute" ]]; then
+    execute_adb 1
+  else
+    exit 1
+  fi
+
+}
+
+function backup_what() {
+  options=("Close" "PC" "Phone")
+  selected=$(printf "%s\n" "${options[@]}" | rofi -dmenu -p "Backup:")
+  if [[ "$selected" == "PC" ]]; then
+    menu
+  elif [[ "$selected" == "Phone" ]]; then
+    menu_phone
+  fi
+}
+
+backup_what
