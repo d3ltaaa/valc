@@ -43,21 +43,21 @@ cmd open ${{
             # sleep 0.4
             # xdotool key Alt+k
             ;;
-        *.pdf)  
+        *.pdf|*.PDF)  
             zathura "$f" &
             ;;
-        *.xopp) 
+        *.xopp|*.XOPP) 
             xournalpp "$f" &
             ;;
 
-        *.webm|*.mkv|*.mp4)
+        *.webm|*.mkv|*.mp4|*.WEBM|*.MKV|*.MP4)
             mpv "$f"
             ;;
-        *.ods|*.odp|*.odt|*.odg|*.odf)
-            libreoffice "$f"
+        *.ods|*.odp|*.odt|*.odg|*.odf|*.ODS|*.ODP|*.ODT|*.ODG|*.ODF)
+            libreoffice "$f" &
             ;;
-        *.FCStd)
-            freecad "$f"
+        *.FCStd|*.FCSTD)
+            freecad "$f" &
             ;;
         *) 
             if [ "$(stat -c %U "$f")" == "root" ]; then

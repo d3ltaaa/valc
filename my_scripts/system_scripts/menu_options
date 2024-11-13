@@ -457,8 +457,6 @@ menu_blue() {
 
     done
 
-    options_connect_menu+=("  Go back")
-
     selected_connect_menu=$(printf '%s\n' "${options_connect_menu[@]}" | ${menu_alt})
 
     case $select in
