@@ -1,136 +1,65 @@
 #!/bin/bash
 
-CONFIG_PATH=~/.config.cfg
+CONFIG_PATH="/var/tmp/scr_light/current_red_value"
 
-mon_bright_type=$(grep -w MONITOR: $CONFIG_PATH | awk '{print $2}')
-mon_index=($(grep -w -A4 MONITOR: $CONFIG_PATH | awk 'NR==5'))
-redshift_state=$(grep -w REDSHIFT: $CONFIG_PATH | awk '{print $2}')
-redshift=(1000, 1100, 1200, 1400, 1800, 2300, 3500, 6000, 10000, 15000, 25000)
+connection_type=$(hyprctl monitors all | grep Monitor)
 
-redshift_command="gammastep" # wayland
-# redshift_command="redshift" # xorg 
+if [ ! -f $CONFIG_PATH ]; then
+  mkdir -p $(dirname $CONFIG_PATH)
+  echo "6" >$CONFIG_PATH
+fi
 
 light_down() {
 
-	case $mon_bright_type in
-	"ddcutil")
-		case "$1" in
-		"max")
-			for index in ${mon_index[@]}; do
-				ddcutil -d $index setvcp 10 0
-				wait
-			done
-			;;
-		*)
-
-			for index in ${mon_index[@]}; do
-				ddcutil -d $index setvcp 10 - 10
-				wait
-			done
-			;;
-		esac
-		;;
-	"brillo")
-		case "$1" in
-		"max")
-			brillo -S 0
-			;;
-		*)
-			brillo -U 10
-			;;
-		esac
-		;;
-	esac
+  case "$1" in
+  "max")
+    brillo -S 0 || ddcutil -d 1 setvcp 10 0 && ddcutil -d 2 setvcp 10 0 && ddcutil -d 3 setvcp 10 0
+    exit 0
+    ;;
+  *)
+    brillo -U -10 || ddcutil -d 1 setvcp 10 - 10 && ddcutil -d 2 setvcp 10 - 10 && ddcutil -d 3 setvcp 10 - 10
+    exit 0
+    ;;
+  esac
 }
 
 light_up() {
 
-	case $mon_bright_type in
-	"ddcutil")
-		case $1 in
-		"max")
-			for index in ${mon_index[@]}; do
-				ddcutil -d $index setvcp 10 100
-				wait
-			done
-			;;
-		*)
-
-			for index in ${mon_index[@]}; do
-				ddcutil -d $index setvcp 10 + 10
-				wait
-			done
-			;;
-		esac
-		;;
-	"brillo")
-		case $1 in
-		"max")
-			brillo -S 100
-			;;
-		*)
-			brillo -A 10
-			;;
-		esac
-		;;
-	esac
-
-}
-
-red_down() {
-	if [[ $1 == "max" ]]; then
-		redshift_state=0
-		sed -i 's/REDSHIFT: [0-9]*/REDSHIFT: '$redshift_state'/' $CONFIG_PATH
-	elif [[ $redshift_state != 0 ]]; then
-		redshift_state=$(($redshift_state - 1))
-		sed -i 's/REDSHIFT: [0-9]*/REDSHIFT: '$redshift_state'/' $CONFIG_PATH
-	fi
-}
-
-red_up() {
-	if [[ $1 == "max" ]]; then
-		redshift_state=9
-		sed -i 's/REDSHIFT: [0-9]*/REDSHIFT: '$redshift_state'/' $CONFIG_PATH
-	elif [[ $redshift_state != 9 ]]; then
-		redshift_state=$(($redshift_state + 1))
-		sed -i 's/REDSHIFT: [0-9]*/REDSHIFT: '$redshift_state'/' $CONFIG_PATH
-	fi
+  case $1 in
+  "max")
+    brillo -S 100 || ddcutil -d 1 setvcp 10 100 && ddcutil -d 2 setvcp 10 100 && ddcutil -d 3 setvcp 10 100
+    exit 0
+    ;;
+  *)
+    brillo -A 10 || ddcutil -d 1 setvcp 10 + 10 && ddcutil -d 2 setvcp 10 + 10 && ddcutil -d 3 setvcp 10 + 10
+    ;;
+  esac
 }
 
 case "$1" in
 
 "up")
-	light_up
-	;;
+  light_up
+  ;;
 
 "down")
-	light_down
-	;;
+  light_down
+  ;;
 
 "blue")
-	red_up
-	$redshift_command -P -O ${redshift[$redshift_state]}
-	;;
+  hyprshade off
+  ;;
 
 "red")
-	red_down
-	$redshift_command -P -O ${redshift[$redshift_state]}
-	;;
+  hyprshade on blue-light-filter
+  ;;
 
 "day")
-	light_up max
-	;;
+  light_up max
+  ;;
 "night")
-	light_down max
-	;;
-"sea")
-	red_down max
-	$redshift_command -P -O ${redshift[$redshift_state]}
-	;;
-"ocean")
-	red_up max
-	$redshift_command -P -O ${redshift[$redshift_state]}
-	;;
+  light_down max
+  ;;
 *) echo "unknown command" && exit 1 ;;
 
 esac

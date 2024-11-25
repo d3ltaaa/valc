@@ -847,20 +847,14 @@ menu_light() {
 
   "  Redshift")
     while true; do
-      options=("  +10%" "  -10%" "  Max Blue light" "  Min Blue light" "  Go back")
+      options=("  Blue-light-filter on" "  Blue-light-filter off" "  Go back")
       further_selected=$(printf '%s\n' "${options[@]}" | ${menu} "Blue light:")
       case "$further_selected" in
-      "  +10%")
+      "  Blue-light-filter off")
         scr_light blue
         ;;
-      "  -10%")
+      "  Blue-light-filter on")
         scr_light red
-        ;;
-      "  Max Blue light")
-        scr_light ocean
-        ;;
-      "  Min Blue light")
-        scr_light sea
         ;;
       "  Go back")
         break
