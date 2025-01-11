@@ -63,8 +63,7 @@
 
     "clock": {
         "tooltip-format": "<tt>{calendar}</tt>",
-        "format-alt": "   {:%d.%m.%Y}",
-        "format": "{:%H:%M}"
+        "format": "{:%H:%M     %d.%m.%Y}"
     },
 
     "network": {
