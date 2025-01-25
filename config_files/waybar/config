@@ -17,6 +17,7 @@
         "tray",
         "network",
         "pulseaudio",
+        "custom/appmenu",
         "custom/settings",
         "battery",
         "custom/power"
@@ -131,6 +132,12 @@
         },
         "tooltip": false
     },
+
+    "custom/appmenu": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "sleep 0.1; rofi -show drun -case-insensitive",
+      },
 
     "custom/settings": {
         "format": "",

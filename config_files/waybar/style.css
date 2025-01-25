@@ -55,6 +55,7 @@ window#waybar.hidden {
 #network,
 #clock,
 #custom-settings,
+#custom-appmenu,
 #custom-logo {
   border-radius: 4px;
   margin: 6px 3px;
@@ -128,6 +129,10 @@ window#waybar.hidden {
 }
 
 #custom-settings {
+  background-color: #ffffff;
+}
+
+#custom-appmenu {
   background-color: #ffffff;
 }
 
