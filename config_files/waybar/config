@@ -100,7 +100,7 @@
         "format": "{}",
         "return-type": "json",
         "tooltip": true,
-        "interval": "3600",
+        "interval": "60",
         "exec": "~/.scripts/system_scripts/get_power_draw.sh"
       },
 
