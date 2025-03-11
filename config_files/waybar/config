@@ -19,7 +19,7 @@
         "pulseaudio",
         "custom/appmenu",
         "custom/settings",
-        "battery",
+        "custom/powerdraw",
         "custom/power"
     ],
 
@@ -96,43 +96,13 @@
         "scroll-step": 5
     },
 
-    "battery": {
-        "format": "{capacity}% {icon}",
-        "format-icons": {
-            "charging": [
-                "󰢜",
-                "󰂆",
-                "󰂇",
-                "󰂈",
-                "󰢝",
-                "󰂉",
-                "󰢞",
-                "󰂊",
-                "󰂋",
-                "󰂅"
-            ],
-            "default": [
-                "󰁺",
-                "󰁻",
-                "󰁼",
-                "󰁽",
-                "󰁾",
-                "󰁿",
-                "󰂀",
-                "󰂁",
-                "󰂂",
-                "󰁹"
-            ]
-        },
-        "format-full": "Charged ",
-        "interval": 5,
-        "states": {
-            "warning": 20,
-            "critical": 10
-        },
+    "custom/powerdraw": {
+        "format": "{}",
+        "return-type": "json",
         "tooltip": true,
-        "tooltip-format": "{timeTo}"
-    },
+        "interval": "3600",
+        "exec": "~/.scripts/system_scripts/get_power_draw.sh"
+      },
 
     "custom/appmenu": {
         "format": "",

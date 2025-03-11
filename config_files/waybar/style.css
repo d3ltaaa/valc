@@ -49,6 +49,7 @@ window#waybar.hidden {
 
 #memory,
 #custom-power,
+#custom-powerdraw,
 #battery,
 #backlight,
 #pulseaudio,
@@ -117,6 +118,10 @@ window#waybar.hidden {
 }
 
 #custom-power {
+  background-color: #ffffff;
+}
+
+#custom-powerdraw {
   background-color: #ffffff;
 }
 
