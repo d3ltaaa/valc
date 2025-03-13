@@ -47,7 +47,10 @@ window#waybar.hidden {
   background-color: #ffffff;
 }
 
+#cpu,
+#custom-test,
 #memory,
+#temperature,
 #custom-power,
 #battery,
 #backlight,
@@ -68,6 +71,8 @@ window#waybar.hidden {
   margin-right: 6px;
 }
 
+#temperature,
+#cpu,
 #memory {
   background-color: #ffffff;
 }
@@ -132,6 +137,7 @@ window#waybar.hidden {
   background-color: #ffffff;
 }
 
+#custom-test,
 #custom-appmenu {
   background-color: #ffffff;
 }
