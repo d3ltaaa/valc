@@ -32,7 +32,7 @@ for battery in /sys/class/power_supply/BAT*; do
     total_capacity=$((total_capacity + full_capacity))
     total_remaining_capacity=$((total_remaining_capacity + remaining_capacity))
 
-    desktop=true
+    desktop=false
     # Update battery count
     battery_count=$((battery_count + 1))
   fi
