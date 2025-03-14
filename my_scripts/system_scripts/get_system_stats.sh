@@ -19,7 +19,11 @@ for battery in /sys/class/power_supply/BAT*; do
   if [ -f "$battery/power_now" ]; then
     power_now=$(cat "$battery/power_now")
     total_power_draw=$((total_power_draw + power_now))
-
+  elif [ -f "$battery/current_now" ] && [ -f "$battery/voltage_now" ]; then
+    current_now=$(cat $battery/current_now)
+    voltage_now=$(cat $battery/voltage_now)
+    power_now=$(($current_now * $voltage_now))
+    total_power_draw=$((total_power_draw + power_now))
   fi
 
   if [ -f "$battery/energy_full" ] && [ -f "$battery/energy_now" ] && [ -f "$battery/status" ]; then
