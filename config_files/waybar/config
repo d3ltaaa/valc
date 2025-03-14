@@ -17,10 +17,9 @@
         "tray",
         "network",
         "pulseaudio",
-        "custom/system_stats",
         "custom/appmenu",
+        "custom/system_stats",
         "custom/settings",
-        "battery",
         "custom/power"
     ],
 

@@ -1,41 +1,44 @@
 #!/bin/bash
 
 # Initialize variables
+power_stat_factor="1.4"
 total_power_draw=0
 total_remaining_capacity=0
+total_capacity=0
 battery_count=0
+charging=false
+
+# Define battery icons
+CHARGING_ICONS=("󰢜" "󰂆" "󰂇" "󰂈" "󰢝" "󰂉" "󰢞" "󰂊" "󰂋" "󰂅")
+DEFAULT_ICONS=("󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹")
 
 # Loop through possible battery files (BAT0, BAT1, etc.)
-for battery in /sys/class/power_supply/BAT*/power_now; do
+for battery in /sys/class/power_supply/BAT*; do
   # Check if the battery exists and is readable
-  if [ -f "$battery" ]; then
-    # Get the battery name (BAT0, BAT1, etc.)
-    battery_name=$(basename $(dirname "$battery"))
-
-    # Read current power draw (in microwatts)
-    power_now=$(cat "$battery")
+  if [ -f "$battery/power_now" ]; then
+    power_now=$(cat "$battery/power_now")
     total_power_draw=$((total_power_draw + power_now))
 
-    # Get battery capacity and remaining capacity (in microamp-hours or microvolts, depending on the system)
-    capacity_file="/sys/class/power_supply/$battery_name/energy_full"
-    remaining_capacity_file="/sys/class/power_supply/$battery_name/energy_now"
+  fi
 
-    if [ -f "$capacity_file" ] && [ -f "$remaining_capacity_file" ]; then
-      full_capacity=$(cat "$capacity_file")
-      remaining_capacity=$(cat "$remaining_capacity_file")
+  if [[ "$(cat $battery/status)" == "Charging" ]]; then
+    charging=true
+  fi
 
-      # Accumulate the remaining capacity
-      total_remaining_capacity=$((total_remaining_capacity + remaining_capacity))
+  if [ -f "$battery/energy_full" ] && [ -f "$battery/energy_now" ]; then
+    full_capacity=$(cat "$battery/energy_full")
+    remaining_capacity=$(cat "$battery/energy_now")
 
-      # Update battery count
-      battery_count=$((battery_count + 1))
-    fi
+    total_capacity=$((total_capacity + full_capacity))
+    total_remaining_capacity=$((total_remaining_capacity + remaining_capacity))
+
+    # Update battery count
+    battery_count=$((battery_count + 1))
   fi
 done
 
 # If we found at least one battery, calculate and print the results
 if [ "$battery_count" -gt 0 ]; then
-  power_stat_factor="1.4"
 
   # Calculate total power draw in watts (from microwatts to watts)
   power_draw_watts=$(echo "scale=1; $total_power_draw * $power_stat_factor/1000000" | bc)
@@ -49,7 +52,22 @@ if [ "$battery_count" -gt 0 ]; then
   fi
 
   # Print the output
-  power_string="${power_draw_watts}W / ${remaining_time_seconds}H"
+  power_string="${power_draw_watts}W 󰾅    ${remaining_time_seconds}H "
+
+  battery_percentage=$((100 * $total_remaining_capacity / total_capacity))
+  # Determine icon index (0-9 scale)
+  icon_index=$((battery_percentage / 10))
+  if [[ $icon_index -gt 9 ]]; then
+    icon_index=9
+  fi
+
+  # Choose the appropriate icon
+  if [[ "$charging" == "true" ]]; then
+    icon=${CHARGING_ICONS[$icon_index]}
+  else
+    icon=${DEFAULT_ICONS[$icon_index]}
+  fi
+  battery_string="$battery_percentage% $icon"
 fi
 
 # Get CPU usage
@@ -79,4 +97,4 @@ fi
 # Output JSON for Waybar
 # echo "{\"text\": \"󰘚 CPU: $CPU_USAGE |  RAM: $RAM_USED/$RAM_TOTAL | 🌡️ Temp: $TEMP | 🔋 Power: $POWER\"}"
 # echo "{\"text\": \" \", \"tooltip\": \"$ram_string\n$cpu_string\n$power_string\"}"
-echo "{\"text\": \"$ram_string | $cpu_string | $power_string\" }"
+echo "{\"text\": \"$power_string    $battery_string\", \"tooltip\": \"$ram_string\n\n$cpu_string\" }"
