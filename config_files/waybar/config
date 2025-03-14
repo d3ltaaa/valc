@@ -149,6 +149,7 @@
     "custom/system_stats": {
         "interval": 2,
         "format": "{}",
+        "on-click": "menu_options energy",
         "return-type": "json",
         "exec": "get_system_stats.sh"
       },

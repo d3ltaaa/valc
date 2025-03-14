@@ -875,6 +875,21 @@ menu_light() {
 
 }
 
+menu_energy() {
+  options=("  Reset" "󱧥  Powersave" "󰓅  Performance" "  Go back")
+
+  # Use dmenu to display the options and prompt the user to select one
+  selected=$(printf '%s\n' "${options[@]}" | ${menu})
+
+  # Depending on which option was selected, perform the corresponding system action
+  case $selected in
+  "  Reset") foot -e sudo auto-cpufreq --force reset ;;
+  "󱧥  Powersave") foot -e sudo auto-cpufreq --force powersave ;;
+  "󰓅  Performance") foot -e sudo auto-cpufreq --force performance ;;
+  "  Go back") menu_main ;;
+  esac
+}
+
 menu_themes() {
   options=("Arch-Dark" "Arch-Light" "Arch-Cyan" "Triangle-Blue" "  Go back")
   selected=$(printf '%s\n' "${options[@]}" | ${menu} "Select Theme:")
@@ -1121,6 +1136,9 @@ case $1 in
   ;;
 "light")
   menu_light
+  ;;
+"energy")
+  menu_energy
   ;;
 "theme")
   menu_theme
