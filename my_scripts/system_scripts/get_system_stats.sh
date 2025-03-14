@@ -7,6 +7,7 @@ total_remaining_capacity=0
 total_capacity=0
 battery_count=0
 charging=false
+desktop=true
 
 # Define battery icons
 CHARGING_ICONS=("󰢜" "󰂆" "󰂇" "󰂈" "󰢝" "󰂉" "󰢞" "󰂊" "󰂋" "󰂅")
@@ -21,17 +22,17 @@ for battery in /sys/class/power_supply/BAT*; do
 
   fi
 
-  if [[ "$(cat $battery/status)" == "Charging" ]]; then
-    charging=true
-  fi
-
-  if [ -f "$battery/energy_full" ] && [ -f "$battery/energy_now" ]; then
+  if [ -f "$battery/energy_full" ] && [ -f "$battery/energy_now" ] && [ -f "$battery/status" ]; then
+    if [[ "$(cat $battery/status)" == "Charging" ]]; then
+      charging=true
+    fi
     full_capacity=$(cat "$battery/energy_full")
     remaining_capacity=$(cat "$battery/energy_now")
 
     total_capacity=$((total_capacity + full_capacity))
     total_remaining_capacity=$((total_remaining_capacity + remaining_capacity))
 
+    desktop=true
     # Update battery count
     battery_count=$((battery_count + 1))
   fi
@@ -97,4 +98,8 @@ fi
 # Output JSON for Waybar
 # echo "{\"text\": \"󰘚 CPU: $CPU_USAGE |  RAM: $RAM_USED/$RAM_TOTAL | 🌡️ Temp: $TEMP | 🔋 Power: $POWER\"}"
 # echo "{\"text\": \" \", \"tooltip\": \"$ram_string\n$cpu_string\n$power_string\"}"
-echo "{\"text\": \"$power_string    $battery_string\", \"tooltip\": \"$ram_string\n\n$cpu_string\" }"
+if $desktop; then
+  echo "{\"text\": \"$ram_string    $cpu_string\"}"
+else
+  echo "{\"text\": \"$power_string    $battery_string\", \"tooltip\": \"$ram_string\n\n$cpu_string\" }"
+fi
