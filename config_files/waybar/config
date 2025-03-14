@@ -17,11 +17,8 @@
         "tray",
         "network",
         "pulseaudio",
+        "custom/system_stats",
         "custom/appmenu",
-        "memory",
-        "cpu",
-        "temperature",
-        "custom/test",
         "custom/settings",
         "battery",
         "custom/power"
@@ -149,7 +146,7 @@
         "max-length": 10
       },
       
-    "custom/test": {
+    "custom/system_stats": {
         "interval": 2,
         "format": "{}",
         "return-type": "json",

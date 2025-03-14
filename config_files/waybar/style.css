@@ -47,6 +47,7 @@ window#waybar.hidden {
   background-color: #ffffff;
 }
 
+#custom-system_stats,
 #cpu,
 #custom-test,
 #memory,
@@ -137,7 +138,7 @@ window#waybar.hidden {
   background-color: #ffffff;
 }
 
-#custom-test,
+#custom-system_stats,
 #custom-appmenu {
   background-color: #ffffff;
 }
